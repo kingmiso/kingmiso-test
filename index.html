@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KingMiso Shot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; 
+            margin: 0; 
+            padding: 0; 
+            width: 100vw;
+            min-height: 100dvh;
+            height: 100dvh;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .font-chewy { font-family: 'Chewy', cursive; }
+
+        /* Prevent auto zoom on mobile inputs by ensuring text size is at least 16px */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+
+        .top-bar { 
+            background: rgba(15, 23, 42, 0.92); 
+            backdrop-filter: blur(8px);
+            padding: 5px 6px; 
+            display: flex; 
+            flex-direction: column;
+            gap: 3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%;
+            z-index: 30; 
+        }
+
+        .resource-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 3px; 
+            font-weight: bold; 
+            font-size: 0.675rem; /* 10% smaller than 0.75rem */
+            white-space: nowrap;
+        }
+        .resource-item.gold { color: #fbbf24; }
+        .resource-item.puregold { color: #f59e0b; }
+        .resource-item.emerald { color: #10b981; }
+        .resource-item.ruby { color: #ef4444; }
+        .resource-item.sapphire { color: #3b82f6; }
+        .resource-item.food { color: #f87171; }
+        .resource-item.wood { color: #d97706; }
+        .resource-item.ore { color: #94a3b8; }
+        .resource-item.herb { color: #34d399; }
+        .resource-item.magic { color: #818cf8; }
+        .resource-item.gem { color: #f472b6; }
+        
+        /* Original Category Backgrounds Restored */
+        .screen-panel { 
+            display: none; 
+            position: absolute;
+            top: 68px; 
+            left: 0;
+            width: 100%;
+            height: auto;
+            bottom: calc(105px + env(safe-area-inset-bottom, 0px));
+            padding: 12px; 
+            padding-bottom: 20px; 
+            overflow-y: scroll;
+            overscroll-behavior-y: contain;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .screen-panel.active { display: block; }
+        
+        #screen-domain { background: linear-gradient(rgba(15,23,42,.66),rgba(15,23,42,.9)), url('km_domain_hd.webp') center 15%/cover no-repeat; }
+        #screen-gather { background: linear-gradient(rgba(5,46,22,.62),rgba(6,30,28,.9)), url('km_gather_hd.webp') center 15%/cover no-repeat; }
+        #screen-heroes { background: linear-gradient(rgba(15,23,42,.62),rgba(30,27,75,.92)), url('km_heroes_hd.webp') center 12%/cover no-repeat; }
+        #screen-battle { background: linear-gradient(rgba(30,10,18,.55),rgba(69,10,10,.9)), url('km_battle_hd.webp') center 10%/cover no-repeat; }
+        #screen-shop { background: linear-gradient(rgba(15,23,42,.62),rgba(67,42,12,.9)), url('km_shop_hd.webp') center 10%/cover no-repeat; }
+
+        /* Bottom Nav & Inline Chat Wrapper */
+        .bottom-wrapper {
+            position: fixed; 
+            bottom: 0; 
+            left: 0;
+            width: 100%; 
+            z-index: 30; 
+            background: #0f172a; 
+            border-top: 1px solid #334155;
+        }
+        .bottom-nav { 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 6px 0; 
+            padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+            background: #1e293b;
+        }
+        .nav-btn { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            color: #94a3b8; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            transition: color 0.2s, transform 0.1s; 
+            font-size: 0.65rem; 
+            flex: 1; 
+        }
+        .nav-btn i { font-size: 1.1rem; margin-bottom: 1px; }
+        .nav-btn.active { color: #f59e0b; transform: scale(1.05); }
+
+        /* Cards */
+        .card { 
+            background: rgba(30, 41, 59, 0.85); 
+            backdrop-filter: blur(8px);
+            border-radius: 14px; 
+            padding: 12px; 
+            margin-bottom: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        /* 3D Button Styles */
+        .btn-3d {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            position: relative;
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        }
+        .btn-3d:active { transform: translateY(2px); }
+        .btn-3d:disabled { background: #475569 !important; color: #94a3b8; cursor: not-allowed; box-shadow: none !important; transform: none !important; }
+
+        .btn-green { background: linear-gradient(180deg, #4ade80, #166534); box-shadow: 0 3px 0 #14532d; }
+        .btn-blue { background: linear-gradient(180deg, #38bdf8, #0369a1); box-shadow: 0 3px 0 #075985; }
+        .btn-orange { background: linear-gradient(180deg, #fb923c, #c2410c); box-shadow: 0 3px 0 #9a3412; }
+        .btn-purple { background: linear-gradient(180deg, #c084fc, #7e22ce); box-shadow: 0 3px 0 #581c87; }
+        .btn-red { background: linear-gradient(180deg, #f87171, #b91c1c); box-shadow: 0 3px 0 #7f1d1d; }
+
+        /* Shop */
+        .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .shop-item { 
+            background: rgba(30, 41, 59, 0.85); 
+            backdrop-filter: blur(8px);
+            border-radius: 14px; 
+            padding: 12px; 
+            text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .shop-icon { font-size: 2rem; margin-bottom: 6px; }
+        .shop-desc { font-size: 0.7rem; color: #94a3b8; margin-bottom: 10px; min-height: 2.2em; }
+
+        /* Battle Arena */
+        .battle-arena { 
+            background: #020617; 
+            border-radius: 12px; 
+            height: 180px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 12px; 
+            overflow: hidden; 
+            position: relative; 
+            border: 2px solid #334155;
+        }
+        .battle-arena.middle-boss { border-color: #eab308; box-shadow: inset 0 0 25px rgba(234, 179, 8, 0.3); }
+        .battle-arena.special-boss { border-color: #ec4899; box-shadow: inset 0 0 35px rgba(236, 72, 153, 0.5); }
+
+        @keyframes screenShake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-5px, 4px); }
+            40% { transform: translate(5px, -4px); }
+            60% { transform: translate(-3px, 2px); }
+            80% { transform: translate(3px, -2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .arena-shaking { animation: screenShake 0.2s ease-in-out infinite; }
+
+        .battle-log { 
+            max-height: 120px; 
+            overflow-y: auto; 
+            font-size: 0.75rem; 
+            background: rgba(15, 23, 42, 0.9); 
+            color: #e2e8f0;
+            padding: 10px; 
+            border-radius: 10px; 
+            border: 1px solid #334155; 
+        }
+
+        .modal-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 100; display: none;
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-content {
+            background: #1e293b; color: #f1f5f9; width: 100%; max-width: 380px; border-radius: 16px;
+            padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto;
+            border: 1px solid #475569;
+        }
+
+        .progress-bar-container {
+            width: 100%; background-color: #334155; border-radius: 6px; height: 14px; margin-top: 6px; overflow: hidden; display: none; position: relative;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #3b82f6, #6366f1); height: 100%; width: 0%; border-radius: 6px; transition: width 0.1s linear;
+        }
+        .progress-bar-text {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: bold; color: #fff; text-shadow: 0 0 2px rgba(0,0,0,0.8); z-index: 2;
+        }
+
+        #notification-container { 
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%); 
+            z-index: 1000; display: flex; flex-direction: column; gap: 6px; pointer-events: none; width: 90%; max-width: 280px; align-items: center;
+        }
+        .notification { 
+            background: rgba(15, 23, 42, 0.95); color: #f8fafc; padding: 8px 16px; 
+            border-radius: 16px; font-size: 0.8rem; font-weight: bold; border: 1px solid #475569; animation: slideUpFade 2s forwards; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        @keyframes slideUpFade { 
+            0% { opacity: 0; transform: translateY(15px); } 
+            15% { opacity: 1; transform: translateY(0); } 
+            85% { opacity: 1; transform: translateY(0); } 
+            100% { opacity: 0; transform: translateY(-15px); } 
+        }
+
+        .hero-dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .hero-dropdown-content.open { max-height: 3000px; }
+
+        .chat-message-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-align: left;
+            width: 100%;
+        }
+
+        /* v1.2 Battle Engine */
+        .battle-arena { height: 245px; background: radial-gradient(circle at 50% 80%, #263449 0%, #0f172a 48%, #020617 100%); }
+        #battle-visual-content { overflow: hidden; }
+        .battle-stage-v12 { position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:space-between; padding:18px 14px 42px; z-index:5; }
+        .battle-team-v12 { width:58%; display:flex; align-items:flex-end; gap:4px; }
+        .fighter-v12 { position:relative; width:42px; transition:filter .25s, opacity .25s, transform .25s; text-align:center; }
+        .fighter-v12 .unit { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; border:1px solid #60a5fa; background:linear-gradient(145deg,#2563eb,#1e3a8a); box-shadow:0 5px 12px #0008; font-size:16px; color:white; }
+        .fighter-v12.dead { filter:grayscale(1); opacity:.25; transform:translateY(8px) rotate(-12deg); }
+        .enemy-v12 { width:72px; text-align:center; position:relative; }
+        .enemy-v12 .unit { width:64px; height:64px; margin:auto; border-radius:18px; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#dc2626,#7f1d1d); border:2px solid #fb7185; color:white; font-size:30px; box-shadow:0 0 24px #ef444466; }
+        .enemy-v12.boss .unit { width:76px; height:76px; font-size:36px; background:linear-gradient(145deg,#9333ea,#4c1d95); border-color:#f0abfc; box-shadow:0 0 32px #d946ef88; }
+        .hp-v12 { height:5px; background:#450a0a; border-radius:5px; overflow:hidden; margin-top:4px; border:1px solid #0008; }
+        .hp-v12 > div { height:100%; background:linear-gradient(90deg,#22c55e,#86efac); transition:width .28s ease; }
+        .enemy-v12 .hp-v12 { height:7px; }
+        .damage-v12 { position:absolute; z-index:30; font-weight:900; color:#fde047; text-shadow:0 2px 3px #000; animation:damageFloat .7s ease-out forwards; pointer-events:none; }
+        .damage-v12.enemy-hit { color:#fb7185; }
+        .damage-v12.crit { color:#fff; font-size:18px; text-shadow:0 0 8px #f59e0b,0 2px 3px #000; }
+        @keyframes damageFloat { 0%{opacity:0;transform:translateY(8px) scale(.7)} 20%{opacity:1;transform:translateY(0) scale(1.25)} 100%{opacity:0;transform:translateY(-28px) scale(1)} }
+        @keyframes heroStrike { 0%{transform:translateX(0)} 45%{transform:translateX(48px) scale(1.12)} 100%{transform:translateX(0)} }
+        @keyframes enemyStrike { 0%{transform:translateX(0)} 45%{transform:translateX(-38px) scale(1.08)} 100%{transform:translateX(0)} }
+        @keyframes hitFlash { 0%,100%{filter:none} 45%{filter:brightness(2.4) saturate(.2);transform:scale(.92)} }
+        .hero-strike-v12 { animation:heroStrike .42s ease-in-out; }
+        .enemy-strike-v12 { animation:enemyStrike .46s ease-in-out; }
+        .hit-v12 { animation:hitFlash .3s ease-in-out; }
+        #battle-controls-box { transition: opacity .22s ease, transform .22s ease; }
+        #battle-controls-box.battle-hidden-v121 { opacity:0; transform:translateY(18px) scale(.96); pointer-events:none; }
+        .battle-result-v12 { position:absolute; inset:0; z-index:40; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; letter-spacing:2px; text-shadow:0 4px 12px #000; animation:resultPop .9s ease both; pointer-events:none; }
+        @keyframes resultPop { 0%{opacity:0;transform:scale(.45)} 45%{opacity:1;transform:scale(1.18)} 100%{opacity:1;transform:scale(1)} }
+
+        /* v1.3 visual refresh */
+        #login-overlay {
+            background: linear-gradient(rgba(2,6,23,.28),rgba(2,6,23,.88)), url('km_login_hd.webp') center/cover no-repeat !important;
+        }
+        #login-overlay::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 22%,transparent 0,rgba(2,6,23,.22) 42%,rgba(2,6,23,.78) 100%); pointer-events:none; }
+        .page-art-banner { height:112px; border-radius:16px; margin:0 0 12px; background-position:center; background-size:cover; border:1px solid rgba(255,255,255,.18); box-shadow:0 8px 24px rgba(0,0,0,.32); position:relative; overflow:hidden; }
+        .page-art-banner::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 25%,rgba(2,6,23,.72)); }
+        #battle-arena { background:linear-gradient(rgba(2,6,23,.12),rgba(2,6,23,.6)),url('km_battle_epic.webp') center/cover no-repeat; min-height:230px; }
+        @media (max-height:700px){ .screen-panel{ top:64px; bottom:96px; } }
+    
+        /* v1.4.0 progression + cinematic units */
+        .card.upgrading{position:relative;overflow:hidden;border-color:#fbbf24!important;box-shadow:0 0 22px #f59e0b33!important}
+        .card.upgrading::after{content:"⚒";position:absolute;right:8px;top:6px;font-size:22px;animation:workHammer .65s ease-in-out infinite;filter:drop-shadow(0 2px 2px #000)}
+        @keyframes workHammer{0%,100%{transform:rotate(-18deg) translateY(0)}50%{transform:rotate(28deg) translateY(3px)}}
+        .complete-flash{animation:completeFlash .9s ease-out}
+        @keyframes completeFlash{0%{box-shadow:0 0 0 #facc15}35%{box-shadow:0 0 40px #facc15;transform:scale(1.02)}100%{box-shadow:0 0 0 transparent;transform:scale(1)}}
+        .fighter-v12{width:58px!important}
+        .fighter-v12 .unit{width:54px!important;height:68px!important;border-radius:14px!important;background-image:url('ref_battle.webp')!important;background-size:500px auto!important;background-color:#172554!important;background-repeat:no-repeat!important;font-size:0!important;box-shadow:0 6px 18px #000b,0 0 10px #60a5fa55!important}
+        .fighter-v12:nth-child(1) .unit{background-position:8% 63%!important}.fighter-v12:nth-child(2) .unit{background-position:25% 67%!important}.fighter-v12:nth-child(3) .unit{background-position:43% 69%!important}.fighter-v12:nth-child(4) .unit{background-position:60% 68%!important}.fighter-v12:nth-child(5) .unit{background-position:72% 60%!important}
+        .enemy-v12 .unit{width:92px!important;height:100px!important;border-radius:18px!important;background-image:url('ref_battle.webp')!important;background-size:500px auto!important;background-position:88% 28%!important;background-repeat:no-repeat!important;font-size:0!important;box-shadow:0 0 30px #ef444488!important}
+        .enemy-v12.boss .unit{width:108px!important;height:118px!important;background-position:88% 20%!important}
+        .hero-strike-v12{animation:heroCharge .42s cubic-bezier(.2,.8,.2,1)!important;z-index:5}.enemy-strike-v12{animation:enemyCharge .45s ease!important}
+        @keyframes heroCharge{0%{transform:translateX(0) scale(1)}45%{transform:translateX(72px) scale(1.15)}65%{filter:brightness(1.8)}100%{transform:translateX(0) scale(1)}}
+        @keyframes enemyCharge{0%{transform:translateX(0)}45%{transform:translateX(-75px) scale(1.12)}100%{transform:translateX(0)}}
+        #screen-shop .page-art-banner{min-height:150px!important;background-position:center 72%!important;border:1px solid #f59e0b88!important;box-shadow:inset 0 -35px 40px #020617aa,0 8px 24px #0008!important}
+        #battle-arena{min-height:280px!important;background-image:linear-gradient(#02061722,#02061799),url('km_battle_hd.webp')!important;background-size:cover!important;background-position:center!important}
+
+
+/* ===== v1.5 reference UI rebuild ===== */
+
+/* hotspot geometry follows the reference artwork, not a generic 2x2 grid */
+#screen-domain .art-hotspot:nth-child(1){left:48%!important;top:25%!important;width:24%!important;height:17%!important}
+#screen-domain .art-hotspot:nth-child(2){left:42%!important;top:43%!important;width:25%!important;height:16%!important}
+#screen-domain .art-hotspot:nth-child(3){left:19%!important;top:63%!important;width:28%!important;height:16%!important}
+#screen-domain .art-hotspot:nth-child(4){left:63%!important;top:65%!important;width:27%!important;height:17%!important}
+#screen-gather .art-hotspot:nth-child(1){left:3%!important;top:10%!important;width:94%!important;height:19%!important}
+#screen-gather .art-hotspot:nth-child(2){left:3%!important;top:31%!important;width:94%!important;height:19%!important}
+#screen-gather .art-hotspot:nth-child(3){left:3%!important;top:52%!important;width:94%!important;height:19%!important}
+#screen-gather .art-hotspot:nth-child(4){left:3%!important;top:73%!important;width:94%!important;height:20%!important}
+.art-hotspot:active{background:rgba(255,190,40,.2)!important;box-shadow:inset 0 0 0 3px #ffd65c!important}
+.battle-arena{min-height:410px!important;background-image:url('ref_battle.webp')!important;background-size:cover!important;background-position:center!important;border:1px solid #f59e0b88!important;overflow:hidden!important}
+.battle-stage-v12{opacity:1!important}
+.fighter-v12 .unit,.enemy-v12 .unit{opacity:0!important;box-shadow:none!important;border:0!important;background:none!important}
+.fighter-v12 .text-\[7px\],.enemy-v12 .text-\[8px\],.enemy-v12 .text-\[7px\]{display:none!important}
+.fighter-v12 .hp-v12{position:relative;top:-54px;width:54px!important;height:5px!important;background:#111c!important}
+.enemy-v12 .hp-v12{position:absolute!important;top:-250px!important;right:0!important;width:150px!important;height:9px!important;background:#111d!important}
+#enemy-hp-text-v12{position:absolute!important;top:-237px!important;right:0!important;width:150px!important;text-align:center!important;color:white!important;display:block!important}
+.battle-fx-v15{position:absolute;z-index:18;pointer-events:none;left:50%;top:48%;transform:translate(-50%,-50%);font-size:72px;filter:drop-shadow(0 0 18px #fff);animation:fx15 .42s ease-out forwards}
+.battle-fx-v15.arrow{font-size:60px;animation:arrow15 .48s ease-in forwards}.battle-fx-v15.magic{font-size:78px;color:#c084fc}
+@keyframes fx15{0%{opacity:0;transform:translate(-80%,-50%) scale(.3) rotate(-25deg)}40%{opacity:1;transform:translate(-20%,-50%) scale(1.35) rotate(10deg)}100%{opacity:0;transform:translate(20%,-50%) scale(.8) rotate(25deg)}}
+@keyframes arrow15{0%{opacity:0;transform:translate(-180%,-20%) rotate(-12deg)}25%{opacity:1}100%{opacity:0;transform:translate(90%,-70%) rotate(-12deg)}}
+#battle-controls-box{background:linear-gradient(180deg,#071329ee,#101a30ee)!important;border-color:#f59e0b99!important}
+.v15-build-modal{position:fixed;inset:0;background:#020617e8;z-index:90;display:none;align-items:center;justify-content:center;padding:18px}.v15-build-card{width:min(94vw,430px);background:#0b1730;border:1px solid #fbbf24;border-radius:22px;overflow:hidden;box-shadow:0 24px 70px #000}.v15-build-art{height:210px;background:url('ref_build.webp') center 12%/cover no-repeat}.v15-build-body{padding:16px}.v15-title{font-size:20px;font-weight:900}.v15-lv{color:#fde047}.v15-bigbtn{width:100%;padding:13px;border-radius:14px;background:linear-gradient(#ffc84c,#d99008);font-weight:900;color:#291500;box-shadow:0 5px 0 #8a5200}.v15-close{position:absolute;right:28px;top:28px;width:38px;height:38px;border-radius:50%;background:#111827;color:white;font-size:20px}
+
+/* v1.6 CLEAN FIX — reference art is decoration, HTML is the actual UI */
+.page-art-banner{height:138px!important;background-size:cover!important;background-position:center!important}
+#screen-domain .page-art-banner{background-image:linear-gradient(135deg,#172554,#0f766e)!important}
+#screen-gather .page-art-banner{background-image:linear-gradient(135deg,#14532d,#164e63)!important}
+#screen-heroes .page-art-banner{background-image:linear-gradient(135deg,#312e81,#701a75)!important}
+#screen-shop .page-art-banner{height:155px!important;background-image:linear-gradient(135deg,#78350f,#7e22ce)!important}
+.page-art-banner::before{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;letter-spacing:.03em;text-shadow:0 3px 12px #000;color:#fff;z-index:1}
+#screen-domain .page-art-banner::before{content:"🏰  KINGMISO 왕국"}
+#screen-gather .page-art-banner::before{content:"⛏️  왕국 자원 채집"}
+#screen-heroes .page-art-banner::before{content:"⚔️  영웅 훈련소"}
+#screen-shop .page-art-banner::before{content:"👑  KINGMISO SPECIAL SHOP"}
+#screen-shop .page-art-banner>div{display:none!important}
+.fighter-v12,.enemy-v12{display:none!important}
+.battle-arena{min-height:390px!important;background-image:url('km_battle_epic.webp')!important;background-size:cover!important;background-position:center!important}
+.battle-arena::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#0002 0%,transparent 35%,#02061799 100%)}
+.v16-task-toast{position:fixed;left:50%;top:92px;transform:translateX(-50%);z-index:120;background:#071329f2;border:1px solid #fbbf24;border-radius:14px;padding:9px 14px;font-size:12px;font-weight:800;box-shadow:0 10px 35px #000a}
+
+
+        /* v1.9.7 mobile tactile feedback */
+        button, .btn-3d, [role="button"] {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        button:not(:disabled), .btn-3d:not(:disabled), [role="button"]:not([aria-disabled="true"]) {
+            transition: transform .07s ease, filter .07s ease, box-shadow .07s ease, opacity .07s ease;
+            transform-origin: center center;
+        }
+        button:not(:disabled):active, .btn-3d:not(:disabled):active,
+        [role="button"]:not([aria-disabled="true"]):active, .km-touch-down {
+            transform: translateY(2px) scale(.965) !important;
+            filter: brightness(.84) saturate(1.12) !important;
+        }
+
+
+        /* v1.9.7: compact resource HUD */
+        .top-bar .resource-item { font-size: 90% !important; }
+        .top-bar .resource-item span { font-size: .9em !important; }
+</style>
+
+<style id="v141-fixes">
+/* v1.4.1: interactive art + non-rectangular battle units */
+.page-art-banner{isolation:isolate}
+.art-hotspot{position:absolute;z-index:4;border:0;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.art-hotspot:active{background:rgba(250,204,21,.16);box-shadow:inset 0 0 0 2px rgba(250,204,21,.8);border-radius:14px}
+.art-hotspot::after{content:'';position:absolute;inset:4px;border-radius:12px;border:1px solid rgba(255,255,255,.0);transition:.15s}
+.art-hotspot:active::after{border-color:rgba(255,255,255,.7)}
+#screen-domain .page-art-banner::after,#screen-gather .page-art-banner::after,#screen-heroes .page-art-banner::after{pointer-events:none}
+.fighter-v12{width:64px!important;overflow:visible!important}
+.fighter-v12 .unit{width:60px!important;height:82px!important;border:0!important;border-radius:48% 48% 42% 42%!important;clip-path:polygon(18% 0,82% 0,100% 25%,94% 82%,70% 100%,30% 100%,6% 82%,0 25%)!important;background-size:560px auto!important;box-shadow:0 10px 18px #000a,0 0 0 2px #93c5fd99,0 0 18px #60a5fa77!important;filter:saturate(1.18) contrast(1.08)!important}
+.enemy-v12 .unit{width:112px!important;height:142px!important;border:0!important;border-radius:48% 48% 38% 38%!important;clip-path:polygon(12% 0,88% 0,100% 22%,95% 86%,72% 100%,28% 100%,5% 86%,0 22%)!important;background-size:620px auto!important;box-shadow:0 12px 25px #000c,0 0 0 3px #fb718599,0 0 34px #ef4444aa!important}
+.enemy-v12.boss .unit{width:132px!important;height:164px!important}
+.hero-strike-v12{animation:heroCharge141 .42s cubic-bezier(.2,.9,.2,1)!important;z-index:20}
+.enemy-strike-v12{animation:enemyCharge141 .42s cubic-bezier(.2,.9,.2,1)!important;z-index:20}
+@keyframes heroCharge141{0%{transform:translate(0,0) scale(1)}45%{transform:translate(58px,-12px) scale(1.18) rotate(-4deg)}62%{filter:brightness(1.8)}100%{transform:translate(0,0) scale(1)}}
+@keyframes enemyCharge141{0%{transform:translate(0,0) scale(1)}45%{transform:translate(-68px,5px) scale(1.13) rotate(3deg)}100%{transform:translate(0,0) scale(1)}}
+#battle-arena::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 52% 54%,transparent 0 18%,rgba(255,255,255,.025) 40%,rgba(0,0,0,.28) 100%)}
+</style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="flex items-center justify-between w-full gap-1 text-[10px]">
+            <div class="flex items-center gap-1 shrink-0">
+                <div class="font-bold text-[11px] text-amber-300 flex items-center shrink-0 cursor-pointer bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded-lg transition border border-slate-700" onclick="openProfileModal(); playSfx('click');">
+                    <div id="header-profile-avatar" class="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[8px] mr-1 overflow-hidden shrink-0">
+                        <i class="fa-solid fa-crown text-yellow-300"></i>
+                    </div>
+                    <span id="header-kingdom-level" class="bg-indigo-950/90 border border-indigo-500/50 text-indigo-200 px-1.5 py-0.5 rounded-md mr-1 shrink-0">Lv.<span id="player-level">1</span></span>
+                    <span id="header-kingdom-name" class="max-w-[72px] truncate">왕국</span>
+                </div>
+            </div>
+
+            <button id="audio-toggle-btn" onclick="toggleAudioMute()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-1.5 py-0.5 rounded-lg border border-slate-700 font-bold text-[9px] flex items-center gap-1 transition">
+                <i class="fa-solid fa-volume-high text-blue-400" id="audio-icon"></i> <span id="audio-text">BGM ON</span>
+            </button>
+
+            <div class="flex items-center gap-1 shrink-0">
+                <div class="resource-item gem bg-pink-950/80 text-pink-300 border border-pink-700/60 px-1.5 py-0.5 rounded-lg shadow cursor-pointer" onclick="switchTab('shop'); playSfx('click');">
+                    <i class="fa-solid fa-gem text-pink-400 mr-0.5"></i><span id="res-gem" class="font-bold">10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between w-full overflow-x-auto gap-2.5 py-0.5 text-[10px] no-scrollbar border-t border-slate-800 px-1">
+            <div class="flex items-center gap-2.5 shrink-0">
+                <div class="resource-item gold"><i class="fa-solid fa-coins"></i><span id="res-gold">100</span></div>
+                <div class="resource-item food"><i class="fa-solid fa-wheat-awn"></i><span id="res-food">100</span></div>
+                <div class="resource-item wood"><i class="fa-solid fa-tree"></i><span id="res-wood">100</span></div>
+                <div class="resource-item ore"><i class="fa-solid fa-cubes"></i><span id="res-ore">100</span></div>
+                <div class="resource-item herb"><i class="fa-solid fa-seedling"></i><span id="res-herb">100</span></div>
+                <div class="resource-item magic"><i class="fa-solid fa-wand-magic-sparkles"></i><span id="res-magicDust">100</span></div>
+            </div>
+
+            <div class="flex items-center gap-2.5 shrink-0 pl-1.5 border-l border-slate-700">
+                <div class="resource-item puregold"><i class="fa-solid fa-medal"></i><span id="res-pureGold">5</span></div>
+                <div class="resource-item emerald"><i class="fa-solid fa-gem"></i><span id="res-emerald">5</span></div>
+                <div class="resource-item ruby"><i class="fa-solid fa-gem"></i><span id="res-ruby">5</span></div>
+                <div class="resource-item sapphire"><i class="fa-solid fa-gem"></i><span id="res-sapphire">5</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+
+    <div id="screen-domain" class="screen-panel active">
+        <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-chess-rook mr-1 text-blue-400"></i>나의 영지</h2>
+        <div class="mb-3 text-xs text-slate-400">건물의 최저 레벨이 왕국 레벨이 됩니다.</div>
+        <div class="page-art-banner" style="background-image:url('ref_domain.webp')">
+<button class="art-hotspot" style="left:4%;top:8%;width:46%;height:44%" onclick="openV15Build('building','farm')" aria-label="농장으로 이동"></button>
+<button class="art-hotspot" style="left:50%;top:8%;width:46%;height:44%" onclick="openV15Build('building','mine')" aria-label="금광으로 이동"></button>
+<button class="art-hotspot" style="left:4%;top:52%;width:46%;height:44%" onclick="openV15Build('building','sawmill')" aria-label="제재소로 이동"></button>
+<button class="art-hotspot" style="left:50%;top:52%;width:46%;height:44%" onclick="openV15Build('building','forge')" aria-label="대장간으로 이동"></button>
+</div>
+        <div id="buildings-container"></div>
+    </div>
+
+    <div id="screen-gather" class="screen-panel">
+        <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-mountain-sun mr-1 text-emerald-400"></i>자원 채집장</h2>
+        <div class="mb-3 text-xs text-slate-400">채집장을 확장하여 다양한 자원을 수급하세요.</div>
+        <div class="page-art-banner" style="background-image:url('ref_gather.webp')">
+<button class="art-hotspot" style="left:2%;top:5%;width:48%;height:45%" onclick="openV15Build('gather','wood')" aria-label="목재 채집장"></button>
+<button class="art-hotspot" style="left:50%;top:5%;width:48%;height:45%" onclick="openV15Build('gather','ore')" aria-label="철광석 광산"></button>
+<button class="art-hotspot" style="left:2%;top:50%;width:48%;height:47%" onclick="openV15Build('gather','herb')" aria-label="약초밭"></button>
+<button class="art-hotspot" style="left:50%;top:50%;width:48%;height:47%" onclick="openV15Build('gather','magic')" aria-label="마력수정 광산"></button>
+</div>
+        <div id="gathering-container"></div>
+    </div>
+
+    <div id="screen-heroes" class="screen-panel">
+        <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-users mr-1 text-indigo-400"></i>영웅 훈련실 및 장비</h2>
+        <div class="mb-3 text-xs text-slate-400">병종별 트리 아코디언을 펼쳐 영웅을 강화하세요.</div>
+        <div class="page-art-banner" style="background-image:url('ref_heroes.webp')"></div>
+        <div id="heroes-container"></div>
+    </div>
+
+    <div id="screen-battle" class="screen-panel">
+        <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-tower-observation mr-1 text-red-400"></i>정복의 탑 원정</h2>
+        
+        <div class="bg-slate-800 text-white p-3 rounded-xl mb-3 flex justify-between items-center border border-slate-700">
+            <div>
+                <div class="text-[10px] text-indigo-300 font-semibold">현재 도전 층</div>
+                <div class="text-xl font-black text-amber-400"><i class="fa-solid fa-chess-rook mr-1"></i>제 <span id="current-tower-floor">1</span>층</div>
+            </div>
+            <div class="text-right">
+                <div class="text-[10px] text-slate-400">최고 기록</div>
+                <div class="text-sm font-bold text-emerald-400"><i class="fa-solid fa-trophy mr-1 text-yellow-400"></i><span id="max-tower-floor">0</span>층</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-3 rounded-xl mb-3 border border-slate-700 text-center">
+            <div class="flex items-center justify-between mb-2">
+                <div class="text-xs font-bold text-indigo-200 flex items-center">
+                    <i class="fa-solid fa-shield-cat mr-1 text-amber-400"></i>원정대 부대 편성
+                </div>
+                <div class="text-[10px] text-amber-300 font-bold bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-500/30">
+                    <span id="squad-count-num-badge">0</span>/5명
+                </div>
+            </div>
+
+            <div id="battle-squad-preview-container" class="flex items-center justify-center gap-2 my-2 min-h-[50px] bg-slate-900/80 p-2 rounded-lg border border-slate-700">
+                <div class="text-xs text-slate-400 italic">편성된 영웅이 없습니다.</div>
+            </div>
+
+            <button class="btn-3d btn-blue w-full py-2 text-xs flex items-center justify-center gap-2 shadow" onclick="openSquadModal(); playSfx('click');">
+                <i class="fa-solid fa-users-gear"></i><span>원정대 편성 관리</span>
+            </button>
+        </div>
+
+        <div class="battle-arena" id="battle-arena">
+            <div id="battle-visual-content" class="absolute inset-0 pointer-events-none">
+                <div id="battle-stage-v12" class="battle-stage-v12">
+                    <div id="battle-team-v12" class="battle-team-v12"></div>
+                    <div id="battle-enemy-v12" class="enemy-v12"></div>
+                </div>
+            </div>
+            
+            <div class="z-20 text-center bg-slate-900/95 p-3 rounded-xl border border-slate-700 max-w-[280px] w-full mx-3" id="battle-controls-box">
+                <p class="mb-1 font-bold text-xs text-amber-300" id="battle-status-title"><i class="fa-solid fa-flag mr-1"></i>제 1층 전투 준비 완료</p>
+                <div id="floor-advantage-hint" class="text-[9px] text-indigo-300 mb-1.5">적 속성: 야수</div>
+                <div id="floor-cost-hint" class="text-[9px] text-amber-200 mb-2 bg-slate-950 py-1 px-2 rounded border border-slate-800 flex items-center justify-center gap-2">
+                    <span><i class="fa-solid fa-coins text-yellow-400"></i><span id="cost-gold">50</span></span>
+                    <span><i class="fa-solid fa-wheat-awn text-red-400"></i><span id="cost-food">50</span></span>
+                    <span><i class="fa-solid fa-seedling text-emerald-400"></i><span id="cost-herb">30</span></span>
+                    <span><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span id="cost-magic">30</span></span>
+                </div>
+                <button class="btn-3d btn-red w-full py-2 text-xs font-bold" id="btn-start-battle" onclick="startBattle()">
+                    <i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작
+                </button>
+            </div>
+        </div>
+        
+        <div class="font-bold text-slate-300 mb-1 text-xs flex justify-between items-center">
+            <span>정복 전투 기록</span>
+        </div>
+        <div class="battle-log" id="battle-log">
+            <div class="text-slate-500 text-center py-2">탑 공략을 시작하면 전투 기록이 표시됩니다.</div>
+        </div>
+    </div>
+
+    <div id="screen-shop" class="screen-panel">
+        <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-store mr-1 text-emerald-400"></i>왕국 상점</h2>
+        <div class="mb-3 text-xs text-slate-400">다이아로 자원을 구매하거나 후원할 수 있습니다.</div>
+        <div class="page-art-banner flex items-end p-3" style="background-image:url('ref_shop.webp')"><div class="w-full rounded-xl bg-slate-950/70 border border-amber-400/50 p-2 text-center"><div class="font-black text-amber-300 text-base">👑 KINGMISO SPECIAL SHOP</div><div class="text-[10px] text-amber-100">왕국 성장에 필요한 자원을 한곳에서</div></div></div>
+        <div class="shop-grid" id="shop-container"></div>
+    </div>
+
+    
+<div id="v15-build-modal" class="v15-build-modal" onclick="closeV15Build(event)"><button class="v15-close" onclick="closeV15Build()">×</button><div class="v15-build-card" onclick="event.stopPropagation()"><div class="v15-build-art"></div><div class="v15-build-body"><div id="v15-build-title" class="v15-title">왕성 Lv.1 → Lv.2</div><div id="v15-build-desc" class="text-xs text-slate-300 mt-2 mb-3">시설을 강화하면 생산량과 왕국 성장도가 증가합니다.</div><div id="v15-build-cost" class="bg-slate-950 rounded-xl p-3 text-sm mb-3"></div><button id="v15-build-go" class="v15-bigbtn">건설 시작</button></div></div></div>
+
+    <div id="equipment-modal" class="modal-bg" onclick="closeEquipmentModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-3">
+                <h3 id="modal-hero-name" class="font-bold text-sm text-slate-100">영웅 장비 관리</h3>
+                <button onclick="closeEquipmentModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="equipment-list-container"></div>
+        </div>
+    </div>
+
+    <div id="roulette-modal" class="modal-bg" onclick="closeRouletteModal(event)">
+        <div class="modal-content text-center" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-gift mr-1 text-pink-400"></i>다이아 돌림판 🎡</h3>
+                <button onclick="closeRouletteModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="text-[11px] text-slate-400 mb-2">1시간마다 무료 참여 (하루 최대 3회)!</div>
+            
+            <div class="relative w-40 h-40 mx-auto my-2 flex items-center justify-center">
+                <div class="absolute -top-2 z-30 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[14px] border-t-red-500"></div>
+                <div class="relative w-36 h-36 rounded-full border-4 border-pink-500 shadow-xl overflow-hidden bg-slate-900" id="roulette-wheel">
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <path d="M50,50 L50,0 A50,50 0 0,1 97.55,34.55 Z" fill="#f43f5e" />
+                        <path d="M50,50 L97.55,34.55 A50,50 0 0,1 80.90,90.45 Z" fill="#fbbf24" />
+                        <path d="M50,50 L80.90,90.45 A50,50 0 0,1 19.10,90.45 Z" fill="#10b981" />
+                        <path d="M50,50 L19.10,90.45 A50,50 0 0,1 2.45,34.55 Z" fill="#0ea5e9" />
+                        <path d="M50,50 L2.45,34.55 A50,50 0 0,1 50,0 Z" fill="#8b5cf6" />
+                    </svg>
+                    <div class="absolute inset-0 pointer-events-none text-white font-black text-[10px]">
+                        <span class="absolute top-4 left-[60%]">1</span>
+                        <span class="absolute top-[50%] left-[70%]">10</span>
+                        <span class="absolute bottom-3 left-[42%]">20</span>
+                        <span class="absolute top-[50%] left-[16%]">30</span>
+                        <span class="absolute top-4 left-[24%]">50</span>
+                    </div>
+                    <div class="absolute w-8 h-8 bg-slate-900 rounded-full border-2 border-pink-400 flex items-center justify-center shadow-inner z-20">
+                        <i class="fa-solid fa-gem text-pink-400 text-[10px]"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="roulette-result-display" class="text-xs font-bold text-pink-400 my-1">오늘 남은 횟수: <span id="roulette-count-left">3</span>/3회</div>
+
+            <button id="btn-spin-roulette" class="btn-3d btn-purple w-full py-2.5 text-xs font-bold mt-2" onclick="spinRouletteWheel()">
+                <i class="fa-solid fa-play mr-1"></i>돌림판 돌리기
+            </button>
+        </div>
+    </div>
+
+    <div id="donate-modal" class="modal-bg" onclick="closeDonateModal(event)">
+        <div class="modal-content text-center" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-mug-hot mr-1 text-pink-400"></i>미소에게 후원하기</h3>
+                <button onclick="closeDonateModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="text-[11px] text-slate-400 mb-2">QR코드를 스캔하여 후원해 주세요.</div>
+            <div class="bg-white p-2 rounded-xl inline-block my-1 shadow">
+                <img src="donation_qr.jpeg" alt="후원 QR" class="w-48 h-auto mx-auto object-contain rounded-lg">
+            </div>
+            <button class="btn-3d btn-pink w-full mt-3 py-2 text-xs font-bold bg-pink-600 hover:bg-pink-700 shadow" onclick="completeDonationReward()">
+                후원 완료 (다이아 +100)
+            </button>
+        </div>
+    </div>
+
+    <div id="squad-modal" class="modal-bg" onclick="closeSquadModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-users-gear mr-1 text-indigo-400"></i>원정대 5인 편성 (<span id="squad-count-num">0</span>/5)</h3>
+                <button onclick="closeSquadModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="text-[10px] text-slate-400 mb-2">출전할 영웅을 최대 5명 선택하세요.</div>
+            <div id="squad-hero-selection-list" class="space-y-2 max-h-[45vh] overflow-y-auto pr-1"></div>
+            <button class="btn-3d btn-blue w-full mt-3 py-2 text-xs font-bold" onclick="closeSquadModal(); playSfx('click');">
+                편성 완료
+            </button>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal-bg" onclick="closeProfileModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-id-card mr-1 text-indigo-400"></i>왕국 프로필</h3>
+                <button onclick="closeProfileModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex flex-col items-center mb-3">
+                <div class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-indigo-500 flex items-center justify-center overflow-hidden relative shadow mb-1 cursor-pointer group" onclick="document.getElementById('profile-image-input').click()">
+                    <div id="modal-preview-avatar" class="w-full h-full flex items-center justify-center bg-indigo-950 text-white text-2xl">
+                        <i class="fa-solid fa-crown text-yellow-400"></i>
+                    </div>
+                </div>
+                <input type="file" id="profile-image-input" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
+                <div class="text-[10px] text-slate-400">클릭하여 프로필 사진 변경</div>
+            </div>
+
+            <div class="space-y-2 mb-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-300 mb-1">왕국 이름 (최대 6글자, 비용: 다이아 5개)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="kingdom-name-input" maxlength="6" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="왕국 이름">
+                        <button class="btn-3d btn-purple px-3 py-1.5 text-xs" onclick="updateKingdomName()">변경</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-3d btn-blue w-full py-2 text-xs" onclick="closeProfileModal(); playSfx('click');">닫기</button>
+        </div>
+    </div>
+
+    <div id="kingdom-levelup-modal" class="modal-bg" style="z-index: 100;">
+        <div class="modal-content text-center bg-gradient-to-br from-amber-600 to-indigo-950 border-2 border-yellow-400 p-5 shadow-2xl">
+            <div class="text-3xl mb-1 text-yellow-300"><i class="fa-solid fa-crown"></i></div>
+            <h2 class="text-lg font-black text-yellow-300 mb-1">왕국 레벨 업!</h2>
+            <div class="text-xs font-bold mb-3">왕국이 <span id="popup-new-kingdom-level" class="text-amber-300 font-black">2</span>레벨로 도약했습니다!</div>
+            <div id="popup-reward-text" class="bg-black/50 p-2.5 rounded-lg border border-yellow-400/40 text-xs font-bold text-yellow-200 mb-4 text-left"></div>
+            <button class="btn-3d btn-green w-full py-2.5 text-xs font-black text-slate-950 bg-gradient-to-r from-yellow-400 to-amber-500 shadow-lg" onclick="closeKingdomLevelUpModal(); playSfx('click');">
+                계속하기
+            </button>
+        </div>
+    </div>
+
+    <div id="boss-warning-overlay" class="fixed inset-0 z-[1000] flex-col items-center justify-center hidden overflow-hidden bg-black/90">
+        <div class="absolute inset-0 mix-blend-overlay" id="boss-warning-bg"></div>
+        <div class="absolute top-0 left-0 w-full h-2" id="boss-warning-border-top"></div>
+        <div class="absolute bottom-0 left-0 w-full h-2" id="boss-warning-border-bottom"></div>
+        <div class="z-10 flex flex-col items-center justify-center text-center px-4">
+            <div class="mb-3" id="boss-warning-icon"></div>
+            <h1 class="text-4xl md:text-5xl font-black text-white tracking-wider uppercase italic mb-2" id="boss-warning-title">WARNING</h1>
+            <h2 class="text-lg font-bold text-amber-300" id="boss-warning-subtitle">보스 출현 임박!</h2>
+        </div>
+    </div>
+
+    <div class="bottom-wrapper">
+        <div id="inline-chat-container" class="bg-slate-900/95 border-t border-slate-700 flex flex-col w-full px-2 py-1.5">
+            <div id="chat-messages" class="h-[36px] flex flex-col justify-end text-[11px] gap-0.5 overflow-hidden">
+                <div class="text-center text-[10px] text-slate-500 my-auto">채팅 서버 연결 중...</div>
+            </div>
+            <div class="mt-1 flex gap-1.5 w-full">
+                <input type="text" id="chat-input" placeholder="연합 메시지 입력..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500" autocomplete="off" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage(); playSfx('click');" class="btn-3d btn-blue px-3 py-1 text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="switchTab('domain'); playSfx('click');" id="tab-domain">
+                <i class="fa-solid fa-chess-rook"></i><span>영지</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('gather'); playSfx('click');" id="tab-gather">
+                <i class="fa-solid fa-mountain-sun"></i><span>채집</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('heroes'); playSfx('click');" id="tab-heroes">
+                <i class="fa-solid fa-users"></i><span>영웅</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('battle'); playSfx('click');" id="tab-battle">
+                <i class="fa-solid fa-khanda"></i><span>전투</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('shop'); playSfx('click');" id="tab-shop">
+                <i class="fa-solid fa-store"></i><span>상점</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="login-overlay" class="fixed inset-0 z-[2000] flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-950">
+        <div class="relative z-10 text-center mb-6 w-full max-w-xs">
+            <div class="text-5xl text-yellow-400 mb-2 animate-bounce"><i class="fa-solid fa-crown"></i></div>
+            <h1 class="text-4xl text-white font-chewy tracking-wide drop-shadow-[0_4px_10px_rgba(37,99,235,0.8)]">KingMiso Shot</h1>
+            <p class="text-white font-bold text-xs bg-indigo-600 inline-block px-3 py-1 rounded-full border border-indigo-400 mt-2 shadow">
+                <i class="fa-solid fa-cloud mr-1"></i>클라우드 동기화 모드
+            </p>
+        </div>
+
+        <div class="w-full max-w-xs bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 z-10">
+            <div id="panel-login" class="p-5">
+                <h2 class="text-base font-bold text-slate-100 mb-3"><i class="fa-solid fa-right-to-bracket text-indigo-400 mr-2"></i>왕국 접속</h2>
+                <input type="text" id="login-id" placeholder="아이디 입력" class="w-full mb-2.5 px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <input type="password" id="login-pw" placeholder="비밀번호 입력" class="w-full mb-4 px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <button onclick="attemptLogin(); playSfx('click');" class="btn-3d btn-blue w-full py-3 text-xs font-bold shadow-lg mb-3">접속 / 자동 가입</button>
+                <div class="text-center text-[11px] text-slate-400">미입력 아이디는 즉시 자동 가입됩니다.</div>
+            </div>
+            
+            <div id="panel-loading" class="p-6 hidden flex-col items-center justify-center">
+                <div class="flex items-center justify-center gap-3 mb-4 mt-2">
+                    <i class="fa-solid fa-shield-cat text-3xl text-blue-400 animate-bounce"></i>
+                    <i class="fa-solid fa-khanda text-2xl text-yellow-400 animate-spin"></i>
+                    <i class="fa-solid fa-dragon text-3xl text-rose-400 animate-bounce"></i>
+                </div>
+                <p class="text-slate-200 font-bold text-xs" id="loading-text">서버 통신중...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let isMuted = false;
+        let bgmInterval = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function toggleAudioMute() {
+            initAudioContext();
+            isMuted = !isMuted;
+            const icon = document.getElementById('audio-icon');
+            const text = document.getElementById('audio-text');
+            if (isMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-red-400";
+                text.textContent = "BGM OFF";
+                if (bgmInterval) { clearInterval(bgmInterval); bgmInterval = null; }
+            } else {
+                icon.className = "fa-solid fa-volume-high text-blue-400";
+                text.textContent = "BGM ON";
+                startBgmLoop();
+            }
+            playSfx('click');
+        }
+
+        function playTone(freq, duration, type = 'sine', gainVal = 0.08) {
+            if (isMuted || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playSfx(sfxType) {
+            initAudioContext();
+            if (isMuted) return;
+            
+            if (sfxType === 'click') {
+                playTone(440, 0.05, 'triangle', 0.05);
+            } else if (sfxType === 'upgrade') {
+                playTone(523.25, 0.08, 'sine', 0.1);
+                setTimeout(() => playTone(659.25, 0.08, 'sine', 0.1), 60);
+                setTimeout(() => playTone(783.99, 0.12, 'sine', 0.1), 120);
+            } else if (sfxType === 'levelup') {
+                playTone(523.25, 0.1, 'square', 0.08);
+                setTimeout(() => playTone(659.25, 0.1, 'square', 0.08), 80);
+                setTimeout(() => playTone(783.99, 0.1, 'square', 0.08), 160);
+                setTimeout(() => playTone(1046.50, 0.2, 'square', 0.1), 240);
+            } else if (sfxType === 'victory') {
+                playTone(587.33, 0.12, 'triangle', 0.1);
+                setTimeout(() => playTone(739.99, 0.12, 'triangle', 0.1), 100);
+                setTimeout(() => playTone(880.00, 0.25, 'triangle', 0.12), 200);
+            } else if (sfxType === 'defeat') {
+                playTone(300, 0.15, 'sawtooth', 0.08);
+                setTimeout(() => playTone(220, 0.3, 'sawtooth', 0.1), 120);
+            } else if (sfxType === 'boss') {
+                playTone(150, 0.25, 'sawtooth', 0.15);
+                setTimeout(() => playTone(110, 0.4, 'sawtooth', 0.18), 150);
+            }
+        }
+
+        function startBgmLoop() {
+            if (bgmInterval || isMuted) return;
+            initAudioContext();
+            // Mobile-friendly fantasy loop: melody + soft bass. Starts only after a user gesture unlocks AudioContext.
+            const melody = [523.25,659.25,783.99,659.25,587.33,698.46,880.00,698.46,493.88,587.33,739.99,587.33,440.00,523.25,659.25,523.25];
+            const bass   = [130.81,130.81,146.83,146.83,123.47,123.47,110.00,110.00];
+            let step = 0;
+            const tick = () => {
+                if (isMuted || !audioCtx) return;
+                playTone(melody[step % melody.length], 0.28, 'triangle', 0.045);
+                if (step % 2 === 0) playTone(bass[Math.floor(step/2) % bass.length], 0.42, 'sine', 0.035);
+                if (step % 4 === 0) playTone(melody[step % melody.length] / 2, 0.18, 'sine', 0.018);
+                step++;
+            };
+            tick();
+            bgmInterval = setInterval(tick, 360);
+        }
+    </script>
+
+    <script>
+        const GAME_VERSION = "v1.9.7";
+        
+        const gameState = {
+            level: 1,
+            kingdomName: '왕국',
+            profileImageBase64: null,
+            resources: { 
+                gold: 100, pureGold: 5, food: 100, gem: 10,
+                wood: 100, ore: 100, herb: 100, magicDust: 100, 
+                emerald: 5, ruby: 5, sapphire: 5 
+            },
+            upgradesInProgress: {}, 
+            openHeroAccordions: { infantry: false, cavalry: false, archer: false },
+            isBattling: false,
+            towerFloor: 1,
+            maxTowerFloor: 0,
+            selectedSquad: [],
+            roulette: { countToday: 0, lastSpinTime: 0, cooldownMs: 3600000 }
+        };
+
+        const BUILDINGS = {
+            farm: { name: '풍요의 농장', icon: 'fa-wheat-awn text-red-400', desc: '식량을 생산합니다.', level: 1, baseCost: 50, costType: 'gold', prodRate: 1, prodType: 'food' },
+            mine: { name: '비밀 금광', icon: 'fa-coins text-yellow-400', desc: '금화를 조달합니다.', level: 1, baseCost: 60, costType: 'food', prodRate: 1, prodType: 'gold' },
+            sawmill: { name: '왕실 제재소', icon: 'fa-tree text-amber-600', desc: '목재를 생산합니다.', level: 1, baseCost: 75, costType: 'wood', prodRate: 1, prodType: 'wood' },
+            forge: { name: '대장간', icon: 'fa-medal text-yellow-500', desc: '철광석을 제련합니다.', level: 1, baseCost: 90, costType: 'ore', prodRate: 1, prodType: 'ore' }
+        };
+
+        const GATHERING_NODES = {
+            wood: { name: '원시림 통나무', icon: 'fa-tree text-amber-600', desc: '목재를 채집합니다.', level: 1, baseCost: 100, costType: 'wood', prodRate: 1, resKey: 'wood' },
+            ore: { name: '철광석 광산', icon: 'fa-cubes text-slate-400', desc: '철광석을 캐냅니다.', level: 1, baseCost: 100, costType: 'ore', prodRate: 1, resKey: 'ore' },
+            herb: { name: '신비의 약초밭', icon: 'fa-seedling text-emerald-400', desc: '약초를 채집합니다.', level: 1, baseCost: 100, costType: 'herb', prodRate: 1, resKey: 'herb' },
+            magic: { name: '마력 수정광산', icon: 'fa-gem text-indigo-400', desc: '마력 수정가루를 모읍니다.', level: 1, baseCost: 100, costType: 'magicDust', prodRate: 1, resKey: 'magicDust' }
+        };
+
+        const ARMY_EQUIPMENT = {
+            infantry: { helmet: 0, gloves: 0, armor: 0, boots: 0 },
+            cavalry: { helmet: 0, gloves: 0, armor: 0, boots: 0 },
+            archer: { helmet: 0, gloves: 0, armor: 0, boots: 0 }
+        };
+
+        const HEROES = [
+            { id:'inf1',type:'infantry',name:'견습 보병',icon:'fa-shield-halved text-blue-400',level:1,hp:100,atk:10,baseCost:70,baseTime:2,costType:'food' },
+            { id:'inf2',type:'infantry',name:'중무장 보병',icon:'fa-shield text-blue-500',level:1,hp:210,atk:24,baseCost:120,baseTime:3,costType:'food' },
+            { id:'inf3',type:'infantry',name:'왕실 근위대',icon:'fa-chess-rook text-blue-600',level:1,hp:390,atk:46,baseCost:180,baseTime:4,costType:'gold' },
+            { id:'inf4',type:'infantry',name:'성벽 수호자',icon:'fa-shield-heart text-cyan-400',level:1,hp:650,atk:78,baseCost:260,baseTime:5,costType:'gold' },
+            { id:'inf5',type:'infantry',name:'황금 기사',icon:'fa-shield text-yellow-400',level:1,hp:980,atk:125,baseCost:360,baseTime:6,costType:'gold' },
+            { id:'inf6',type:'infantry',name:'드래곤 가드',icon:'fa-dragon text-orange-400',level:1,hp:1450,atk:190,baseCost:500,baseTime:7,costType:'gold' },
+            { id:'inf7',type:'infantry',name:'미소 왕실 챔피언',icon:'fa-crown text-yellow-300',level:1,hp:2200,atk:300,baseCost:700,baseTime:8,costType:'gold' },
+            { id:'cav1',type:'cavalry',name:'정찰 기병',icon:'fa-horse-head text-orange-400',level:1,hp:120,atk:15,baseCost:70,baseTime:2,costType:'gold' },
+            { id:'cav2',type:'cavalry',name:'경기병',icon:'fa-horse text-orange-500',level:1,hp:240,atk:34,baseCost:120,baseTime:3,costType:'food' },
+            { id:'cav3',type:'cavalry',name:'중기병',icon:'fa-chess-knight text-orange-600',level:1,hp:430,atk:68,baseCost:180,baseTime:4,costType:'gold' },
+            { id:'cav4',type:'cavalry',name:'백은 창기병',icon:'fa-horse-head text-slate-200',level:1,hp:680,atk:110,baseCost:260,baseTime:5,costType:'gold' },
+            { id:'cav5',type:'cavalry',name:'왕실 돌격대',icon:'fa-chess-knight text-yellow-400',level:1,hp:1000,atk:170,baseCost:360,baseTime:6,costType:'gold' },
+            { id:'cav6',type:'cavalry',name:'와이번 라이더',icon:'fa-dragon text-purple-400',level:1,hp:1450,atk:255,baseCost:500,baseTime:7,costType:'gold' },
+            { id:'cav7',type:'cavalry',name:'천공의 성기사',icon:'fa-crown text-amber-300',level:1,hp:2050,atk:390,baseCost:700,baseTime:8,costType:'gold' },
+            { id:'arc1',type:'archer',name:'숲의 궁수',icon:'fa-bullseye text-emerald-400',level:1,hp:70,atk:25,baseCost:70,baseTime:2,costType:'food' },
+            { id:'arc2',type:'archer',name:'석궁병',icon:'fa-location-crosshairs text-emerald-500',level:1,hp:150,atk:55,baseCost:120,baseTime:3,costType:'gold' },
+            { id:'arc3',type:'archer',name:'엘프 명사수',icon:'fa-leaf text-emerald-600',level:1,hp:260,atk:100,baseCost:180,baseTime:4,costType:'food' },
+            { id:'arc4',type:'archer',name:'그림자 사수',icon:'fa-eye text-purple-400',level:1,hp:400,atk:165,baseCost:260,baseTime:5,costType:'gold' },
+            { id:'arc5',type:'archer',name:'별빛 레인저',icon:'fa-star text-cyan-300',level:1,hp:610,atk:250,baseCost:360,baseTime:6,costType:'gold' },
+            { id:'arc6',type:'archer',name:'정령의 궁성',icon:'fa-wand-sparkles text-fuchsia-300',level:1,hp:900,atk:370,baseCost:500,baseTime:7,costType:'gold' },
+            { id:'arc7',type:'archer',name:'천상의 명사수',icon:'fa-crown text-yellow-300',level:1,hp:1300,atk:560,baseCost:700,baseTime:8,costType:'gold' }
+        ];
+
+        const ENEMY_TYPES = [
+            { name: '고블린 약탈자 부대', icon: 'fa-otter text-amber-400', weakness: 'infantry' },
+            { name: '숲의 야수 팩', icon: 'fa-paw text-orange-400', weakness: 'cavalry' },
+            { name: '어둠의 망령 군단', icon: 'fa-skull-crossbones text-slate-300', weakness: 'archer' }
+        ];
+
+        const SHOP_ITEMS = [
+            { id: 'free_gem', name: '행운의 돌림판', icon: 'fa-gift text-pink-400', desc: '1시간마다 최대 50 다이아 획득!', cost: 0, costType: 'none', btnText: '돌림판 열기' },
+            { id: 'buy_cash_gem', name: '다이아 100개 충전', icon: 'fa-gem text-purple-400', desc: '후원하고 다이아 100개 즉시 충전', cost: 0, costType: 'cash', btnText: '후원하기' },
+            { id: 'buy_gold', name: '금화 주머니', icon: 'fa-coins text-yellow-400', desc: '금화 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'gold', btnText: '다이아 15개' },
+            { id: 'buy_food', name: '식량 상자', icon: 'fa-wheat-awn text-red-400', desc: '식량 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'food', btnText: '다이아 15개' },
+            { id: 'buy_wood', name: '왕실 목재 묶음', icon: 'fa-tree text-amber-500', desc: '목재 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'wood', btnText: '다이아 15개' },
+            { id: 'buy_ore', name: '철광석 상자', icon: 'fa-cubes text-slate-300', desc: '철광석 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'ore', btnText: '다이아 15개' },
+            { id: 'buy_herb', name: '신비의 약초 꾸러미', icon: 'fa-seedling text-emerald-400', desc: '약초 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'herb', btnText: '다이아 15개' },
+            { id: 'buy_magic', name: '마력수정 상자', icon: 'fa-gem text-indigo-400', desc: '마력수정 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'magicDust', btnText: '다이아 15개' }
+        ];
+
+        const EQUIP_TYPES = {
+            helmet: { name: '헬멧', icon: 'fa-hard-hat text-yellow-500', statBonus: '체력 증가', costType: 'pureGold', baseCost: 2, baseTime: 2 },
+            gloves: { name: '장갑', icon: 'fa-mitten text-emerald-400', statBonus: '공격력 증가', costType: 'emerald', baseCost: 2, baseTime: 2 },
+            armor: { name: '갑옷', icon: 'fa-vest text-rose-400', statBonus: '체력 대폭증가', costType: 'ruby', baseCost: 2, baseTime: 2 },
+            boots: { name: '신발', icon: 'fa-shoe-prints text-blue-400', statBonus: '공격력 대폭증가', costType: 'sapphire', baseCost: 2, baseTime: 2 }
+        };
+
+        let activeHeroIndexForModal = null;
+
+        function formatNumber(num) { return Math.floor(num).toLocaleString(); }
+        function getUpgradeCost(baseCost, level, subIdx = 0) {
+            return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
+        }
+        function getUpgradeTime(baseTime, level, subIdx = 0) {
+            return Math.max(1, Math.round(baseTime * Math.pow(1.2, Math.max(0, Number(level)-1))));
+        }
+
+        function getHeroUpgradeCostV194(hero, subIdx=0) {
+            return Math.max(1, Math.floor(hero.baseCost * Math.pow(1.8, subIdx) * Math.pow(1.2, Math.max(0, hero.level-1))));
+        }
+        function getHeroUpgradeTimeV194(hero) {
+            return Math.max(1, Math.round(hero.baseTime * Math.pow(1.3, Math.max(0, hero.level-1))));
+        }
+        function canUpgradeHeroTierV194(index) {
+            const hero=HEROES[index];
+            const same=HEROES.map((h,i)=>({h,i})).filter(x=>x.h.type===hero.type);
+            const pos=same.findIndex(x=>x.i===index);
+            if(pos<=0) return {ok:true};
+            const lower=same[pos-1].h;
+            const nextLevel=hero.level+1;
+            if(nextLevel-lower.level>=3) {
+                return {ok:false, message:`${lower.name}을 먼저 강화해야 합니다. (영웅 단계 레벨 차이는 3 미만)`};
+            }
+            return {ok:true};
+        }
+        function getEquipCostV194(eq,currentLevel) {
+            // v1.9.7: 군단 장비 강화 비용은 단계마다 50% 증가, 소수점 반올림
+            return Math.max(1, Math.round(eq.baseCost * Math.pow(1.5, Math.max(0, Number(currentLevel)||0))));
+        }
+
+        function addResource(type, amount) { gameState.resources[type] = (gameState.resources[type] || 0) + amount; return true; }
+        function spendResource(type, amount) {
+            if ((gameState.resources[type] || 0) >= amount) {
+                gameState.resources[type] -= amount;
+                return true;
+            }
+            return false;
+        }
+        function formatHudNumber(num) {
+            const n = Number(num) || 0, a = Math.abs(n);
+            const short = (v) => {
+                const d = Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2;
+                return v.toFixed(d).replace(/\.0+$|(?<=\.[0-9])0+$/g,'').replace(/\.$/,'');
+            };
+            if (a >= 1e9) return short(n/1e9)+'B';
+            if (a >= 1e6) return short(n/1e6)+'M';
+            if (a >= 1e3) return short(n/1e3)+'K';
+            return Math.floor(n).toLocaleString();
+        }
+
+
+        function showNotification(msg) {
+            const container = document.getElementById('notification-container');
+            const noti = document.createElement('div');
+            noti.className = 'notification';
+            noti.innerHTML = msg;
+            container.appendChild(noti);
+            setTimeout(() => noti.remove(), 2000);
+        }
+
+        function checkKingdomLevelUp() {
+            let minLevel = 9999;
+            Object.keys(BUILDINGS).forEach(k => { if (BUILDINGS[k].level < minLevel) minLevel = BUILDINGS[k].level; });
+            Object.keys(GATHERING_NODES).forEach(k => { if (GATHERING_NODES[k].level < minLevel) minLevel = GATHERING_NODES[k].level; });
+
+            if (minLevel > gameState.level) {
+                gameState.level = minLevel;
+                addResource('gem', 50);
+                
+                const armyTypes = ['infantry', 'cavalry', 'archer'];
+                const equipKeys = ['helmet', 'gloves', 'armor', 'boots'];
+                const rArmy = armyTypes[Math.floor(Math.random() * armyTypes.length)];
+                const rEquip = equipKeys[Math.floor(Math.random() * equipKeys.length)];
+                ARMY_EQUIPMENT[rArmy][rEquip] += 1;
+
+                document.getElementById('popup-new-kingdom-level').textContent = gameState.level;
+                document.getElementById('popup-reward-text').innerHTML = `
+                    <div class="mb-1"><i class="fa-solid fa-gem text-yellow-300 mr-1"></i>왕국 지원금: 다이아 +50개!</div>
+                    <div class="text-purple-300"><i class="fa-solid fa-shield mr-1"></i>보너스 장비 강화 (${rArmy} ${EQUIP_TYPES[rEquip].name} +1)</div>
+                `;
+                document.getElementById('kingdom-levelup-modal').style.display = 'flex';
+                playSfx('levelup');
+                showNotification(`<i class="fa-solid fa-crown mr-1 text-yellow-300"></i>왕국 Lv.${gameState.level} 달성!`);
+                renderHeroes();
+            }
+        }
+
+        function closeKingdomLevelUpModal() { document.getElementById('kingdom-levelup-modal').style.display = 'none'; }
+
+
+        // v1.5: persist progression separately from static definitions.
+        function applyProgressionV15() {
+            const p=gameState.progression||{};
+            Object.keys(p.buildings||{}).forEach(k=>{ if(BUILDINGS[k]) BUILDINGS[k].level=Math.max(1,Number(p.buildings[k])||1); });
+            Object.keys(p.gathering||{}).forEach(k=>{ if(GATHERING_NODES[k]) GATHERING_NODES[k].level=Math.max(1,Number(p.gathering[k])||1); });
+            (p.heroes||[]).forEach((lv,i)=>{ if(HEROES[i]) HEROES[i].level=Math.max(1,Number(lv)||1); });
+            Object.keys(p.equipment||{}).forEach(army=>{
+                if(!ARMY_EQUIPMENT[army]) return;
+                Object.keys(ARMY_EQUIPMENT[army]).forEach(slot=>{
+                    ARMY_EQUIPMENT[army][slot]=Math.max(0,Number(p.equipment[army]?.[slot])||0);
+                });
+            });
+        }
+        function syncProgressionV15() {
+            gameState.progression={buildings:{},gathering:{},heroes:HEROES.map(h=>h.level),equipment:JSON.parse(JSON.stringify(ARMY_EQUIPMENT))};
+            Object.keys(BUILDINGS).forEach(k=>gameState.progression.buildings[k]=BUILDINGS[k].level);
+            Object.keys(GATHERING_NODES).forEach(k=>gameState.progression.gathering[k]=GATHERING_NODES[k].level);
+        }
+        let v15BuildTarget=null;
+        function openV15Build(kind,key){
+            const obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key]; if(!obj)return;
+            v15BuildTarget={kind,key}; const next=obj.level+1; const cost=getUpgradeCost(obj.baseCost,obj.level);
+            document.getElementById('v15-build-title').innerHTML=`${obj.name} <span class="v15-lv">Lv.${obj.level} → Lv.${next}</span>`;
+            document.getElementById('v15-build-desc').textContent=kind==='building'?'건설을 완료하면 생산량이 증가하고 왕국 성장에 반영됩니다.':'확장을 완료하면 초당 채집량이 증가합니다.';
+            document.getElementById('v15-build-cost').innerHTML=`필요 자원 <b class="text-amber-300">${formatNumber(cost)}</b> · 예상 시간 <b>${getUpgradeTime(3,obj.level)}초</b>`;
+            const btn=document.getElementById('v15-build-go'); btn.textContent=gameState.upgradesInProgress[(kind==='building'?'building:':'gather:')+key]?(kind==='building'?'건설 진행중':'확장 진행중'):(kind==='building'?'건설 시작':'확장 시작'); btn.disabled=!!gameState.upgradesInProgress[(kind==='building'?'building:':'gather:')+key];
+            btn.onclick=()=>{ kind==='building'?startBuildingUpgrade(key):startGatherUpgrade(key); closeV15Build(); };
+            document.getElementById('v15-build-modal').style.display='flex'; playSfx('click');
+        }
+        function closeV15Build(e){ if(e&&e.target!==e.currentTarget)return; document.getElementById('v15-build-modal').style.display='none'; }
+        function battleFxV15(type){ const a=document.getElementById('battle-arena'); if(!a)return; const d=document.createElement('div'); d.className='battle-fx-v15 '+type; d.textContent=type==='arrow'?'➶':type==='magic'?'✦':'⚔'; a.appendChild(d); setTimeout(()=>d.remove(),600); }
+
+        function renderBuildings() {
+            const container = document.getElementById('buildings-container');
+            container.innerHTML = '';
+            
+            Object.keys(BUILDINGS).forEach(key => {
+                const b = BUILDINGS[key];
+                const cost = getUpgradeCost(b.baseCost, b.level);
+                const timeSec = getUpgradeTime(3, b.level);
+                let costIcon = 'fa-coins text-yellow-400';
+                if (b.costType === 'food') costIcon = 'fa-wheat-awn text-red-400';
+                else if (b.costType === 'wood') costIcon = 'fa-tree text-amber-600';
+                else if (b.costType === 'ore') costIcon = 'fa-cubes text-slate-400';
+                
+                const isBusy = gameState.upgradesInProgress[`building:${key}`] !== undefined;
+                
+                container.innerHTML += `
+                    <div id="building-${key}" class="card flex-col items-stretch ${isBusy ? 'upgrading' : ''}" onclick="if(!event.target.closest('button')) openV15Build('building','${key}')">
+                        <div class="flex justify-between items-center w-full">
+                            <div class="flex items-center gap-2.5">
+                                <div class="text-xl w-8 text-center bg-slate-900 p-2 rounded-lg border border-slate-700"><i class="fa-solid ${b.icon}"></i></div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs">${b.name} <span class="text-[10px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded ml-1">Lv.${b.level}</span></div>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">${b.desc}</div>
+                                    <div class="text-[10px] font-semibold text-emerald-400 mt-0.5">초당 +${b.level * b.prodRate}</div>
+                                </div>
+                            </div>
+                            <button class="btn-3d btn-green flex flex-col items-center justify-center min-w-[85px] text-[11px] py-1.5 px-2" id="btn-bld-${key}" onclick="event.stopPropagation(); startBuildingUpgrade('${key}')" ${isBusy ? 'disabled' : ''}>
+                                <span>${isBusy ? '건설중' : '레벨업'}</span>
+                                <span class="flex items-center gap-1 mt-0.5"><i class="fa-solid ${costIcon}"></i>${formatNumber(cost)}</span>
+                                <span class="text-[9px] text-slate-200"><i class="fa-regular fa-clock mr-0.5"></i>${timeSec}초</span>
+                            </button>
+                        </div>
+                        <div class="progress-bar-container" id="progress-container-${key}">
+                            <div class="progress-bar-fill" id="progress-fill-${key}"></div>
+                            <div class="progress-bar-text" id="progress-text-${key}">0%</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function startBuildingUpgrade(key) {
+            const taskKey = `building:${key}`;
+            if (gameState.upgradesInProgress[taskKey]) return;
+            const sourceBtn=document.getElementById(`btn-bld-${key}`); if(sourceBtn) sourceBtn.disabled=true;
+            const b = BUILDINGS[key];
+            const cost = getUpgradeCost(b.baseCost, b.level);
+            if (spendResource(b.costType, cost)) {
+                const timeSec = getUpgradeTime(3, b.level);
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key };
+                scheduleUpgradeCompletionV16(taskKey);
+                updateUI(); renderBuildings();
+                if(window.cloudSaveGame) window.cloudSaveGame();
+                playSfx('click');
+                showNotification(`<i class="fa-solid fa-hammer mr-1 text-yellow-300"></i>${b.name} 건설 시작 (${timeSec}초)`);
+            } else {
+                showNotification(`<i class="fa-solid fa-triangle-exclamation mr-1 text-red-400"></i>자원이 부족합니다.`);
+            }
+        }
+
+        function renderGathering() {
+            const container = document.getElementById('gathering-container');
+            container.innerHTML = '';
+
+            Object.keys(GATHERING_NODES).forEach(key => {
+                const node = GATHERING_NODES[key];
+                const cost = getUpgradeCost(node.baseCost, node.level);
+                const timeSec = getUpgradeTime(3, node.level);
+                let costIconName = 'fa-tree text-amber-600';
+                if (node.costType === 'ore') costIconName = 'fa-cubes text-slate-400';
+                else if (node.costType === 'herb') costIconName = 'fa-seedling text-emerald-400';
+                else if (node.costType === 'magicDust') costIconName = 'fa-gem text-indigo-400';
+                
+                const isBusy = gameState.upgradesInProgress[`gather:${key}`] !== undefined;
+
+                container.innerHTML += `
+                    <div id="gather-${key}" class="card flex-col items-stretch ${isBusy ? 'upgrading' : ''}" onclick="if(!event.target.closest('button')) openV15Build('gather','${key}')">
+                        <div class="flex justify-between items-center w-full">
+                            <div class="flex items-center gap-2.5">
+                                <div class="text-xl w-8 text-center bg-slate-900 p-2 rounded-lg border border-slate-700"><i class="fa-solid ${node.icon}"></i></div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs">${node.name} <span class="text-[10px] bg-emerald-900/80 text-emerald-200 px-1.5 py-0.5 rounded ml-1">Lv.${node.level}</span></div>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">${node.desc}</div>
+                                    <div class="text-[10px] font-semibold text-emerald-400 mt-0.5">초당 +${node.level * node.prodRate} 채집</div>
+                                </div>
+                            </div>
+                            <button class="btn-3d btn-blue flex flex-col items-center justify-center min-w-[85px] text-[11px] py-1.5 px-2" id="btn-gather-${key}" onclick="event.stopPropagation(); startGatherUpgrade('${key}')" ${isBusy ? 'disabled' : ''}>
+                                <span>${isBusy ? '확장중' : '확장'}</span>
+                                <span class="flex items-center gap-1 mt-0.5"><i class="fa-solid ${costIconName}"></i>${formatNumber(cost)}</span>
+                                <span class="text-[9px] text-slate-200"><i class="fa-regular fa-clock mr-0.5"></i>${timeSec}초</span>
+                            </button>
+                        </div>
+                        <div class="progress-bar-container" id="progress-container-${key}">
+                            <div class="progress-bar-fill" id="progress-fill-${key}"></div>
+                            <div class="progress-bar-text" id="progress-text-${key}">0%</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function startGatherUpgrade(key) {
+            const taskKey = `gather:${key}`;
+            if (gameState.upgradesInProgress[taskKey]) return;
+            const sourceBtn=document.getElementById(`btn-gather-${key}`); if(sourceBtn) sourceBtn.disabled=true;
+            const node = GATHERING_NODES[key];
+            const cost = getUpgradeCost(node.baseCost, node.level);
+            if (spendResource(node.costType, cost)) {
+                const timeSec = getUpgradeTime(3, node.level);
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key };
+                scheduleUpgradeCompletionV16(taskKey);
+                updateUI(); renderGathering();
+                if(window.cloudSaveGame) window.cloudSaveGame();
+                playSfx('click');
+                showNotification(`<i class="fa-solid fa-mountain-sun mr-1 text-emerald-300"></i>${node.name} 확장 시작`);
+            } else {
+                showNotification(`<i class="fa-solid fa-triangle-exclamation mr-1 text-red-400"></i>자원이 부족합니다.`);
+            }
+        }
+
+        function getHeroStats(hero) {
+            const mult = 1 + 0.15 * (hero.level - 1);
+            const armyEquip = ARMY_EQUIPMENT[hero.type];
+            const hp = Math.floor(hero.hp * mult * (1 + 0.15 * armyEquip.helmet) * (1 + 0.15 * armyEquip.armor));
+            const atk = Math.floor(hero.atk * mult * (1 + 0.15 * armyEquip.gloves) * (1 + 0.15 * armyEquip.boots));
+            return { hp, atk };
+        }
+
+        function toggleHeroAccordion(type) {
+            gameState.openHeroAccordions[type] = !gameState.openHeroAccordions[type];
+            renderHeroes();
+            playSfx('click');
+        }
+
+        // v1.9.7: 누적 단계 해금 규칙
+        function getHeroTierUnlockV196(typeHeroes, tierIndex) {
+            if (tierIndex <= 0) return { ok:true, requirements:[] };
+            const requirements=[];
+            for (let prev=0; prev<tierIndex; prev++) {
+                const requiredLevel=tierIndex-prev+1;
+                const hero=HEROES[typeHeroes[prev].idx];
+                requirements.push({hero, requiredLevel, actualLevel:Number(hero.level||0)});
+            }
+            return {ok:requirements.every(r=>r.actualLevel>=r.requiredLevel), requirements};
+        }
+        function getHighestUnlockedHeroTierV196(typeHeroes) {
+            let highest=0;
+            for(let i=1;i<typeHeroes.length;i++){
+                if(getHeroTierUnlockV196(typeHeroes,i).ok) highest=i;
+                else break;
+            }
+            return highest;
+        }
+        function getHeroUnlockTextV196(typeHeroes,tierIndex) {
+            return getHeroTierUnlockV196(typeHeroes,tierIndex).requirements
+                .map(r=>`${r.hero.name} Lv.${r.requiredLevel}`).join(' · ');
+        }
+
+        function renderHeroes() {
+            const container = document.getElementById('heroes-container');
+            container.innerHTML = '';
+            
+            const categories = [
+                { type: 'infantry', name: '보병 군단', icon: 'fa-shield-halved text-blue-400', badgeClass: 'bg-blue-900/80 text-blue-200' },
+                { type: 'cavalry', name: '기병 군단', icon: 'fa-horse text-orange-400', badgeClass: 'bg-orange-900/80 text-orange-200' },
+                { type: 'archer', name: '궁병 군단', icon: 'fa-bullseye text-emerald-400', badgeClass: 'bg-emerald-900/80 text-emerald-200' }
+            ];
+
+            categories.forEach(cat => {
+                const typeHeroes = HEROES.map((h, idx) => ({ h, idx })).filter(item => item.h.type === cat.type);
+                let highestUnlockedIdx = getHighestUnlockedHeroTierV196(typeHeroes);
+                
+                const leadHero = HEROES[typeHeroes[highestUnlockedIdx].idx];
+                const isOpen = gameState.openHeroAccordions[cat.type];
+
+                let dropdownHtml = '';
+                typeHeroes.forEach((item, subIdx) => {
+                    const h = item.h;
+                    const globalIdx = item.idx;
+                    const isUnlocked = subIdx <= highestUnlockedIdx;
+                    const stats = getHeroStats(h);
+                    const cost = getHeroUpgradeCostV194(h, subIdx);
+                    const timeSec = getHeroUpgradeTimeV194(h);
+                    const costIcon = h.costType === 'gold' ? 'fa-coins text-yellow-400' : 'fa-wheat-awn text-red-400';
+                    const progressKey = `hero:${globalIdx}`;
+                    const heroJob = gameState.upgradesInProgress[progressKey];
+                    const isBusy = heroJob !== undefined;
+                    const busyRemain = isBusy ? Math.max(0, Math.ceil((Number(heroJob.endTime||0)-Date.now())/1000)) : 0;
+
+                    if (!isUnlocked) {
+                        dropdownHtml += `<div class="bg-slate-900/50 border border-slate-800 rounded-xl p-2.5 mb-2 opacity-50 text-xs text-slate-500">🔒 ${subIdx + 1}단계 영웅 · ${getHeroUnlockTextV196(typeHeroes, subIdx)} 달성 시 해금</div>`;
+                    } else {
+                        dropdownHtml += `
+                            <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-2.5 mb-2 shadow-inner">
+                                <div class="flex justify-between items-center gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-lg w-7 text-center bg-slate-950 p-1.5 rounded-lg border border-slate-800"><i class="fa-solid ${h.icon}"></i></div>
+                                        <div>
+                                            <div class="font-bold text-slate-100 text-xs flex items-center">
+                                                ${h.name} <span class="text-[10px] ${cat.badgeClass} px-1.5 py-0.2 rounded ml-1">Lv.${h.level}</span>
+                                            </div>
+                                            <div class="text-[10px] text-slate-300 mt-0.5">
+                                                <span class="mr-1.5"><i class="fa-solid fa-khanda text-red-400"></i> ${formatNumber(stats.atk)}</span>
+                                                <span><i class="fa-solid fa-heart text-pink-400"></i> ${formatNumber(stats.hp)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-1">
+                                        <button class="btn-3d btn-purple text-[10px] px-2 py-1" onclick="event.stopPropagation(); openEquipmentModal(${globalIdx}); playSfx('click');">장비</button>
+                                        <button class="btn-3d btn-orange flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5 ${isBusy ? 'opacity-60 cursor-not-allowed' : ''}" id="btn-hero-${globalIdx}" onclick="event.stopPropagation(); startHeroUpgrade(${globalIdx}, this)" ${isBusy ? 'disabled aria-disabled="true"' : ''}>
+                                            <span>${isBusy ? '훈련중' : '강화'}</span>
+                                            <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${busyRemain}초` : `<i class="fa-solid ${costIcon}"></i>${formatNumber(cost)}`}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container" id="progress-container-${progressKey}">
+                                    <div class="progress-bar-fill" id="progress-fill-${progressKey}"></div>
+                                    <div class="progress-bar-text" id="progress-text-${progressKey}">0%</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                container.innerHTML += `
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl mb-2.5 shadow overflow-hidden">
+                        <div class="p-3 flex justify-between items-center cursor-pointer bg-slate-800/80 hover:bg-slate-700 transition" onclick="toggleHeroAccordion('${cat.type}')">
+                            <div class="flex items-center gap-2.5">
+                                <div class="text-xl w-8 text-center bg-slate-900 p-1.5 rounded-lg border border-slate-700"><i class="fa-solid ${leadHero.icon}"></i></div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs flex items-center">
+                                        ${cat.name} <span class="text-[10px] ${cat.badgeClass} px-1.5 py-0.2 rounded ml-1.5">대표 Lv.${leadHero.level}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-slate-400 text-xs"><i class="fa-solid fa-chevron-${isOpen ? 'up' : 'down'}"></i></div>
+                        </div>
+                        <div class="hero-dropdown-content ${isOpen ? 'open' : ''} p-2.5 bg-slate-950/40 border-t border-slate-700">
+                            ${dropdownHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function startHeroUpgrade(index, sourceBtn=null) {
+            const progressKey = `hero:${index}`;
+            if (gameState.upgradesInProgress[progressKey]) return;
+            if(sourceBtn){ sourceBtn.disabled=true; sourceBtn.setAttribute('aria-disabled','true'); sourceBtn.classList.add('opacity-60','cursor-not-allowed'); }
+            const h = HEROES[index];
+            const tierCheckV194=canUpgradeHeroTierV194(index);
+            if(!tierCheckV194.ok){
+                showNotification(`<i class="fa-solid fa-lock mr-1 text-amber-400"></i>${tierCheckV194.message}`);
+                return;
+            }
+            let typeHeroes = HEROES.filter(x => x.type === h.type);
+            let subIdx = typeHeroes.findIndex(x => x.id === h.id);
+            const cost = getHeroUpgradeCostV194(h, subIdx);
+
+            if (spendResource(h.costType, cost)) {
+                const timeSec = getHeroUpgradeTimeV194(h);
+                gameState.upgradesInProgress[progressKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'hero', subKey: index };
+                scheduleUpgradeCompletionV16(progressKey);
+                renderHeroes();
+                playSfx('click');
+                showNotification(`<i class="fa-solid fa-users mr-1 text-indigo-300"></i>${h.name} 훈련 시작 (${timeSec}초)`);
+            } else {
+                if(sourceBtn){ sourceBtn.disabled=false; sourceBtn.removeAttribute('aria-disabled'); sourceBtn.classList.remove('opacity-60','cursor-not-allowed'); }
+                showNotification(`<i class="fa-solid fa-triangle-exclamation mr-1 text-red-400"></i>자원이 부족합니다.`);
+            }
+        }
+
+        function openEquipmentModal(heroIdx) {
+            activeHeroIndexForModal = heroIdx;
+            const h = HEROES[heroIdx];
+            document.getElementById('modal-hero-name').textContent = `${h.type === 'infantry' ? '보병 군단' : h.type === 'cavalry' ? '기병 군단' : '궁병 군단'} 장비`;
+            renderEquipmentList();
+            document.getElementById('equipment-modal').style.display = 'flex';
+        }
+
+        function renderEquipmentList() {
+            const container = document.getElementById('equipment-list-container');
+            if (!container || activeHeroIndexForModal === null) return;
+            container.innerHTML = '';
+            const h = HEROES[activeHeroIndexForModal];
+            const armyEquip = ARMY_EQUIPMENT[h.type];
+
+            Object.keys(EQUIP_TYPES).forEach(equipKey => {
+                const eq = EQUIP_TYPES[equipKey];
+                const currentEquipLevel = Number(armyEquip[equipKey] || 0);
+                const cost = getEquipCostV194(eq, currentEquipLevel);
+                let rareIcon = eq.costType === 'pureGold' ? 'fa-medal text-yellow-500' : 'fa-gem text-emerald-400';
+                const canAfford = (gameState.resources[eq.costType] || 0) >= cost;
+
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 mb-2">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2.5">
+                                <div class="text-lg w-7 text-center bg-slate-950 p-1.5 rounded-lg border border-slate-800"><i class="fa-solid ${eq.icon}"></i></div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs">${eq.name} <span class="text-[10px] bg-purple-900/80 text-purple-200 px-1.5 rounded ml-1">Lv.${currentEquipLevel}</span></div>
+                                    <div class="text-[10px] text-slate-400 mt-0.5">${eq.statBonus} · 같은 군단 전체 공유</div>
+                                </div>
+                            </div>
+                            <button class="btn-3d btn-purple flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5"
+                              onclick="instantEquipUpgrade('${h.type}','${equipKey}',this)" ${canAfford ? '' : 'disabled'}>
+                                <span>강화</span>
+                                <span class="flex items-center gap-0.5 mt-0.5"><i class="fa-solid ${rareIcon}"></i>${formatNumber(cost)}</span>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        const EQUIP_CLICK_LOCK_V191 = new Set();
+        function instantEquipUpgrade(armyType,equipKey,sourceBtn=null){
+            const lockKey=`${armyType}:${equipKey}`;
+            if(EQUIP_CLICK_LOCK_V191.has(lockKey)) return;
+            const eq=EQUIP_TYPES[equipKey]; if(!eq||!ARMY_EQUIPMENT[armyType])return;
+            const currentLevel=Number(ARMY_EQUIPMENT[armyType][equipKey]||0);
+            const cost=getEquipCostV194(eq,currentLevel);
+            if((gameState.resources[eq.costType]||0)<cost){showNotification('강화 재화가 부족합니다.');return;}
+            EQUIP_CLICK_LOCK_V191.add(lockKey);
+            if(sourceBtn){sourceBtn.disabled=true;sourceBtn.dataset.oldHtml=sourceBtn.innerHTML;sourceBtn.innerHTML='<span>강화중…</span>';}
+            try{
+                gameState.resources[eq.costType]-=cost;
+                ARMY_EQUIPMENT[armyType][equipKey]=currentLevel+1;
+                Object.keys(gameState.upgradesInProgress||{}).forEach(k=>{if(gameState.upgradesInProgress[k]?.type==='equip')delete gameState.upgradesInProgress[k];});
+                syncProgressionV15();
+                updateUI();
+                try{renderEquipmentList();}catch(err){console.error(err);}
+                try{renderHeroes();}catch(err){console.error(err);}
+                playSfx('upgrade');
+                const legionName=armyType==='infantry'?'보병':armyType==='cavalry'?'기병':'궁병';
+                showNotification(`${legionName} 군단 ${eq.name} Lv.${currentLevel+1} 강화 완료`);
+                if(window.cloudSaveGame)window.cloudSaveGame();
+            } finally {
+                setTimeout(()=>EQUIP_CLICK_LOCK_V191.delete(lockKey),450);
+            }
+        }
+
+        function startEquipUpgrade(armyType, equipKey) {
+            instantEquipUpgrade(armyType, equipKey);
+        }
+
+        function closeEquipmentModal(event) {
+            if (!event || event.target.id === 'equipment-modal') {
+                document.getElementById('equipment-modal').style.display = 'none';
+            }
+        }
+
+        function openSquadModal() {
+            const listContainer = document.getElementById('squad-hero-selection-list');
+            listContainer.innerHTML = '';
+            const unlockedList = [];
+            ['infantry', 'cavalry', 'archer'].forEach(catType => {
+                const typeHeroes = HEROES.map((h, idx) => ({ h, idx })).filter(item => item.h.type === catType);
+                let highestUnlockedIdx = getHighestUnlockedHeroTierV196(typeHeroes);
+                for (let i = 0; i <= highestUnlockedIdx; i++) unlockedList.push(typeHeroes[i].idx);
+            });
+
+            if (unlockedList.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-xs text-slate-500 py-3">해제된 영웅이 없습니다.</div>';
+            } else {
+                unlockedList.forEach(globalIdx => {
+                    const h = HEROES[globalIdx];
+                    const stats = getHeroStats(h);
+                    const isSelected = gameState.selectedSquad.includes(globalIdx);
+
+                    listContainer.innerHTML += `
+                        <div class="flex justify-between items-center p-2 bg-slate-800 border border-slate-700 rounded-lg cursor-pointer" onclick="toggleSquadHero(${globalIdx})">
+                            <div class="flex items-center gap-2.5">
+                                <div class="text-base w-7 text-center bg-slate-900 p-1.5 rounded border border-slate-700"><i class="fa-solid ${h.icon}"></i></div>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-xs">${h.name} <span class="text-[10px] bg-blue-900 text-blue-200 px-1 py-0.2 rounded">Lv.${h.level}</span></div>
+                                    <div class="text-[10px] text-slate-400">공격: ${formatNumber(stats.atk)} / 체력: ${formatNumber(stats.hp)}</div>
+                                </div>
+                            </div>
+                            <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 text-indigo-600 rounded bg-slate-900 border-slate-700 pointer-events-none">
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('squad-count-num').textContent = gameState.selectedSquad.length;
+            document.getElementById('squad-modal').style.display = 'flex';
+        }
+
+        function toggleSquadHero(heroIdx) {
+            const idxInSquad = gameState.selectedSquad.indexOf(heroIdx);
+            if (idxInSquad > -1) {
+                gameState.selectedSquad.splice(idxInSquad, 1);
+            } else {
+                if (gameState.selectedSquad.length >= 5) {
+                    showNotification('원정대는 최대 5명까지 편성 가능합니다.');
+                    return;
+                }
+                gameState.selectedSquad.push(heroIdx);
+            }
+            openSquadModal();
+            updateSquadSummary();
+            playSfx('click');
+        }
+
+        function closeSquadModal(event) {
+            if (!event || event.target.id === 'squad-modal') {
+                document.getElementById('squad-modal').style.display = 'none';
+                updateSquadSummary();
+            }
+        }
+
+        function updateSquadSummary() {
+            const previewContainer = document.getElementById('battle-squad-preview-container');
+            const countBadge = document.getElementById('squad-count-num-badge');
+            if (countBadge) countBadge.textContent = gameState.selectedSquad.length;
+
+            if (previewContainer) {
+                if (gameState.selectedSquad.length === 0) {
+                    previewContainer.innerHTML = '<div class="text-xs text-slate-500 italic">편성된 영웅이 없습니다.</div>';
+                } else {
+                    previewContainer.innerHTML = '';
+                    gameState.selectedSquad.forEach(idx => {
+                        const h = HEROES[idx];
+                        previewContainer.innerHTML += `
+                            <div class="flex flex-col items-center bg-indigo-950 border border-indigo-700/60 p-1 rounded-lg w-12 shrink-0 shadow">
+                                <div class="w-7 h-7 rounded bg-indigo-800 flex items-center justify-center text-xs text-white">
+                                    <i class="fa-solid ${h.icon.split(' ')[0]}"></i>
+                                </div>
+                                <span class="text-[8px] font-bold text-indigo-200 mt-0.5 truncate w-full text-center">${h.name}</span>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        }
+
+        function getTowerEntryCosts(floor) {
+            // 1층 50/50/30/30, 층마다 30% 증가, 반올림
+            const f=Math.max(1,Math.floor(Number(floor)||1));
+            const mult=Math.pow(1.30,f-1);
+            return {
+                gold:Math.round(50*mult),
+                food:Math.round(50*mult),
+                herb:Math.round(30*mult),
+                magicDust:Math.round(30*mult)
+            };
+        }
+
+
+        function syncBattleFloorDisplayV192(isFailed=false){
+            const floor=Math.max(1,Number(gameState.towerFloor)||1);
+            const header=document.getElementById('current-tower-floor');
+            const status=document.getElementById('battle-status-title');
+            if(header) header.textContent=String(floor);
+            if(status && !gameState.isBattling){
+                if(isFailed) status.innerHTML=`<i class="fa-solid fa-flag mr-1"></i>제 ${floor}층 재도전`;
+                else if(floor%10===0) status.innerHTML=`<i class="fa-solid fa-crown mr-1 text-pink-400"></i>제 ${floor}층 스페셜 보스 결전!`;
+                else if(floor%5===0) status.innerHTML=`<i class="fa-solid fa-star mr-1 text-amber-400"></i>제 ${floor}층 중간 보스전!`;
+                else status.innerHTML=`<i class="fa-solid fa-flag mr-1"></i>제 ${floor}층 전투 준비 완료`;
+            }
+            return floor;
+        }
+
+        function updateBattleStageUI(isFailed = false) {
+            const floorV192 = syncBattleFloorDisplayV192(isFailed);
+            const hintEl = document.getElementById('floor-advantage-hint');
+            const statusTitle = document.getElementById('battle-status-title');
+            const arenaBox = document.getElementById('battle-arena');
+            const monsterNameLabel = document.getElementById('battle-monster-name');
+            const btnStartBattle = document.getElementById('btn-start-battle');
+            
+            const isSpecialBoss = floorV192 % 10 === 0;
+            const isMiddleBoss = floorV192 % 5 === 0 && !isSpecialBoss;
+
+            if (isSpecialBoss) {
+                arenaBox.className = "battle-arena special-boss";
+                monsterNameLabel.textContent = `[스페셜 보스] 제 ${floorV192}층`;
+                if (!isFailed) statusTitle.innerHTML = `<i class="fa-solid fa-crown mr-1 text-pink-400"></i>제 ${floorV192}층 스페셜 보스 결전!`;
+            } else if (isMiddleBoss) {
+                arenaBox.className = "battle-arena middle-boss";
+                monsterNameLabel.textContent = `[중간 보스] 제 ${floorV192}층`;
+                if (!isFailed) statusTitle.innerHTML = `<i class="fa-solid fa-star mr-1 text-amber-400"></i>제 ${floorV192}층 중간 보스전!`;
+            } else {
+                arenaBox.className = "battle-arena";
+                const enemy = ENEMY_TYPES[(floorV192 - 1) % ENEMY_TYPES.length];
+                monsterNameLabel.textContent = enemy.name;
+                if (!isFailed) statusTitle.innerHTML = `<i class="fa-solid fa-flag mr-1"></i>제 ${floorV192}층 전투 준비 완료`;
+            }
+
+            if (isFailed) {
+                statusTitle.innerHTML = `<i class="fa-solid fa-flag mr-1"></i>제 ${floorV192}층 재도전`;
+                if (btnStartBattle) btnStartBattle.innerHTML = `<i class="fa-solid fa-rotate-right mr-1"></i>재도전`;
+            } else {
+                if (btnStartBattle) btnStartBattle.innerHTML = `<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작`;
+            }
+
+            const enemyV12 = getEnemyForFloor(floorV192);
+            const typeNameV12 = { infantry:'보병', cavalry:'기병', archer:'궁병' };
+            if (hintEl) hintEl.innerHTML = `적 약점: <b class="text-emerald-300">${typeNameV12[enemyV12.weakness]}</b> · 유리 병종 피해 +35%`;
+
+            const costs = getTowerEntryCosts(floorV192);
+            document.getElementById('cost-gold').textContent = formatNumber(costs.gold);
+            document.getElementById('cost-food').textContent = formatNumber(costs.food);
+            document.getElementById('cost-herb').textContent = formatNumber(costs.herb);
+            document.getElementById('cost-magic').textContent = formatNumber(costs.magicDust);
+            const readySquad=(gameState.selectedSquad||[]).some(i=>HEROES[Number(i)]);
+            const enough=['gold','food','herb','magicDust'].every(k=>(gameState.resources[k]||0)>=costs[k]);
+            if(btnStartBattle&&!gameState.isBattling){
+                btnStartBattle.disabled=!readySquad||!enough;
+                if(!readySquad)btnStartBattle.innerHTML='<i class="fa-solid fa-users mr-1"></i>원정대 편성 필요';
+                else if(!enough)btnStartBattle.innerHTML='<i class="fa-solid fa-triangle-exclamation mr-1"></i>입장 자원 부족';
+                else if(!isFailed)btnStartBattle.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';
+            }
+        }
+
+        function renderShop() {
+            const container = document.getElementById('shop-container');
+            container.innerHTML = '';
+            SHOP_ITEMS.forEach(item => {
+                let btnClass = 'btn-3d btn-blue w-full py-2 text-xs';
+                if (item.costType === 'none') btnClass = 'btn-3d btn-purple w-full py-2 text-xs';
+                if (item.costType === 'cash') btnClass = 'btn-3d btn-orange w-full py-2 text-xs';
+                
+                container.innerHTML += `
+                    <div class="shop-item">
+                        <div class="shop-icon"><i class="fa-solid ${item.icon}"></i></div>
+                        <div class="font-bold text-slate-100 text-xs mb-1">${item.name}</div>
+                        <div class="shop-desc">${item.desc}</div>
+                        <button class="${btnClass}" onclick="buyShopItem('${item.id}'); playSfx('click');">
+                            ${item.btnText}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function buyShopItem(itemId) {
+            const item=SHOP_ITEMS.find(i=>i.id===itemId); if(!item)return;
+            if(item.costType==='none'){openRouletteModal();return;}
+            if(item.costType==='cash'){openDonateModal();return;}
+            const cost=Number(item.cost)||0,reward=Number(item.reward)||0;
+            if((gameState.resources[item.costType]||0)<cost){showNotification('다이아가 부족합니다.');return;}
+            if(!(item.rewardType in gameState.resources)){showNotification('상품 데이터 오류: 다이아는 차감되지 않았습니다.');return;}
+            gameState.resources[item.costType]-=cost;
+            gameState.resources[item.rewardType]+=reward;
+            updateUI(); playSfx('upgrade');
+            showNotification(`${item.name} 구매 완료! +${formatNumber(reward)}`);
+            if(window.cloudSaveGame)window.cloudSaveGame();
+        }
+
+        function openDonateModal() { document.getElementById('donate-modal').style.display = 'flex'; }
+        function closeDonateModal(event) { if (!event || event.target.id === 'donate-modal') document.getElementById('donate-modal').style.display = 'none'; }
+        function completeDonationReward() {
+            addResource('gem', 100);
+            const gemHud = document.getElementById('res-gem');
+            if (gemHud) gemHud.textContent = formatNumber(gameState.resources.gem);
+            updateUI();
+            closeDonateModal();
+            playSfx('upgrade');
+            showNotification('후원 확인! 다이아 +100 충전');
+            if (window.cloudSaveGame) window.cloudSaveGame();
+        }
+
+        function openRouletteModal() {
+            const left=Math.max(0,3-(gameState.roulette?.countToday||0));
+            document.getElementById('roulette-count-left').textContent=left;
+            const btn=document.getElementById('btn-spin-roulette');
+            if(btn){btn.disabled=left<=0;btn.textContent=left>0?'▶ 돌림판 돌리기':'오늘 참여 완료';btn.onclick=spinRouletteWheel;}
+            document.getElementById('roulette-result-display').innerHTML=`오늘 남은 횟수: <span id="roulette-count-left-inline">${left}</span>/3회`;
+            document.getElementById('roulette-modal').style.display='flex';
+        }
+
+        function closeRouletteModal(event) { if (!event || event.target.id === 'roulette-modal') document.getElementById('roulette-modal').style.display = 'none'; }
+
+        function spinRouletteWheel() {
+            if (gameState.roulette.countToday >= 3) return;
+            const wheel = document.getElementById('roulette-wheel');
+            const resultDisplay = document.getElementById('roulette-result-display');
+            const spinBtn = document.getElementById('btn-spin-roulette');
+            
+            spinBtn.disabled = true;
+            wheel.style.transition = 'transform 3s cubic-bezier(0.15, 0.85, 0.35, 1)';
+            wheel.style.transform = `rotate(${2160 + Math.random() * 360}deg)`;
+            resultDisplay.textContent = '돌림판 회전 중...';
+
+            setTimeout(() => {
+                const rewardGems = [1, 10, 20, 30, 50][Math.floor(Math.random() * 5)];
+                gameState.resources.gem=(gameState.resources.gem||0)+rewardGems;
+                gameState.roulette.countToday=(gameState.roulette.countToday||0)+1;
+                gameState.roulette.lastSpinTime=Date.now();
+                resultDisplay.innerHTML=`<span class="text-pink-400 font-bold">🎉 당첨! 다이아 +${rewardGems}</span>`;
+                updateUI();
+                if(window.cloudSaveGame) window.cloudSaveGame();
+                playSfx('levelup'); showNotification(`다이아 +${rewardGems} 획득!`);
+                spinBtn.disabled=false; spinBtn.textContent='확인'; spinBtn.onclick=()=>closeRouletteModal();
+            }, 3000);
+        }
+
+        function updateButtonsState() {
+            Object.keys(BUILDINGS).forEach(key => {
+                const b = BUILDINGS[key];
+                const btn = document.getElementById(`btn-bld-${key}`);
+                if (btn && !gameState.upgradesInProgress[`building:${key}`]) btn.disabled = gameState.resources[b.costType] < getUpgradeCost(b.baseCost, b.level);
+            });
+            Object.keys(GATHERING_NODES).forEach(key => {
+                const node = GATHERING_NODES[key];
+                const btn = document.getElementById(`btn-gather-${key}`);
+                if (btn && !gameState.upgradesInProgress[`gather:${key}`]) btn.disabled = gameState.resources[node.costType] < getUpgradeCost(node.baseCost, node.level);
+            });
+        }
+
+        function syncHeaderProfileV196() {
+            const nameEl=document.getElementById('header-kingdom-name');
+            if(nameEl) nameEl.textContent=gameState.kingdomName||'왕국';
+            const avatar=document.getElementById('header-profile-avatar');
+            if(avatar) avatar.innerHTML=gameState.profileImageBase64
+                ? `<img src="${gameState.profileImageBase64}" class="w-full h-full object-cover" alt="프로필">`
+                : `<i class="fa-solid fa-crown text-yellow-300"></i>`;
+            const levelEl=document.getElementById('player-level');
+            if(levelEl) levelEl.textContent=gameState.level;
+        }
+
+        function updateUIUnsafe() {
+            document.getElementById('player-level').textContent = gameState.level;
+            document.getElementById('res-gold').textContent = formatHudNumber(gameState.resources.gold);
+            document.getElementById('res-pureGold').textContent = formatHudNumber(gameState.resources.pureGold);
+            document.getElementById('res-emerald').textContent = formatHudNumber(gameState.resources.emerald);
+            document.getElementById('res-ruby').textContent = formatHudNumber(gameState.resources.ruby);
+            document.getElementById('res-sapphire').textContent = formatHudNumber(gameState.resources.sapphire);
+            document.getElementById('res-food').textContent = formatHudNumber(gameState.resources.food);
+            document.getElementById('res-gem').textContent = formatHudNumber(gameState.resources.gem);
+            document.getElementById('res-wood').textContent = formatHudNumber(gameState.resources.wood);
+            document.getElementById('res-ore').textContent = formatHudNumber(gameState.resources.ore);
+            document.getElementById('res-herb').textContent = formatHudNumber(gameState.resources.herb);
+            document.getElementById('res-magicDust').textContent = formatHudNumber(gameState.resources.magicDust);
+
+            syncBattleFloorDisplayV192(false);
+            document.getElementById('max-tower-floor').textContent = gameState.maxTowerFloor;
+            if (!gameState.isBattling) updateBattleStageUI(false);
+            syncHeaderProfileV196();
+            updateButtonsState();
+        }
+        function updateUI() {
+            try { updateUIUnsafe(); }
+            catch (err) { console.error('KingMiso UI refresh error:', err); }
+        }
+
+        function openProfileModal() {
+            document.getElementById('kingdom-name-input').value = gameState.kingdomName;
+            const preview=document.getElementById('modal-preview-avatar');
+            if(preview) preview.innerHTML=gameState.profileImageBase64
+                ? `<img src="${gameState.profileImageBase64}" class="w-full h-full object-cover" alt="프로필">`
+                : `<i class="fa-solid fa-crown text-yellow-300"></i>`;
+            document.getElementById('profile-modal').style.display = 'flex';
+        }
+        function closeProfileModal(event) { if (!event || event.target.id === 'profile-modal') document.getElementById('profile-modal').style.display = 'none'; }
+
+        function handleProfileImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                gameState.profileImageBase64 = e.target.result;
+                const preview=document.getElementById('modal-preview-avatar');
+                if(preview) preview.innerHTML = `<img src="${gameState.profileImageBase64}" class="w-full h-full object-cover">`;
+                syncHeaderProfileV196();
+                updateUI();
+                if(window.cloudSaveGame) window.cloudSaveGame();
+                showNotification('프로필 사진이 변경되었습니다.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateKingdomName() {
+            const inputVal = document.getElementById('kingdom-name-input').value.trim();
+            if (!inputVal || inputVal.length > 6) {
+                showNotification('1~6글자 이내로 입력하세요.');
+                return;
+            }
+            if (spendResource('gem', 5)) {
+                gameState.kingdomName = inputVal;
+                syncHeaderProfileV196();
+                updateUI();
+                if(window.cloudSaveGame) window.cloudSaveGame();
+                showNotification(`왕국 이름이 '${inputVal}'(으)로 변경되었습니다.`);
+            } else {
+                showNotification('다이아(5개)가 부족합니다.');
+            }
+        }
+
+
+        function artJump(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.scrollIntoView({behavior:'smooth', block:'center'});
+            el.animate([{transform:'scale(1)'},{transform:'scale(1.025)',filter:'brightness(1.35)'},{transform:'scale(1)'}],{duration:520});
+            playSfx('click');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`screen-${tabId}`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text || !window.currentCustomId) return;
+            input.value = '';
+            if(window.cloudSendMessage) {
+                await window.cloudSendMessage({
+                    senderId: window.currentCustomId,
+                    kingdomName: gameState.kingdomName,
+                    text: text,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        window.renderChatMessages = function(msgs) {
+            const container = document.getElementById('chat-messages');
+            if(!container) return;
+            const displayMsgs = msgs.slice(-2);
+            let html = '';
+            if (displayMsgs.length === 0) {
+                html = '<div class="text-center text-[10px] text-slate-500 my-auto">메시지가 없습니다.</div>';
+            } else {
+                displayMsgs.forEach(msg => {
+                    const isMe = msg.senderId === window.currentCustomId;
+                    const safeText = msg.text.replace(/</g, "&lt;");
+                    const safeName = msg.kingdomName.replace(/</g, "&lt;");
+                    html += `
+                        <div class="chat-message-row truncate">
+                            <span class="text-xs font-bold ${isMe ? 'text-indigo-400' : 'text-amber-400'}">[${safeName}]</span>
+                            <span class="text-slate-200 text-xs">${safeText}</span>
+                        </div>
+                    `;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        function showBossWarning(isSpecialBoss, callback) {
+            playSfx('boss');
+            const overlay = document.getElementById('boss-warning-overlay');
+            const title = document.getElementById('boss-warning-title');
+            const subtitle = document.getElementById('boss-warning-subtitle');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            
+            if (isSpecialBoss) {
+                title.textContent = "DANGER";
+                subtitle.textContent = `제 ${gameState.towerFloor}층 스페셜 보스 출현!`;
+            } else {
+                title.textContent = "WARNING";
+                subtitle.textContent = `제 ${gameState.towerFloor}층 중간 보스 등장!`;
+            }
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                callback();
+            }, 2000);
+        }
+
+        const BATTLE_V12 = { running:false, heroes:[], enemy:null, turn:0 };
+        const sleepBattle = ms => new Promise(r => setTimeout(r, ms));
+
+        function getEnemyForFloor(floor) {
+            const normal = ENEMY_TYPES[(floor - 1) % ENEMY_TYPES.length];
+            const special = floor % 10 === 0;
+            const middle = floor % 5 === 0 && !special;
+            const scale = Math.pow(1.16, floor - 1);
+            let hp = Math.floor(260 * scale), atk = Math.floor(18 * scale);
+            if (middle) { hp = Math.floor(hp * 2.0); atk = Math.floor(atk * 1.35); }
+            if (special) { hp = Math.floor(hp * 3.2); atk = Math.floor(atk * 1.65); }
+            return {
+                name: special ? `심연의 군주 · ${floor}층` : middle ? `탑의 수호자 · ${floor}층` : normal.name,
+                icon: special ? 'fa-dragon' : middle ? 'fa-skull' : normal.icon.split(' ')[0],
+                weakness: normal.weakness, maxHp: hp, hp, atk, boss: middle || special, special
+            };
+        }
+
+        function typeAdvantage(type, weakness) { return type === weakness ? 1.35 : 1; }
+
+        function buildBattleUnits() {
+            BATTLE_V12.heroes = gameState.selectedSquad.map((idx, slot) => {
+                const h = HEROES[idx], st = getHeroStats(h);
+                return { idx, slot, name:h.name, type:h.type, icon:h.icon.split(' ')[0], maxHp:st.hp, hp:st.hp, atk:st.atk };
+            });
+            BATTLE_V12.enemy = getEnemyForFloor(BATTLE_V12.floor || gameState.towerFloor);
+            renderBattleUnitsV12();
+        }
+
+        function renderBattleUnitsV12() {
+            const team = document.getElementById('battle-team-v12');
+            const enemyBox = document.getElementById('battle-enemy-v12');
+            if (!team || !enemyBox) return;
+            team.innerHTML = BATTLE_V12.heroes.map((u,i)=>`<div class="fighter-v12 ${u.hp<=0?'dead':''}" id="fighter-v12-${i}"><div class="unit"><i class="fa-solid ${u.icon}"></i></div><div class="hp-v12"><div id="hero-hp-v12-${i}" style="width:${Math.max(0,u.hp/u.maxHp*100)}%"></div></div><div class="text-[7px] text-blue-100 truncate mt-0.5">${u.name}</div></div>`).join('');
+            const e=BATTLE_V12.enemy;
+            enemyBox.className=`enemy-v12 ${e.boss?'boss':''}`;
+            enemyBox.innerHTML=`<div class="unit" id="enemy-unit-v12"><i class="fa-solid ${e.icon}"></i></div><div class="hp-v12"><div id="enemy-hp-v12" style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></div></div><div class="text-[8px] text-red-100 font-bold mt-1 truncate">${e.name}</div><div id="enemy-hp-text-v12" class="text-[7px] text-slate-300">${formatNumber(e.hp)} / ${formatNumber(e.maxHp)}</div>`;
+        }
+
+        function updateBattleHpV12() {
+            BATTLE_V12.heroes.forEach((u,i)=>{
+                const bar=document.getElementById(`hero-hp-v12-${i}`); if(bar) bar.style.width=`${Math.max(0,u.hp/u.maxHp*100)}%`;
+                const f=document.getElementById(`fighter-v12-${i}`); if(f && u.hp<=0) f.classList.add('dead');
+            });
+            const e=BATTLE_V12.enemy, eb=document.getElementById('enemy-hp-v12');
+            if(eb) eb.style.width=`${Math.max(0,e.hp/e.maxHp*100)}%`;
+            const et=document.getElementById('enemy-hp-text-v12'); if(et) et.textContent=`${formatNumber(Math.max(0,e.hp))} / ${formatNumber(e.maxHp)}`;
+        }
+
+        function battleFloatV12(targetId, text, cls='') {
+            const target=document.getElementById(targetId), arena=document.getElementById('battle-arena'); if(!target||!arena)return;
+            const tr=target.getBoundingClientRect(), ar=arena.getBoundingClientRect(), d=document.createElement('div');
+            d.className=`damage-v12 ${cls}`; d.textContent=text; d.style.left=`${tr.left-ar.left+tr.width/2-10}px`; d.style.top=`${tr.top-ar.top-4}px`; arena.appendChild(d); setTimeout(()=>d.remove(),750);
+        }
+
+        function logBattleV12(html) {
+            const log=document.getElementById('battle-log'); const row=document.createElement('div'); row.className='mb-1 border-b border-slate-800 pb-1'; row.innerHTML=html; log.appendChild(row); log.scrollTop=log.scrollHeight;
+        }
+
+        async function heroAttackV12(u, i) {
+            if(u.hp<=0 || BATTLE_V12.enemy.hp<=0) return;
+            const fighter=document.getElementById(`fighter-v12-${i}`), enemyUnit=document.getElementById('enemy-unit-v12');
+            fighter?.classList.add('hero-strike-v12'); battleFxV15(u.type==='archer'?'arrow':(u.type==='cavalry'?'slash':'slash')); await sleepBattle(180);
+            const crit=Math.random()<0.15, adv=typeAdvantage(u.type,BATTLE_V12.enemy.weakness);
+            const variance=.88+Math.random()*.24; const dmg=Math.max(1,Math.floor(u.atk*adv*variance*(crit?1.75:1)));
+            BATTLE_V12.enemy.hp-=dmg; enemyUnit?.classList.add('hit-v12'); battleFxV15(Math.random()<.35?'magic':'slash');
+            battleFloatV12('enemy-unit-v12',`${crit?'CRIT ':''}-${formatNumber(dmg)}`,crit?'crit':'');
+            playTone(crit?760:520,.07,'square',.055); updateBattleHpV12();
+            logBattleV12(`<span class="text-blue-300">${u.name}</span> → ${BATTLE_V12.enemy.name} <b class="text-yellow-300">${formatNumber(dmg)}</b> 피해${adv>1?' <span class="text-emerald-400">[상성]</span>':''}${crit?' <span class="text-amber-300">CRITICAL!</span>':''}`);
+            await sleepBattle(240); fighter?.classList.remove('hero-strike-v12'); enemyUnit?.classList.remove('hit-v12');
+        }
+
+        async function enemyAttackV12() {
+            const alive=BATTLE_V12.heroes.map((u,i)=>({u,i})).filter(x=>x.u.hp>0); if(!alive.length||BATTLE_V12.enemy.hp<=0)return;
+            const target=alive[Math.floor(Math.random()*alive.length)], enemyUnit=document.getElementById('enemy-unit-v12'), fighter=document.getElementById(`fighter-v12-${target.i}`);
+            enemyUnit?.classList.add('enemy-strike-v12'); battleFxV15(BATTLE_V12.enemy.boss?'magic':'slash'); await sleepBattle(190);
+            const bossMult=BATTLE_V12.enemy.special && Math.random()<.22 ? 1.65 : 1; const dmg=Math.max(1,Math.floor(BATTLE_V12.enemy.atk*(.85+Math.random()*.3)*bossMult));
+            target.u.hp-=dmg; fighter?.classList.add('hit-v12'); battleFloatV12(`fighter-v12-${target.i}`,`-${formatNumber(dmg)}`,'enemy-hit'); playTone(180,.09,'sawtooth',.05); updateBattleHpV12();
+            logBattleV12(`<span class="text-red-300">${BATTLE_V12.enemy.name}</span> → ${target.u.name} <b class="text-red-400">${formatNumber(dmg)}</b> 피해${bossMult>1?' <span class="text-pink-400">[강타]</span>':''}`);
+            await sleepBattle(260); enemyUnit?.classList.remove('enemy-strike-v12'); fighter?.classList.remove('hit-v12');
+        }
+
+        async function runBattleV12() {
+            let rounds=0;
+            while(BATTLE_V12.enemy.hp>0 && BATTLE_V12.heroes.some(u=>u.hp>0) && rounds<50) {
+                rounds++; logBattleV12(`<span class="text-slate-500">── ROUND ${rounds} ──</span>`);
+                for(let i=0;i<BATTLE_V12.heroes.length;i++){ await heroAttackV12(BATTLE_V12.heroes[i],i); if(BATTLE_V12.enemy.hp<=0)break; }
+                if(BATTLE_V12.enemy.hp>0) await enemyAttackV12(); await sleepBattle(180);
+            }
+            finishBattleV12(BATTLE_V12.enemy.hp<=0);
+        }
+
+        function showBattleResultV12(victory) {
+            const arena=document.getElementById('battle-arena'), d=document.createElement('div'); d.className='battle-result-v12'; d.style.color=victory?'#facc15':'#fb7185'; d.innerHTML=victory?'⚔ VICTORY!':'☠ DEFEAT'; arena.appendChild(d); setTimeout(()=>d.remove(),1700);
+        }
+
+        function finishBattleV12(victory) {
+            gameState.isBattling=false; BATTLE_V12.running=false; const btn=document.getElementById('btn-start-battle'); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';} const controls=document.getElementById('battle-controls-box'); if(controls) setTimeout(()=>controls.classList.remove('battle-hidden-v121'), 1150);
+            showBattleResultV12(victory);
+            if(victory){
+                playSfx('victory'); const f=gameState.towerFloor, boss=f%5===0; const mult=boss?2:1;
+                const rPure=(Math.floor(Math.random()*(f+2))+1)*mult, rEmer=(Math.floor(Math.random()*(f+2))+1)*mult, rRuby=(Math.floor(Math.random()*(f+2))+1)*mult, rSapp=(Math.floor(Math.random()*(f+2))+1)*mult;
+                gameState.resources.pureGold+=rPure; gameState.resources.emerald+=rEmer; gameState.resources.ruby+=rRuby; gameState.resources.sapphire+=rSapp;
+                if(f>gameState.maxTowerFloor)gameState.maxTowerFloor=f;
+                logBattleV12(`<div class="text-emerald-400 font-black">🏆 ${f}층 정복! 순금 +${rPure} / 에메랄드 +${rEmer} / 루비 +${rRuby} / 사파이어 +${rSapp}</div>`); gameState.towerFloor++;
+                updateBattleStageUI(false);
+            } else { playSfx('defeat'); logBattleV12(`<div class="text-red-400 font-black">원정대 전멸! ${gameState.towerFloor}층에서 재정비가 필요합니다.</div>`); updateBattleStageUI(true); }
+            updateUI(); if(window.cloudSaveGame) window.cloudSaveGame();
+        }
+
+        function startBattle(){
+            if(gameState.isBattling||BATTLE_V12.running)return;
+            const battleFloor=Math.max(1,Number(gameState.towerFloor)||1);
+            const validSquad=(gameState.selectedSquad||[]).map(Number).filter(i=>Number.isInteger(i)&&HEROES[i]).slice(0,5);
+            if(!validSquad.length){showNotification('원정대 영웅을 1명 이상 편성하세요.');return;}
+            const costs=getTowerEntryCosts(battleFloor),keys=['gold','food','herb','magicDust'];
+            if(keys.some(k=>(Number(gameState.resources[k])||0)<Number(costs[k]||0))){showNotification('입장 자원이 부족합니다.');return;}
+
+            const btn=document.getElementById('btn-start-battle');
+            if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-1"></i>전투 시작 중';}
+
+            const launch=()=>{
+                let charged=false;
+                try{
+                    gameState.selectedSquad=validSquad;
+                    BATTLE_V12.floor=battleFloor;
+                    buildBattleUnits();
+                    if(!BATTLE_V12.heroes.length||!BATTLE_V12.enemy) throw new Error('battle units unavailable');
+
+                    keys.forEach(k=>gameState.resources[k]-=costs[k]);
+                    charged=true;
+                    gameState.isBattling=true;
+                    BATTLE_V12.running=true;
+
+                    const controls=document.getElementById('battle-controls-box');
+                    if(controls) controls.classList.add('battle-hidden-v121');
+                    const log=document.getElementById('battle-log');
+                    if(log) log.innerHTML='';
+                    keys.forEach(k=>{
+                        const el=document.getElementById('res-'+k);
+                        if(el) el.textContent=formatNumber(gameState.resources[k]);
+                    });
+                    logBattleV12(`<span class="text-amber-300 font-bold">⚔ ${battleFloor}층 전투 개시!</span>`);
+                    if(window.cloudSaveGame) window.cloudSaveGame();
+
+                    requestAnimationFrame(()=>{
+                        setTimeout(()=>{
+                            runBattleV12().catch(err=>{
+                                console.error('KingMiso battle runtime error:',err);
+                                gameState.isBattling=false; BATTLE_V12.running=false;
+                                if(charged){keys.forEach(k=>gameState.resources[k]+=costs[k]); charged=false;}
+                                const c=document.getElementById('battle-controls-box'); if(c)c.classList.remove('battle-hidden-v121');
+                                updateUI(); updateBattleStageUI(false);
+                                showNotification('전투 오류가 발생해 입장 자원을 반환했습니다.');
+                            });
+                        },80);
+                    });
+                }catch(err){
+                    console.error('KingMiso battle start error:',err);
+                    gameState.isBattling=false; BATTLE_V12.running=false;
+                    if(charged) keys.forEach(k=>gameState.resources[k]+=costs[k]);
+                    if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';}
+                    const controls=document.getElementById('battle-controls-box');if(controls)controls.classList.remove('battle-hidden-v121');
+                    updateUI(); updateBattleStageUI(false);
+                    showNotification('전투 준비 실패: 입장 자원은 차감되지 않았습니다.');
+                }
+            };
+
+            const special=battleFloor%10===0,middle=battleFloor%5===0&&!special;
+            if(special||middle) showBossWarning(special,launch);
+            else launch();
+        }
+
+        function startBattleLegacy() {
+            if (gameState.isBattling) return;
+            const costs = getTowerEntryCosts(gameState.towerFloor);
+            if (gameState.resources.gold < costs.gold || gameState.resources.food < costs.food) {
+                showNotification('탑 공략 재화가 부족합니다.');
+                return;
+            }
+
+            const isSpecialBoss = gameState.towerFloor % 10 === 0;
+            const isMiddleBoss = gameState.towerFloor % 5 === 0 && !isSpecialBoss;
+
+            const initBattle = () => {
+                const log = document.getElementById('battle-log');
+                gameState.isBattling = true;
+                const arenaBox = document.getElementById('battle-arena');
+                if (arenaBox) arenaBox.classList.add('arena-shaking');
+                log.innerHTML = '';
+                
+                setTimeout(() => {
+                    gameState.isBattling = false;
+                    if (arenaBox) arenaBox.classList.remove('arena-shaking');
+                    
+                    playSfx('victory');
+                    const floorNum = gameState.towerFloor;
+                    
+                    const rPure = Math.floor(Math.random() * (floorNum * 2)) + 1;
+                    const rEmer = Math.floor(Math.random() * (floorNum * 2)) + 1;
+                    const rRuby = Math.floor(Math.random() * (floorNum * 2)) + 1;
+                    const rSapp = Math.floor(Math.random() * (floorNum * 2)) + 1;
+
+                    gameState.resources.pureGold += rPure;
+                    gameState.resources.emerald += rEmer;
+                    gameState.resources.ruby += rRuby;
+                    gameState.resources.sapphire += rSapp;
+                    
+                    if (floorNum > gameState.maxTowerFloor) gameState.maxTowerFloor = floorNum;
+                    
+                    log.innerHTML = `<div class="text-emerald-400 font-bold"><i class="fa-solid fa-trophy mr-1"></i>제 ${floorNum}층 정복 성공! (순금+${rPure}, 에메랄드+${rEmer}, 루비+${rRuby}, 사파이어+${rSapp})</div>`;
+                    gameState.towerFloor++;
+                    updateBattleStageUI();
+                    updateUI();
+                }, 2000);
+            };
+
+            if (isSpecialBoss || isMiddleBoss) showBossWarning(isSpecialBoss, initBattle);
+            else initBattle();
+        }
+
+
+        const v16Timers = {};
+        function finishUpgradeV16(taskKey){
+            const item = gameState.upgradesInProgress[taskKey];
+            if(!item) return;
+            if(Date.now() < Number(item.endTime||0)) return;
+            delete gameState.upgradesInProgress[taskKey];
+            if(v16Timers[taskKey]){ clearTimeout(v16Timers[taskKey]); delete v16Timers[taskKey]; }
+            playSfx('upgrade');
+            if(item.type==='building' && BUILDINGS[item.subKey]){
+                BUILDINGS[item.subKey].level++;
+                syncProgressionV15(); renderBuildings(); checkKingdomLevelUp();
+                showNotification(`✨ ${BUILDINGS[item.subKey].name} 건설 완료! Lv.${BUILDINGS[item.subKey].level}`);
+            } else if(item.type==='gather' && GATHERING_NODES[item.subKey]){
+                GATHERING_NODES[item.subKey].level++;
+                syncProgressionV15(); renderGathering(); checkKingdomLevelUp();
+                showNotification(`✨ ${GATHERING_NODES[item.subKey].name} 확장 완료! Lv.${GATHERING_NODES[item.subKey].level}`);
+            } else if(item.type==='hero' && HEROES[item.subKey]){
+                HEROES[item.subKey].level++;
+                syncProgressionV15(); renderHeroes();
+                showNotification(`⚔ ${HEROES[item.subKey].name} 훈련 완료! Lv.${HEROES[item.subKey].level}`);
+            } else if(item.type==='equip'){
+                // v1.7+: equipment is instant; legacy timed job is discarded.
+                if(activeHeroIndexForModal!==null) renderEquipmentList();
+            }
+            updateUI();
+            if(window.cloudSaveGame) window.cloudSaveGame();
+        }
+        function scheduleUpgradeCompletionV16(taskKey){
+            const item=gameState.upgradesInProgress[taskKey]; if(!item)return;
+            const wait=Math.max(0,Number(item.endTime)-Date.now())+80;
+            if(v16Timers[taskKey]) clearTimeout(v16Timers[taskKey]);
+            v16Timers[taskKey]=setTimeout(()=>finishUpgradeV16(taskKey),wait);
+        }
+        function resumeUpgradeTimersV16(){
+            Object.keys(gameState.upgradesInProgress||{}).forEach(k=>{
+                if(gameState.upgradesInProgress[k]?.type==='equip') delete gameState.upgradesInProgress[k];
+            });
+            Object.keys(gameState.upgradesInProgress||{}).forEach(k=>{
+                const it=gameState.upgradesInProgress[k];
+                // migrate old keys safely
+                let nk=k;
+                if(it?.type==='building'&&!k.startsWith('building:')) nk=`building:${it.subKey}`;
+                if(it?.type==='gather'&&!k.startsWith('gather:')) nk=`gather:${it.subKey}`;
+                if(it?.type==='hero'&&!k.startsWith('hero:')) nk=`hero:${it.subKey}`;
+                if(nk!==k){ gameState.upgradesInProgress[nk]=it; delete gameState.upgradesInProgress[k]; }
+                if(Number(it?.endTime||0)<=Date.now()) finishUpgradeV16(nk); else scheduleUpgradeCompletionV16(nk);
+            });
+        }
+
+        let kmLastProductionTickV193 = Date.now();
+        function gameLoop() {
+            const tickNowV193 = Date.now();
+            let elapsedV193 = (tickNowV193 - kmLastProductionTickV193) / 1000;
+            kmLastProductionTickV193 = tickNowV193;
+            if (!Number.isFinite(elapsedV193) || elapsedV193 <= 0) elapsedV193 = 0.1;
+            elapsedV193 = Math.min(elapsedV193, 1.0);
+
+            Object.keys(BUILDINGS).forEach(key => {
+                const b = BUILDINGS[key];
+                gameState.resources[b.prodType] += (b.prodRate * b.level) * elapsedV193;
+            });
+            Object.keys(GATHERING_NODES).forEach(key => {
+                const node = GATHERING_NODES[key];
+                gameState.resources[node.resKey] += (node.prodRate * node.level) * elapsedV193;
+            });
+
+            const now = Date.now();
+            Object.keys(gameState.upgradesInProgress).forEach(key => {
+                const item = gameState.upgradesInProgress[key];
+                const timeLeftMs = item.endTime - now;
+                const timeLeftSec = Math.max(0, timeLeftMs / 1000);
+                const domKey = (item.type==='building'||item.type==='gather') ? item.subKey : key;
+                const progressContainer = document.getElementById(`progress-container-${domKey}`);
+                const progressFill = document.getElementById(`progress-fill-${domKey}`);
+                const progressText = document.getElementById(`progress-text-${domKey}`);
+
+                if (progressContainer && progressFill && progressText) {
+                    progressContainer.style.display = 'block';
+                    const elapsed = (item.totalTime * 1000) - timeLeftMs;
+                    const percent = Math.min(100, Math.max(0, (elapsed / (item.totalTime * 1000)) * 100));
+                    progressFill.style.width = `${percent}%`;
+                    progressText.textContent = `${Math.floor(percent)}% (${timeLeftSec.toFixed(1)}초)`;
+                }
+
+                if (timeLeftMs <= 0) finishUpgradeV16(key);
+            });
+            updateUI();
+        }
+
+        function showLoginPanel(panelId) {
+            document.getElementById('panel-login').style.display = 'none';
+            document.getElementById('panel-loading').style.display = 'none';
+            const p = document.getElementById('panel-' + panelId);
+            if(p) p.style.display = panelId === 'loading' ? 'flex' : 'block';
+        }
+
+        async function attemptLogin() {
+            const id = document.getElementById('login-id').value.trim();
+            const pw = document.getElementById('login-pw').value.trim();
+            if(!id || !pw) { 
+                showNotification('아이디와 비밀번호를 입력하세요.'); 
+                return; 
+            }
+            showLoginPanel('loading');
+            
+            if (window.cloudVerifyCredentials && window.cloudCheckIdExists) {
+                const exists = await window.cloudCheckIdExists(id);
+                if (exists) {
+                    await window.cloudVerifyCredentials(id, pw);
+                    const loadedData = await window.cloudLoadGame();
+                    if (loadedData) { Object.assign(gameState, loadedData); applyProgressionV15(); }
+                } else {
+                    await window.cloudCreateAccount(id, pw);
+                }
+                document.getElementById('login-overlay').style.display = 'none';
+                startGameEngine();
+            } else {
+                document.getElementById('login-overlay').style.display = 'none';
+                startGameEngine();
+            }
+        }
+
+        function startGameEngine() {
+            applyProgressionV15();
+            renderBuildings();
+            renderGathering();
+            renderHeroes();
+            renderShop();
+            updateSquadSummary();
+            updateBattleStageUI();
+            updateUI();
+
+            if (window.initGlobalChat) window.initGlobalChat();
+            if (!isMuted) startBgmLoop();
+            setInterval(gameLoop, 100); setTimeout(resumeUpgradeTimersV16, 250);
+        }
+
+        // iOS/Safari requires audio to be unlocked by a direct user gesture.
+        function unlockKingMisoAudio() {
+            if (isMuted) return;
+            initAudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            startBgmLoop();
+        }
+        document.addEventListener('pointerdown', unlockKingMisoAudio, { once: true });
+        document.addEventListener('touchstart', unlockKingMisoAudio, { once: true, passive: true });
+
+        window.onload = function() {
+            document.getElementById('login-overlay').style.display = 'flex';
+            showLoginPanel('login');
+        };
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        
+        let db, auth;
+        window.currentCustomId = null;
+
+        async function initFirebaseSystem() {
+            if (!firebaseConfig) return false;
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                return true;
+            } catch(e) { return false; }
+        }
+        initFirebaseSystem();
+
+        window.cloudVerifyCredentials = async function(id, pw) {
+            window.currentCustomId = id;
+            return true;
+        };
+        window.cloudCheckIdExists = async function(id) {
+            if (!db) return false;
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+            try { const snap = await getDoc(ref); return snap.exists(); } catch(e) { return false; }
+        };
+        window.cloudCreateAccount = async function(id, pw) {
+            if (!db) return false;
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+            try {
+                await setDoc(ref, { pw, createdAt: Date.now() });
+                window.currentCustomId = id;
+                return true;
+            } catch(e) { return false; }
+        };
+        window.cloudLoadGame = async function() {
+            if (!db || !window.currentCustomId) return null;
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'saves', window.currentCustomId);
+            try { const snap = await getDoc(ref); return snap.exists() ? snap.data() : null; } catch(e) { return null; }
+        };
+        window.cloudSaveGame = async function() {
+            syncProgressionV15();
+            if (!db || !window.currentCustomId) return;
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'saves', window.currentCustomId);
+            try { await setDoc(ref, gameState); } catch(e) {}
+        };
+        window.cloudSendMessage = async function(msgObj) {
+            if (!db) return;
+            try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'global_chat'), msgObj); } catch(e) {}
+        };
+        window.initGlobalChat = function() {
+            if (!db) return;
+            const chatRef = collection(db, 'artifacts', appId, 'public', 'data', 'global_chat');
+            onSnapshot(chatRef, (snapshot) => {
+                const msgs = [];
+                snapshot.forEach(doc => { msgs.push({ id: doc.id, ...doc.data() }); });
+                msgs.sort((a, b) => a.timestamp - b.timestamp);
+                if (window.renderChatMessages) window.renderChatMessages(msgs.slice(-20));
+            }, () => {});
+        };
+
+        setInterval(() => {
+            if (window.currentCustomId && window.cloudSaveGame) {
+                window.cloudSaveGame();
+            }
+        }, 5000);
+    </script>
+<script>
+        // v1.9.7: Safari/iOS pointer feedback, including onclick div controls.
+        document.addEventListener('pointerdown', function(e){
+            const el=e.target.closest('button,.btn-3d,[role="button"]');
+            if(!el || el.disabled || el.getAttribute('aria-disabled')==='true') return;
+            el.classList.add('km-touch-down');
+            try { if(typeof playSfx==='function') playSfx('click'); } catch(_){}
+        }, {passive:true});
+        function kmReleaseTouchV193(e){
+            const el=e.target && e.target.closest ? e.target.closest('button,.btn-3d,[role="button"]') : null;
+            if(el) setTimeout(()=>el.classList.remove('km-touch-down'),55);
+        }
+        document.addEventListener('pointerup',kmReleaseTouchV193,{passive:true});
+        document.addEventListener('pointercancel',kmReleaseTouchV193,{passive:true});
+</script>
+</body>
+</html>
