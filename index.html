@@ -401,6 +401,18 @@
 .km-upgrade-btn>span:last-child>span{white-space:nowrap}
 .km-equip-row>.km-upgrade-btn{justify-self:stretch}
 @media(max-width:390px){.km-hero-row,.km-equip-row{grid-template-columns:minmax(0,1fr) minmax(132px,44%);column-gap:6px}.km-hero-row>div:last-child{grid-template-columns:40px minmax(0,1fr);gap:5px!important}.km-hero-row>div:last-child>button:first-child{width:40px;min-width:40px}.km-hero-row>div:first-child>div:first-child,.km-equip-row>div:first-child>div:first-child{width:38px!important;min-width:38px!important;flex-basis:38px;height:42px!important}.km-upgrade-btn{padding:8px 4px!important}}
+
+/* v2.0.10: fixed-width responsive HUD; game logic unchanged */
+.top-bar { gap: 3px; }
+.km-resource-board { width:100%; display:flex; flex-direction:column; gap:3px; padding:3px 2px 1px; border-top:1px solid #334155; min-width:0; }
+.km-basic-resources { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px 4px; width:100%; min-width:0; }
+.km-rare-resources { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:3px; width:100%; min-width:0; border-top:1px solid #334155; padding-top:3px; }
+.km-resource-board .resource-item { min-width:0; width:100%; display:flex; justify-content:center; align-items:center; gap:4px; padding:2px 1px; border-radius:5px; background:rgba(30,41,59,.5); font-size:11px!important; font-variant-numeric:tabular-nums; overflow:hidden; }
+.km-resource-board .resource-item i { flex:0 0 auto; font-size:11px; }
+.km-resource-board .resource-item span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px!important; }
+@media(max-width:360px){.km-resource-board .resource-item{gap:2px;font-size:10px!important}.km-resource-board .resource-item i,.km-resource-board .resource-item span{font-size:10px!important}}
+.screen-panel { top:var(--km-header-height,112px)!important; }
+#notification-container { top:calc(var(--km-header-height,112px) + 8px)!important; }
 </style>
 
 <style id="v141-fixes">
@@ -447,8 +459,8 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-between w-full overflow-x-auto gap-2.5 py-0.5 text-[10px] no-scrollbar border-t border-slate-800 px-1">
-            <div class="flex items-center gap-2.5 shrink-0">
+        <div class="km-resource-board">
+            <div class="km-basic-resources">
                 <div class="resource-item gold"><i class="fa-solid fa-coins"></i><span id="res-gold">100</span></div>
                 <div class="resource-item food"><i class="fa-solid fa-wheat-awn"></i><span id="res-food">100</span></div>
                 <div class="resource-item wood"><i class="fa-solid fa-tree"></i><span id="res-wood">100</span></div>
@@ -457,7 +469,7 @@
                 <div class="resource-item magic"><i class="fa-solid fa-wand-magic-sparkles"></i><span id="res-magicDust">100</span></div>
             </div>
 
-            <div class="flex items-center gap-2.5 shrink-0 pl-1.5 border-l border-slate-700">
+            <div class="km-rare-resources">
                 <div class="resource-item puregold"><i class="fa-solid fa-medal"></i><span id="res-pureGold">5</span></div>
                 <div class="resource-item emerald"><i class="fa-solid fa-gem"></i><span id="res-emerald">5</span></div>
                 <div class="resource-item ruby"><i class="fa-solid fa-gem"></i><span id="res-ruby">5</span></div>
@@ -862,7 +874,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.9";
+        const GAME_VERSION = "v2.0.10";
         
         const gameState = {
             level: 1,
@@ -1015,7 +1027,7 @@
         function formatHudNumber(num) {
             const n = Number(num) || 0, a = Math.abs(n);
             const short = (v) => {
-                const d = Math.abs(v) >= 100 ? 1 : Math.abs(v) >= 10 ? 2 : 3;
+                const d = Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2;
                 return v.toFixed(d).replace(/\.0+$|(?<=\.[0-9])0+$/g,'').replace(/\.$/,'');
             };
             if (a >= 1e9) return short(n/1e9)+'B';
@@ -2545,6 +2557,21 @@
     }catch(error){console.error('Backup export failed',error);alert('백업 파일 생성 실패: '+error.message);}
   };
   window.addEventListener('load',()=>{window.kmCheckUIContractV209();});
+})();
+</script>
+<script id="km-hud-layout-v210">
+(function(){
+  function alignHUD(){
+    var header=document.querySelector('.top-bar');
+    if(header) document.documentElement.style.setProperty('--km-header-height',Math.ceil(header.getBoundingClientRect().height)+'px');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',alignHUD);
+  else alignHUD();
+  window.addEventListener('resize',alignHUD);
+  if(typeof ResizeObserver!=='undefined'){
+    var observe=function(){var h=document.querySelector('.top-bar');if(h)new ResizeObserver(alignHUD).observe(h);};
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe);else observe();
+  }
 })();
 </script>
 </body>
