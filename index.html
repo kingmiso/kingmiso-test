@@ -836,7 +836,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.1";
+        const GAME_VERSION = "v2.0.2";
         
         const gameState = {
             level: 1,
@@ -2091,36 +2091,45 @@
             });
         }
 
-        // v2.0.1: 자원 생산과 HUD는 전투 렌더링과 독립적으로 실행
-        // v2.0.1: 생산 엔진은 업그레이드 타이머 및 전체 UI와 독립
-        let kmLastProductionTickV201 = Date.now();
+        // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
+        // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
+        let kmLastResourceTickV202 = Date.now();
         function updateResourceHudV200() {
-            for (const key of ['gold','food','wood','ore','herb','magicDust','gem','pureGold','emerald','ruby','sapphire']) {
+            const keys=['gold','food','wood','ore','herb','magicDust','gem','pureGold','emerald','ruby','sapphire'];
+            for (const key of keys) {
                 const el=document.getElementById('res-'+key);
-                if(!el) continue;
+                if (!el) continue;
                 const n=Number(gameState.resources?.[key])||0;
-                // 채집 중 변화가 실제로 보이도록 소수점 첫째 자리 표시
-                el.textContent=n<1000000 ? (Math.floor(n*10)/10).toLocaleString('en-US',{maximumFractionDigits:1}) : formatHudNumber(n);
+                el.textContent=n<1000000
+                    ? Math.floor(n).toLocaleString('en-US')
+                    : formatHudNumber(n);
             }
         }
         function productionTickV201() {
             const now=Date.now();
-            const seconds=Math.max(0,Math.min((now-kmLastProductionTickV201)/1000,10));
-            kmLastProductionTickV201=now;
+            const seconds=Math.max(0,Math.min((now-kmLastResourceTickV202)/1000,30));
+            kmLastResourceTickV202=now;
             try {
-                if(!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
-                for(const b of Object.values(BUILDINGS)) {
-                    if(!b.prodType) continue;
-                    const k=b.prodType;
-                    gameState.resources[k]=(Number(gameState.resources[k])||0)+(Number(b.prodRate)||0)*Math.max(1,Number(b.level)||1)*seconds;
-                }
-                for(const node of Object.values(GATHERING_NODES)) {
-                    if(!node.resKey) continue;
-                    const k=node.resKey;
-                    gameState.resources[k]=(Number(gameState.resources[k])||0)+(Number(node.prodRate)||0)*Math.max(1,Number(node.level)||1)*seconds;
-                }
+                if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
+                // 원본 정상 작동 코드와 동일한 건물/채집장 생산 경로
+                Object.keys(BUILDINGS).forEach(key => {
+                    const b=BUILDINGS[key];
+                    const resource=b.prodType;
+                    if (!resource) return;
+                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                        +(Number(b.prodRate)||0)*(Number(b.level)||1)*seconds;
+                });
+                Object.keys(GATHERING_NODES).forEach(key => {
+                    const node=GATHERING_NODES[key];
+                    const resource=node.resKey;
+                    if (!resource) return;
+                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                        +(Number(node.prodRate)||0)*(Number(node.level)||1)*seconds;
+                });
+                // 매 틱 실제 자원과 헤더를 동기화. 다른 UI의 오류와 독립적으로 실행.
                 updateResourceHudV200();
-            } catch(e) { console.error('KingMiso production error',e); }
+                updateButtonsState();
+            } catch(e) { console.error('KingMiso resource loop error',e); }
         }
         function upgradeTimerTickV201() {
             try {
@@ -2193,8 +2202,8 @@
             if (window.initGlobalChat) window.initGlobalChat();
             if (!isMuted) startBgmLoop();
             updateResourceHudV200();
-            kmLastProductionTickV201=Date.now();
-            if (!window.kmProductionIntervalV201) window.kmProductionIntervalV201=setInterval(productionTickV201,250);
+            kmLastResourceTickV202=Date.now();
+            if (!window.kmProductionIntervalV201) window.kmProductionIntervalV201=setInterval(productionTickV201,100);
             if (!window.kmUpgradeIntervalV201) window.kmUpgradeIntervalV201=setInterval(upgradeTimerTickV201,100);
             setTimeout(resumeUpgradeTimersV16,250);
         }
