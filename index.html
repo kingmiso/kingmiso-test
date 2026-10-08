@@ -836,7 +836,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.2";
+        const GAME_VERSION = "v2.0.3";
         
         const gameState = {
             level: 1,
@@ -2187,26 +2187,42 @@
             }
         }
 
+        // v2.0.3: start production BEFORE optional UI initialization.
         function startGameEngine() {
             if (!gameState.upgradesInProgress || typeof gameState.upgradesInProgress!=='object') gameState.upgradesInProgress={};
             if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
-            applyProgressionV15();
-            renderBuildings();
-            renderGathering();
-            renderHeroes();
-            renderShop();
-            updateSquadSummary();
-            updateBattleStageUI();
-            updateUI();
-
-            if (window.initGlobalChat) window.initGlobalChat();
-            if (!isMuted) startBgmLoop();
-            updateResourceHudV200();
             kmLastResourceTickV202=Date.now();
             if (!window.kmProductionIntervalV201) window.kmProductionIntervalV201=setInterval(productionTickV201,100);
             if (!window.kmUpgradeIntervalV201) window.kmUpgradeIntervalV201=setInterval(upgradeTimerTickV201,100);
-            setTimeout(resumeUpgradeTimersV16,250);
+            productionTickV201();
+            const steps=[
+                ['progression',()=>applyProgressionV15()],
+                ['buildings',()=>renderBuildings()],
+                ['gathering',()=>renderGathering()],
+                ['heroes',()=>renderHeroes()],
+                ['shop',()=>renderShop()],
+                ['squad',()=>updateSquadSummary()],
+                ['battle',()=>updateBattleStageUI()],
+                ['ui',()=>updateUI()],
+                ['chat',()=>{if(window.initGlobalChat)window.initGlobalChat();}],
+                ['bgm',()=>{if(!isMuted)startBgmLoop();}],
+                ['resume',()=>setTimeout(resumeUpgradeTimersV16,250)]
+            ];
+            for(const [name,fn] of steps) try{fn();}catch(e){console.error('KingMiso startup '+name,e);kmSetEngineStatus('초기화 오류: '+name);}
+            updateResourceHudV200();
         }
+        function kmSetEngineStatus(message){
+            let el=document.getElementById('km-engine-status');
+            if(!el){el=document.createElement('div');el.id='km-engine-status';el.style.cssText='position:fixed;bottom:110px;right:8px;z-index:9999;background:#082f49;color:#fff;font:11px sans-serif;padding:5px 8px;border:1px solid #38bdf8;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
+            el.textContent='v2.0.3 · '+message;
+        }
+        let kmEngineTickCount=0;
+        setInterval(()=>{
+            if(!window.kmProductionIntervalV201)return;
+            kmEngineTickCount++;
+            const gold=Number(gameState.resources?.gold||0);
+            kmSetEngineStatus('자동생산 실행 · 금화 '+Math.floor(gold).toLocaleString('en-US'));
+        },1000);
 
         // iOS/Safari requires audio to be unlocked by a direct user gesture.
         function unlockKingMisoAudio() {
