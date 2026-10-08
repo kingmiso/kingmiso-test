@@ -679,6 +679,8 @@
                 </div>
             </div>
 
+            <button class="btn-3d btn-green w-full py-2.5 text-xs mb-2" onclick="kmExportBackupV209()"><i class="fa-solid fa-download mr-1"></i> 게임 진행 데이터 백업 (JSON)</button>
+            <p class="text-[10px] text-slate-400 mb-3">대규모 디자인 업데이트 전 백업 파일을 보관하세요. 계정 비밀번호는 포함하지 않습니다.</p>
             <button class="btn-3d btn-blue w-full py-2 text-xs" onclick="closeProfileModal(); playSfx('click');">닫기</button>
         </div>
     </div>
@@ -860,7 +862,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.8";
+        const GAME_VERSION = "v2.0.9";
         
         const gameState = {
             level: 1,
@@ -2236,7 +2238,7 @@
             kmSaveStatusV204=message;
             let el=document.getElementById('km-save-status-v204');
             if(!el){el=document.createElement('div');el.id='km-save-status-v204';el.style.cssText='position:fixed;right:8px;bottom:139px;z-index:9999;background:#172554;color:white;border:1px solid #818cf8;border-radius:8px;padding:4px 7px;font:10px sans-serif;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.5 · 저장 '+message;
+            el.textContent='v2.0.9 · 저장 '+message;
         }
         // v2.0.5 offline progress. Only production resources; premium currency is excluded.
         const KM_OFFLINE_CAP_V205=12*60*60;
@@ -2373,7 +2375,7 @@
         function kmSetEngineStatus(message){
             let el=document.getElementById('km-engine-status');
             if(!el){el=document.createElement('div');el.id='km-engine-status';el.style.cssText='position:fixed;bottom:110px;right:8px;z-index:9999;background:#082f49;color:#fff;font:11px sans-serif;padding:5px 8px;border:1px solid #38bdf8;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.5 · '+message;
+            el.textContent='v2.0.9 · '+message;
         }
         let kmEngineTickCount=0;
         setInterval(()=>{
@@ -2502,6 +2504,48 @@
         }
         document.addEventListener('pointerup',kmReleaseTouchV193,{passive:true});
         document.addEventListener('pointercancel',kmReleaseTouchV193,{passive:true});
+</script>
+
+<script id="km-v209-compatibility">
+// v2.0.9: Non-invasive compatibility contract for future UI redesigns.
+// All gameplay, save, production, and battle functions are retained from v2.0.8.
+(function(){
+  'use strict';
+  const requiredIds=['header-profile-avatar','header-kingdom-name','player-level',
+    'res-gold','res-food','res-wood','res-ore','res-herb','res-magicDust',
+    'res-gem','res-pureGold','res-emerald','res-ruby','res-sapphire',
+    'buildings-container','gathering-container','heroes-container',
+    'shop-container','battle-arena','profile-modal','login-overlay'];
+  window.kmCheckUIContractV209=function(){
+    const missing=requiredIds.filter(id=>!document.getElementById(id));
+    const functions=['startGameEngine','productionTickV201','updateUI','renderBuildings',
+      'renderGathering','renderHeroes','renderShop','kmSnapshotV204','kmRestoreV204'];
+    const missingFunctions=functions.filter(name=>typeof window[name]!=='function');
+    const result={version:'v2.0.9',ok:missing.length===0&&missingFunctions.length===0,
+      missingIds:missing,missingFunctions:missingFunctions};
+    if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
+    return result;
+  };
+  window.kmExportBackupV209=function(){
+    try {
+      if(!window.currentCustomId || typeof kmSnapshotV204!=='function'){
+        alert('게임 로그인 후 백업할 수 있습니다.');return;
+      }
+      const payload={format:'KingMiso-save-backup',schemaVersion:1,
+        gameVersion:'v2.0.9',exportedAt:new Date().toISOString(),
+        accountId:window.currentCustomId,state:kmSnapshotV204()};
+      const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download='KingMiso_backup_'+new Date().toISOString().slice(0,10)+'.json';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),15000);
+      if(typeof showNotification==='function')showNotification('진행 데이터 백업 파일 생성 완료');
+    }catch(error){console.error('Backup export failed',error);alert('백업 파일 생성 실패: '+error.message);}
+  };
+  window.addEventListener('load',()=>{window.kmCheckUIContractV209();});
+})();
 </script>
 </body>
 </html>
