@@ -836,7 +836,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.5";
+        const GAME_VERSION = "v2.0.6";
         
         const gameState = {
             level: 1,
@@ -937,6 +937,27 @@
         function getHeroUpgradeCostV194(hero, subIdx=0) {
             return Math.max(1, Math.floor(hero.baseCost * Math.pow(1.8, subIdx) * Math.pow(1.2, Math.max(0, hero.level-1))));
         }
+        const HERO_RESOURCE_ICONS_V206 = {
+            gold:'fa-coins text-yellow-400',food:'fa-wheat-awn text-red-400',
+            wood:'fa-tree text-amber-500',ore:'fa-cubes text-slate-300',
+            herb:'fa-seedling text-emerald-400',magicDust:'fa-wand-magic-sparkles text-indigo-400'
+        };
+        function getHeroUpgradeCostsV206(hero,subIdx=0){
+            const total=getHeroUpgradeCostV194(hero,subIdx);
+            const resourceGroups={
+                infantry:['food','ore','wood'],cavalry:['food','gold','herb'],archer:['wood','herb','magicDust']
+            };
+            const types=resourceGroups[hero.type]||['gold','food','wood'];
+            const rotation=(Math.max(0,Number(hero.level)-1)+subIdx)%types.length;
+            const primary=types[rotation],secondary=types[(rotation+1)%types.length];
+            const first=Math.max(1,Math.round(total*0.65));
+            const second=Math.max(1,Math.round(total*0.35));
+            return {[primary]:first,[secondary]:second};
+        }
+        function heroCostsHtmlV206(costs){
+            return Object.entries(costs).map(([k,n])=>`<span class="inline-flex items-center gap-0.5"><i class="fa-solid ${HERO_RESOURCE_ICONS_V206[k]}"></i>${formatNumber(n)}</span>`).join(' ');
+        }
+        function canPayHeroCostsV206(costs){return Object.entries(costs).every(([k,n])=>(Number(gameState.resources[k])||0)>=n);}
         function getHeroUpgradeTimeV194(hero) {
             return Math.max(1, Math.round(hero.baseTime * Math.pow(1.3, Math.max(0, hero.level-1))));
         }
@@ -1232,7 +1253,7 @@
                     const stats = getHeroStats(h);
                     const cost = getHeroUpgradeCostV194(h, subIdx);
                     const timeSec = getHeroUpgradeTimeV194(h);
-                    const costIcon = h.costType === 'gold' ? 'fa-coins text-yellow-400' : 'fa-wheat-awn text-red-400';
+                    const heroCostsV206 = getHeroUpgradeCostsV206(h,subIdx);
                     const progressKey = `hero:${globalIdx}`;
                     const heroJob = gameState.upgradesInProgress[progressKey];
                     const isBusy = heroJob !== undefined;
@@ -1260,7 +1281,7 @@
                                         <button class="btn-3d btn-purple text-[10px] px-2 py-1" onclick="event.stopPropagation(); openEquipmentModal(${globalIdx}); playSfx('click');">장비</button>
                                         <button class="btn-3d btn-orange flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5 ${isBusy ? 'opacity-60 cursor-not-allowed' : ''}" id="btn-hero-${globalIdx}" onclick="event.stopPropagation(); startHeroUpgrade(${globalIdx}, this)" ${isBusy ? 'disabled aria-disabled="true"' : ''}>
                                             <span>${isBusy ? '훈련중' : '강화'}</span>
-                                            <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${busyRemain}초` : `<i class="fa-solid ${costIcon}"></i>${formatNumber(cost)}`}</span>
+                                            <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${busyRemain}초` : heroCostsHtmlV206(heroCostsV206)}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -1308,7 +1329,9 @@
             let subIdx = typeHeroes.findIndex(x => x.id === h.id);
             const cost = getHeroUpgradeCostV194(h, subIdx);
 
-            if (spendResource(h.costType, cost)) {
+            const heroCostsV206=getHeroUpgradeCostsV206(h,subIdx);
+            if (canPayHeroCostsV206(heroCostsV206)) {
+                Object.entries(heroCostsV206).forEach(([key,amount])=>{gameState.resources[key]-=amount;});
                 const timeSec = getHeroUpgradeTimeV194(h);
                 gameState.upgradesInProgress[progressKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'hero', subKey: index };
                 scheduleUpgradeCompletionV16(progressKey);
@@ -1340,7 +1363,9 @@
                 const eq = EQUIP_TYPES[equipKey];
                 const currentEquipLevel = Number(armyEquip[equipKey] || 0);
                 const cost = getEquipCostV194(eq, currentEquipLevel);
-                let rareIcon = eq.costType === 'pureGold' ? 'fa-medal text-yellow-500' : 'fa-gem text-emerald-400';
+                const rareIconsV206={pureGold:'fa-medal text-yellow-400',emerald:'fa-gem text-emerald-400',ruby:'fa-gem text-rose-500',sapphire:'fa-gem text-blue-400'};
+                const rareIcon=rareIconsV206[eq.costType]||'fa-gem text-purple-400';
+                const rareNameV206={pureGold:'순금',emerald:'에메랄드',ruby:'루비',sapphire:'사파이어'}[eq.costType]||'';
                 const canAfford = (gameState.resources[eq.costType] || 0) >= cost;
 
                 container.innerHTML += `
@@ -1356,7 +1381,7 @@
                             <button class="btn-3d btn-purple flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5"
                               onclick="instantEquipUpgrade('${h.type}','${equipKey}',this)" ${canAfford ? '' : 'disabled'}>
                                 <span>강화</span>
-                                <span class="flex items-center gap-0.5 mt-0.5"><i class="fa-solid ${rareIcon}"></i>${formatNumber(cost)}</span>
+                                <span class="flex items-center gap-0.5 mt-0.5"><i class="fa-solid ${rareIcon}"></i>${formatNumber(cost)} <span class="text-[9px]">${rareNameV206}</span></span>
                             </button>
                         </div>
                     </div>`;
@@ -1486,17 +1511,13 @@
         }
 
         function getTowerEntryCosts(floor) {
-            // 1층 50/50/30/30, 층마다 30% 증가, 반올림
+            // v2.0.6: gentle progression, no exponential runaway.
             const f=Math.max(1,Math.floor(Number(floor)||1));
-            const mult=Math.pow(1.30,f-1);
-            return {
-                gold:Math.round(50*mult),
-                food:Math.round(50*mult),
-                herb:Math.round(30*mult),
-                magicDust:Math.round(30*mult)
-            };
+            const step=f-1;
+            const scale=1+0.065*step+0.003*Math.floor(step/10)*10;
+            return {gold:Math.round(30*scale),food:Math.round(30*scale),
+                    herb:Math.round(12*scale),magicDust:Math.round(12*scale)};
         }
-
 
         function syncBattleFloorDisplayV192(isFailed=false){
             const floor=Math.max(1,Number(gameState.towerFloor)||1);
