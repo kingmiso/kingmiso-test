@@ -358,7 +358,7 @@
 .v16-task-toast{position:fixed;left:50%;top:92px;transform:translateX(-50%);z-index:120;background:#071329f2;border:1px solid #fbbf24;border-radius:14px;padding:9px 14px;font-size:12px;font-weight:800;box-shadow:0 10px 35px #000a}
 
 
-        /* v1.9.7 mobile tactile feedback */
+        /* v2.0.0 mobile tactile feedback */
         button, .btn-3d, [role="button"] {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
@@ -374,7 +374,7 @@
         }
 
 
-        /* v1.9.7: compact resource HUD */
+        /* v2.0.0: compact resource HUD */
         .top-bar .resource-item { font-size: 90% !important; }
         .top-bar .resource-item span { font-size: .9em !important; }
 </style>
@@ -836,7 +836,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v1.9.7";
+        const GAME_VERSION = "v2.0.0";
         
         const gameState = {
             level: 1,
@@ -953,7 +953,7 @@
             return {ok:true};
         }
         function getEquipCostV194(eq,currentLevel) {
-            // v1.9.7: 군단 장비 강화 비용은 단계마다 50% 증가, 소수점 반올림
+            // v2.0.0: 군단 장비 강화 비용은 단계마다 50% 증가, 소수점 반올림
             return Math.max(1, Math.round(eq.baseCost * Math.pow(1.5, Math.max(0, Number(currentLevel)||0))));
         }
 
@@ -968,7 +968,7 @@
         function formatHudNumber(num) {
             const n = Number(num) || 0, a = Math.abs(n);
             const short = (v) => {
-                const d = Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2;
+                const d = Math.abs(v) >= 100 ? 1 : Math.abs(v) >= 10 ? 2 : 3;
                 return v.toFixed(d).replace(/\.0+$|(?<=\.[0-9])0+$/g,'').replace(/\.$/,'');
             };
             if (a >= 1e9) return short(n/1e9)+'B';
@@ -1183,7 +1183,7 @@
             playSfx('click');
         }
 
-        // v1.9.7: 누적 단계 해금 규칙
+        // v2.0.0: 누적 단계 해금 규칙
         function getHeroTierUnlockV196(typeHeroes, tierIndex) {
             if (tierIndex <= 0) return { ok:true, requirements:[] };
             const requirements=[];
@@ -1413,6 +1413,7 @@
             if (unlockedList.length === 0) {
                 listContainer.innerHTML = '<div class="text-center text-xs text-slate-500 py-3">해제된 영웅이 없습니다.</div>';
             } else {
+                unlockedList.sort((a,b)=>{ const x=getHeroStats(HEROES[a]), y=getHeroStats(HEROES[b]); return (y.atk+y.hp/10)-(x.atk+x.hp/10); });
                 unlockedList.forEach(globalIdx => {
                     const h = HEROES[globalIdx];
                     const stats = getHeroStats(h);
@@ -1502,6 +1503,10 @@
             const header=document.getElementById('current-tower-floor');
             const status=document.getElementById('battle-status-title');
             if(header) header.textContent=String(floor);
+            const entry=getTowerEntryCosts(floor);
+            [['cost-gold',entry.gold],['cost-food',entry.food],['cost-herb',entry.herb],['cost-magic',entry.magicDust]].forEach(([id,value])=>{
+                const el=document.getElementById(id); if(el) el.textContent=formatNumber(value);
+            });
             if(status && !gameState.isBattling){
                 if(isFailed) status.innerHTML=`<i class="fa-solid fa-flag mr-1"></i>제 ${floor}층 재도전`;
                 else if(floor%10===0) status.innerHTML=`<i class="fa-solid fa-crown mr-1 text-pink-400"></i>제 ${floor}층 스페셜 보스 결전!`;
@@ -1689,6 +1694,7 @@
             if (!gameState.isBattling) updateBattleStageUI(false);
             syncHeaderProfileV196();
             updateButtonsState();
+            updateResourceHudV200();
         }
         function updateUI() {
             try { updateUIUnsafe(); }
@@ -2085,23 +2091,46 @@
             });
         }
 
-        let kmLastProductionTickV193 = Date.now();
+        // v2.0.0: 자원 생산과 HUD는 전투 렌더링과 독립적으로 실행
+        let kmLastProductionTickV200 = Date.now();
+        let kmProductionCarryV200 = 0;
+        let kmProductionStepsV200 = 0;
+        function updateResourceHudV200() {
+            const keys=['gold','food','wood','ore','herb','magicDust','gem','pureGold','emerald','ruby','sapphire'];
+            for (const key of keys) {
+                const el=document.getElementById('res-'+key);
+                if (!el) continue;
+                const amount=Number(gameState.resources[key])||0;
+                // K 단위도 최소 1개 자원 변화가 눈에 보이도록 3자리 표시
+                el.textContent=amount>=1000&&amount<1000000
+                    ? (amount/1000).toFixed(3).replace(/0+$/,'').replace(/\\.$/,'')+'K'
+                    : formatHudNumber(amount);
+            }
+        }
         function gameLoop() {
-            const tickNowV193 = Date.now();
-            let elapsedV193 = (tickNowV193 - kmLastProductionTickV193) / 1000;
-            kmLastProductionTickV193 = tickNowV193;
-            if (!Number.isFinite(elapsedV193) || elapsedV193 <= 0) elapsedV193 = 0.1;
-            elapsedV193 = Math.min(elapsedV193, 1.0);
-
-            Object.keys(BUILDINGS).forEach(key => {
-                const b = BUILDINGS[key];
-                gameState.resources[b.prodType] += (b.prodRate * b.level) * elapsedV193;
-            });
-            Object.keys(GATHERING_NODES).forEach(key => {
-                const node = GATHERING_NODES[key];
-                gameState.resources[node.resKey] += (node.prodRate * node.level) * elapsedV193;
-            });
-
+            const nowTick=Date.now();
+            let elapsed=(nowTick-kmLastProductionTickV200)/1000;
+            kmLastProductionTickV200=nowTick;
+            if (!Number.isFinite(elapsed)||elapsed<0) elapsed=0;
+            kmProductionCarryV200+=Math.min(elapsed,5);
+            const steps=Math.floor(kmProductionCarryV200/0.5);
+            if (steps>0) {
+                kmProductionCarryV200-=steps*0.5;
+                // '초당 +N'은 초당 N개: 0.5초마다 N/2개씩 생산
+                for(const b of Object.values(BUILDINGS)){
+                    const k=b.prodType;
+                    gameState.resources[k]=(Number(gameState.resources[k])||0)+
+                        (Number(b.prodRate)||0)*(Number(b.level)||1)*steps*0.5;
+                }
+                for(const node of Object.values(GATHERING_NODES)){
+                    const k=node.resKey;
+                    gameState.resources[k]=(Number(gameState.resources[k])||0)+
+                        (Number(node.prodRate)||0)*(Number(node.level)||1)*steps*0.5;
+                }
+                kmProductionStepsV200+=steps;
+                updateResourceHudV200();
+            }
+            // 생산과 별도로 타이머 갱신
             const now = Date.now();
             Object.keys(gameState.upgradesInProgress).forEach(key => {
                 const item = gameState.upgradesInProgress[key];
@@ -2122,7 +2151,7 @@
 
                 if (timeLeftMs <= 0) finishUpgradeV16(key);
             });
-            updateUI();
+            // 전투 화면 전체 재렌더링은 100ms마다 하지 않음
         }
 
         function showLoginPanel(panelId) {
@@ -2170,7 +2199,9 @@
 
             if (window.initGlobalChat) window.initGlobalChat();
             if (!isMuted) startBgmLoop();
-            setInterval(gameLoop, 100); setTimeout(resumeUpgradeTimersV16, 250);
+            updateResourceHudV200();
+            if (!window.kmEngineIntervalV200) window.kmEngineIntervalV200=setInterval(gameLoop,100);
+            setTimeout(resumeUpgradeTimersV16,250);
         }
 
         // iOS/Safari requires audio to be unlocked by a direct user gesture.
@@ -2267,7 +2298,7 @@
         }, 5000);
     </script>
 <script>
-        // v1.9.7: Safari/iOS pointer feedback, including onclick div controls.
+        // v2.0.0: Safari/iOS pointer feedback, including onclick div controls.
         document.addEventListener('pointerdown', function(e){
             const el=e.target.closest('button,.btn-3d,[role="button"]');
             if(!el || el.disabled || el.getAttribute('aria-disabled')==='true') return;
