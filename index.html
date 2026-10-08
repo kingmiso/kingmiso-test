@@ -836,7 +836,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.3";
+        const GAME_VERSION = "v2.0.4";
         
         const gameState = {
             level: 1,
@@ -2161,31 +2161,92 @@
             if(p) p.style.display = panelId === 'loading' ? 'flex' : 'block';
         }
 
+        // v2.0.4: per-account local recovery, never overwrite an unknown cloud save.
+        let kmSaveEnabledV204=false;
+        let kmSaveBusyV204=false;
+        let kmSaveDirtyV204=false;
+        let kmSaveStatusV204='대기';
+        function kmLocalKeyV204(id){ return 'kingmiso-v204-save:'+encodeURIComponent(id); }
+        function kmSnapshotV204(){
+            syncProgressionV15();
+            return JSON.parse(JSON.stringify(gameState));
+        }
+        function kmLocalReadV204(id){
+            try { const raw=localStorage.getItem(kmLocalKeyV204(id)); if(!raw)return null;
+                const data=JSON.parse(raw);return data&&data.state&&typeof data.state.resources==='object'?data:null;
+            } catch(e){console.warn('Local save read failed',e);return null;}
+        }
+        function kmLocalWriteV204(id){
+            try {localStorage.setItem(kmLocalKeyV204(id),JSON.stringify({savedAt:Date.now(),state:kmSnapshotV204()}));return true;}
+            catch(e){console.warn('Local save write failed',e);return false;}
+        }
+        function kmSetSaveStatusV204(message){
+            kmSaveStatusV204=message;
+            let el=document.getElementById('km-save-status-v204');
+            if(!el){el=document.createElement('div');el.id='km-save-status-v204';el.style.cssText='position:fixed;right:8px;bottom:139px;z-index:9999;background:#172554;color:white;border:1px solid #818cf8;border-radius:8px;padding:4px 7px;font:10px sans-serif;pointer-events:none';document.body.appendChild(el);}
+            el.textContent='v2.0.4 · 저장 '+message;
+        }
+        function kmRestoreV204(data){
+            if(!data||typeof data!=='object'||!data.resources||typeof data.resources!=='object')throw Error('잘못된 저장 데이터');
+            Object.assign(gameState,data);
+            gameState.resources=Object.assign({gold:0,food:0,wood:0,ore:0,herb:0,magicDust:0,gem:0,pureGold:0,emerald:0,ruby:0,sapphire:0},data.resources);
+            if(!gameState.upgradesInProgress||typeof gameState.upgradesInProgress!=='object')gameState.upgradesInProgress={};
+            applyProgressionV15();
+        }
         async function attemptLogin() {
-            const id = document.getElementById('login-id').value.trim();
-            const pw = document.getElementById('login-pw').value.trim();
-            if(!id || !pw) { 
-                showNotification('아이디와 비밀번호를 입력하세요.'); 
-                return; 
-            }
+            const id=document.getElementById('login-id').value.trim();
+            const pw=document.getElementById('login-pw').value.trim();
+            if(!id||!pw){showNotification('아이디와 비밀번호를 입력하세요.');return;}
             showLoginPanel('loading');
-            
-            if (window.cloudVerifyCredentials && window.cloudCheckIdExists) {
-                const exists = await window.cloudCheckIdExists(id);
-                if (exists) {
-                    await window.cloudVerifyCredentials(id, pw);
-                    const loadedData = await window.cloudLoadGame();
-                    if (loadedData) { Object.assign(gameState, loadedData); applyProgressionV15(); }
-                } else {
-                    await window.cloudCreateAccount(id, pw);
+            try {
+                const local=kmLocalReadV204(id);
+                const cloudReady=window.kmCloudReadyV204 ? await window.kmCloudReadyV204() : false;
+                let cloudData=null,cloudAccount=false;
+                if(cloudReady){
+                    cloudAccount=await window.cloudCheckIdExists(id);
+                    if(cloudAccount){
+                        await window.cloudVerifyCredentials(id,pw);
+                        cloudData=await window.cloudLoadGame();
+                    } else {
+                        if(local)throw Error('클라우드 계정이 확인되지 않아 기존 로컬 저장을 보호합니다.');
+                        const created=await window.cloudCreateAccount(id,pw);
+                        if(!created)throw Error('계정 생성 실패');
+                    }
+                } else if(!local){
+                    const proceed=confirm('서버에 연결되지 않았고 이 기기에 백업이 없습니다. 새 로컬 게임으로 시작할까요? 기존 다른 기기의 저장 데이터는 불러오지 않습니다.');
+                    if(!proceed)throw Error('로그인이 취소되었습니다.');
                 }
-                document.getElementById('login-overlay').style.display = 'none';
+                if(cloudData){
+                    // Cloud is authoritative for existing accounts; retain local snapshot as recovery fallback.
+                    kmRestoreV204(cloudData);
+                    kmSetSaveStatusV204('클라우드 불러오기 완료');
+                } else if(local){
+                    kmRestoreV204(local.state);
+                    kmSetSaveStatusV204('기기 백업 복원');
+                } else {
+                    kmSetSaveStatusV204('새 계정');
+                }
+                window.currentCustomId=id;
+                kmSaveEnabledV204=true;
+                kmLocalWriteV204(id);
+                document.getElementById('login-overlay').style.display='none';
                 startGameEngine();
-            } else {
-                document.getElementById('login-overlay').style.display = 'none';
-                startGameEngine();
+                if(!cloudReady)kmSetSaveStatusV204('기기에만 저장 (서버 미연결)');
+            }catch(e){
+                console.error('KingMiso login/load error',e);
+                kmSaveEnabledV204=false;
+                showLoginPanel('login');
+                alert('저장 데이터 보호: '+(e.message||'불러오기 실패'));
             }
         }
+        function kmSaveLocalV204(){
+            if(!kmSaveEnabledV204||!window.currentCustomId)return;
+            if(kmLocalWriteV204(window.currentCustomId))kmSetSaveStatusV204('기기 백업 완료');
+            else kmSetSaveStatusV204('기기 저장 실패');
+        }
+        setInterval(kmSaveLocalV204,5000);
+        document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')kmSaveLocalV204();});
+        window.addEventListener('pagehide',kmSaveLocalV204);
 
         // v2.0.3: start production BEFORE optional UI initialization.
         function startGameEngine() {
@@ -2214,7 +2275,7 @@
         function kmSetEngineStatus(message){
             let el=document.getElementById('km-engine-status');
             if(!el){el=document.createElement('div');el.id='km-engine-status';el.style.cssText='position:fixed;bottom:110px;right:8px;z-index:9999;background:#082f49;color:#fff;font:11px sans-serif;padding:5px 8px;border:1px solid #38bdf8;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.3 · '+message;
+            el.textContent='v2.0.4 · '+message;
         }
         let kmEngineTickCount=0;
         setInterval(()=>{
@@ -2265,16 +2326,17 @@
                 return true;
             } catch(e) { return false; }
         }
-        initFirebaseSystem();
+        const kmFirebaseInitPromiseV204=initFirebaseSystem();
+        window.kmCloudReadyV204=async()=>Boolean(await kmFirebaseInitPromiseV204);
 
         window.cloudVerifyCredentials = async function(id, pw) {
             window.currentCustomId = id;
             return true;
         };
         window.cloudCheckIdExists = async function(id) {
-            if (!db) return false;
+            if (!db) throw Error('클라우드 연결 실패');
             const ref = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
-            try { const snap = await getDoc(ref); return snap.exists(); } catch(e) { return false; }
+            const snap=await getDoc(ref);return snap.exists();
         };
         window.cloudCreateAccount = async function(id, pw) {
             if (!db) return false;
@@ -2286,15 +2348,26 @@
             } catch(e) { return false; }
         };
         window.cloudLoadGame = async function() {
-            if (!db || !window.currentCustomId) return null;
+            if (!db || !window.currentCustomId) throw Error('클라우드 저장 데이터 연결 실패');
             const ref = doc(db, 'artifacts', appId, 'public', 'data', 'saves', window.currentCustomId);
-            try { const snap = await getDoc(ref); return snap.exists() ? snap.data() : null; } catch(e) { return null; }
+            const snap=await getDoc(ref);return snap.exists()?snap.data():null;
         };
         window.cloudSaveGame = async function() {
-            syncProgressionV15();
-            if (!db || !window.currentCustomId) return;
-            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'saves', window.currentCustomId);
-            try { await setDoc(ref, gameState); } catch(e) {}
+            if(!kmSaveEnabledV204||!window.currentCustomId)return;
+            kmSaveLocalV204();
+            if(!db)return;
+            if(kmSaveBusyV204){kmSaveDirtyV204=true;return;}
+            kmSaveBusyV204=true;
+            try {
+                do {
+                    kmSaveDirtyV204=false;
+                    const ref=doc(db,'artifacts',appId,'public','data','saves',window.currentCustomId);
+                    const snapshot=kmSnapshotV204();
+                    await setDoc(ref,snapshot);
+                    kmSetSaveStatusV204('클라우드 저장 완료');
+                } while(kmSaveDirtyV204);
+            }catch(e){console.error('Cloud save failed',e);kmSetSaveStatusV204('기기 저장만 완료 · 서버 오류');}
+            finally{kmSaveBusyV204=false;}
         };
         window.cloudSendMessage = async function(msgObj) {
             if (!db) return;
