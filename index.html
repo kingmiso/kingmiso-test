@@ -879,7 +879,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.16";
+        const GAME_VERSION = "v2.0.17";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -974,7 +974,7 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
-        // v2.0.16 balance configuration: formulas remain unchanged by default.
+        // v2.0.17 balance configuration: formulas remain unchanged by default.
         // All values below are tuning knobs, not saved player progress.
         const KM_BALANCE_V216 = Object.freeze({
             production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
@@ -993,6 +993,39 @@
                 upgradeMode: 'instant', // No equipment timer in current game.
                 timeSeconds: 0
             })
+        });
+        // v2.0.17: building and gathering balance is configured separately.
+        // Defaults intentionally reproduce the pre-existing costs, timers and production.
+        const KM_ECONOMY_V217 = Object.freeze({
+            building: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
+            gathering: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
+            production: Object.freeze({buildingMultiplier:1,gatheringMultiplier:1,catchupLimitSeconds:43200})
+        });
+        function kmGrowthCostV217(baseCost,level,kind) {
+            const cfg=KM_ECONOMY_V217[kind];
+            return Math.max(1,Math.round(baseCost*Math.pow(cfg.costGrowth,Math.max(0,Number(level)-1))));
+        }
+        function kmGrowthTimeV217(level,kind) {
+            const cfg=KM_ECONOMY_V217[kind];
+            return Math.max(1,Math.round(cfg.timeBaseSeconds*Math.pow(cfg.timeGrowth,Math.max(0,Number(level)-1))));
+        }
+        function kmProductionRatesV217() {
+            const rates={};
+            for(const b of Object.values(BUILDINGS)) if(b.prodType)
+                rates[b.prodType]=(rates[b.prodType]||0)+(Number(b.prodRate)||0)*(Number(b.level)||1)*KM_ECONOMY_V217.production.buildingMultiplier;
+            for(const n of Object.values(GATHERING_NODES)) if(n.resKey)
+                rates[n.resKey]=(rates[n.resKey]||0)+(Number(n.prodRate)||0)*(Number(n.level)||1)*KM_ECONOMY_V217.production.gatheringMultiplier;
+            return rates;
+        }
+        window.KingMisoEconomyBridge=Object.freeze({
+            version:'1.0',balance:KM_ECONOMY_V217,
+            productionPerSecond:kmProductionRatesV217,
+            building:(key)=>{const b=BUILDINGS[key];return b?{key,level:b.level,resource:b.costType,
+                cost:kmGrowthCostV217(b.baseCost,b.level,'building'),
+                timeSeconds:kmGrowthTimeV217(b.level,'building')}:null;},
+            gathering:(key)=>{const n=GATHERING_NODES[key];return n?{key,level:n.level,resource:n.costType,
+                cost:kmGrowthCostV217(n.baseCost,n.level,'gathering'),
+                timeSeconds:kmGrowthTimeV217(n.level,'gathering')}:null;}
         });
         function getUpgradeTime(baseTime, level, subIdx = 0) {
             return Math.max(1, Math.round(baseTime * Math.pow(1.2, Math.max(0, Number(level)-1))));
@@ -1049,7 +1082,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.16: show finer increments so live production is visible.
+            // v2.0.17: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1140,8 +1173,8 @@
             
             Object.keys(BUILDINGS).forEach(key => {
                 const b = BUILDINGS[key];
-                const cost = getUpgradeCost(b.baseCost, b.level);
-                const timeSec = getUpgradeTime(3, b.level);
+                const cost = kmGrowthCostV217(b.baseCost,b.level,'building');
+                const timeSec = kmGrowthTimeV217(b.level,'building');
                 let costIcon = 'fa-coins text-yellow-400';
                 if (b.costType === 'food') costIcon = 'fa-wheat-awn text-red-400';
                 else if (b.costType === 'wood') costIcon = 'fa-tree text-amber-600';
@@ -1180,9 +1213,9 @@
             if (gameState.upgradesInProgress[taskKey]) return;
             const sourceBtn=document.getElementById(`btn-bld-${key}`); if(sourceBtn) sourceBtn.disabled=true;
             const b = BUILDINGS[key];
-            const cost = getUpgradeCost(b.baseCost, b.level);
+            const cost = kmGrowthCostV217(b.baseCost,b.level,'building');
             if (spendResource(b.costType, cost)) {
-                const timeSec = getUpgradeTime(3, b.level);
+                const timeSec = kmGrowthTimeV217(b.level,'building');
                 gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderBuildings();
@@ -1200,8 +1233,8 @@
 
             Object.keys(GATHERING_NODES).forEach(key => {
                 const node = GATHERING_NODES[key];
-                const cost = getUpgradeCost(node.baseCost, node.level);
-                const timeSec = getUpgradeTime(3, node.level);
+                const cost = kmGrowthCostV217(node.baseCost,node.level,'gathering');
+                const timeSec = kmGrowthTimeV217(node.level,'gathering');
                 let costIconName = 'fa-tree text-amber-600';
                 if (node.costType === 'ore') costIconName = 'fa-cubes text-slate-400';
                 else if (node.costType === 'herb') costIconName = 'fa-seedling text-emerald-400';
@@ -1240,9 +1273,9 @@
             if (gameState.upgradesInProgress[taskKey]) return;
             const sourceBtn=document.getElementById(`btn-gather-${key}`); if(sourceBtn) sourceBtn.disabled=true;
             const node = GATHERING_NODES[key];
-            const cost = getUpgradeCost(node.baseCost, node.level);
+            const cost = kmGrowthCostV217(node.baseCost,node.level,'gathering');
             if (spendResource(node.costType, cost)) {
-                const timeSec = getUpgradeTime(3, node.level);
+                const timeSec = kmGrowthTimeV217(node.level,'gathering');
                 gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderGathering();
@@ -2209,7 +2242,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.16 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.17 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -2250,7 +2283,7 @@
         function productionTickV201() {
             const now=Date.now();
             // Catch up when Safari suspends timers in the background, capped at 12h.
-            const seconds=Math.max(0,Math.min((now-kmLastResourceTickV202)/1000,43200));
+            const seconds=Math.max(0,Math.min((now-kmLastResourceTickV202)/1000,KM_ECONOMY_V217.production.catchupLimitSeconds));
             kmLastResourceTickV202=now;
             try {
                 if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
@@ -2260,14 +2293,14 @@
                     const resource=b.prodType;
                     if (!resource) return;
                     gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +(Number(b.prodRate)||0)*(Number(b.level)||1)*seconds;
+                        +(Number(b.prodRate)||0)*(Number(b.level)||1)*KM_ECONOMY_V217.production.buildingMultiplier*seconds;
                 });
                 Object.keys(GATHERING_NODES).forEach(key => {
                     const node=GATHERING_NODES[key];
                     const resource=node.resKey;
                     if (!resource) return;
                     gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +(Number(node.prodRate)||0)*(Number(node.level)||1)*seconds;
+                        +(Number(node.prodRate)||0)*(Number(node.level)||1)*KM_ECONOMY_V217.production.gatheringMultiplier*seconds;
                 });
                 // 매 틱 실제 자원과 헤더를 동기화. 다른 UI의 오류와 독립적으로 실행.
                 updateResourceHudV200();
@@ -2617,7 +2650,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.16: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.17: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
