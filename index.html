@@ -377,6 +377,16 @@
         /* v2.0.1: compact resource HUD */
         .top-bar .resource-item { font-size: 90% !important; }
         .top-bar .resource-item span { font-size: .9em !important; }
+
+/* v2.0.7 unified large upgrade buttons: readable resource costs on mobile */
+.km-upgrade-btn{min-width:132px;min-height:58px;padding:9px 12px!important;font-size:12px!important;line-height:1.35;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:12px;flex-shrink:0;white-space:normal;text-align:center}
+.km-upgrade-btn>span:first-child{font-size:13px;font-weight:900}
+.km-upgrade-btn>span:last-child{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px!important;font-size:11px;line-height:1.45;max-width:150px}
+.km-upgrade-btn>span:last-child>span{display:inline-flex;align-items:center;gap:3px!important;white-space:nowrap}
+.km-hero-row>div:first-child,.km-equip-row>div:first-child{min-width:0;flex:1}
+.km-hero-row>div:last-child{flex-shrink:0;align-items:center}
+.km-equip-row .km-upgrade-btn{min-width:142px}
+@media(max-width:390px){.km-upgrade-btn{min-width:118px;padding:8px!important}.km-equip-row .km-upgrade-btn{min-width:126px}.km-hero-row>div:last-child{gap:4px}.km-hero-row>div:last-child>button:first-child{padding:8px 7px;font-size:10px}}
 </style>
 
 <style id="v141-fixes">
@@ -836,7 +846,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.6";
+        const GAME_VERSION = "v2.0.7";
         
         const gameState = {
             level: 1,
@@ -1264,7 +1274,7 @@
                     } else {
                         dropdownHtml += `
                             <div class="bg-slate-900 border border-slate-700/80 rounded-xl p-2.5 mb-2 shadow-inner">
-                                <div class="flex justify-between items-center gap-2">
+                                <div class="km-hero-row flex justify-between items-center gap-2">
                                     <div class="flex items-center gap-2">
                                         <div class="text-lg w-7 text-center bg-slate-950 p-1.5 rounded-lg border border-slate-800"><i class="fa-solid ${h.icon}"></i></div>
                                         <div>
@@ -1279,7 +1289,7 @@
                                     </div>
                                     <div class="flex gap-1">
                                         <button class="btn-3d btn-purple text-[10px] px-2 py-1" onclick="event.stopPropagation(); openEquipmentModal(${globalIdx}); playSfx('click');">장비</button>
-                                        <button class="btn-3d btn-orange flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5 ${isBusy ? 'opacity-60 cursor-not-allowed' : ''}" id="btn-hero-${globalIdx}" onclick="event.stopPropagation(); startHeroUpgrade(${globalIdx}, this)" ${isBusy ? 'disabled aria-disabled="true"' : ''}>
+                                        <button class="btn-3d btn-orange flex flex-col items-center justify-center km-upgrade-btn km-hero-upgrade-btn ${isBusy ? 'opacity-60 cursor-not-allowed' : ''}" id="btn-hero-${globalIdx}" onclick="event.stopPropagation(); startHeroUpgrade(${globalIdx}, this)" ${isBusy ? 'disabled aria-disabled="true"' : ''}>
                                             <span>${isBusy ? '훈련중' : '강화'}</span>
                                             <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${busyRemain}초` : heroCostsHtmlV206(heroCostsV206)}</span>
                                         </button>
@@ -1370,7 +1380,7 @@
 
                 container.innerHTML += `
                     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 mb-2">
-                        <div class="flex justify-between items-center">
+                        <div class="km-equip-row flex justify-between items-center gap-2">
                             <div class="flex items-center gap-2.5">
                                 <div class="text-lg w-7 text-center bg-slate-950 p-1.5 rounded-lg border border-slate-800"><i class="fa-solid ${eq.icon}"></i></div>
                                 <div>
@@ -1378,7 +1388,7 @@
                                     <div class="text-[10px] text-slate-400 mt-0.5">${eq.statBonus} · 같은 군단 전체 공유</div>
                                 </div>
                             </div>
-                            <button class="btn-3d btn-purple flex flex-col items-center justify-center min-w-[75px] text-[10px] py-1 px-1.5"
+                            <button class="btn-3d btn-purple flex flex-col items-center justify-center km-upgrade-btn km-equip-upgrade-btn"
                               onclick="instantEquipUpgrade('${h.type}','${equipKey}',this)" ${canAfford ? '' : 'disabled'}>
                                 <span>강화</span>
                                 <span class="flex items-center gap-0.5 mt-0.5"><i class="fa-solid ${rareIcon}"></i>${formatNumber(cost)} <span class="text-[9px]">${rareNameV206}</span></span>
@@ -1514,9 +1524,10 @@
             // v2.0.6: gentle progression, no exponential runaway.
             const f=Math.max(1,Math.floor(Number(floor)||1));
             const step=f-1;
-            const scale=1+0.065*step+0.003*Math.floor(step/10)*10;
-            return {gold:Math.round(30*scale),food:Math.round(30*scale),
-                    herb:Math.round(12*scale),magicDust:Math.round(12*scale)};
+            const scale=1+0.085*step+0.004*Math.floor(step/10)*10;
+            // v2.0.7: roughly 4x v2.0.6 base cost, with gradual linear growth.
+            return {gold:Math.round(120*scale),food:Math.round(120*scale),
+                    herb:Math.round(48*scale),magicDust:Math.round(48*scale)};
         }
 
         function syncBattleFloorDisplayV192(isFailed=false){
