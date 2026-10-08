@@ -879,7 +879,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.15";
+        const GAME_VERSION = "v2.0.16";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -974,12 +974,32 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
+        // v2.0.16 balance configuration: formulas remain unchanged by default.
+        // All values below are tuning knobs, not saved player progress.
+        const KM_BALANCE_V216 = Object.freeze({
+            production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
+            hero: Object.freeze({
+                costTierMultiplier: 1.8, costLevelMultiplier: 1.2,
+                costPrimaryShare: 0.65, costSecondaryShare: 0.35,
+                timeLevelMultiplier: 1.3,
+                resourcesByArmy: Object.freeze({
+                    infantry: Object.freeze(['food','ore','wood']),
+                    cavalry: Object.freeze(['food','gold','herb']),
+                    archer: Object.freeze(['wood','herb','magicDust'])
+                })
+            }),
+            equipment: Object.freeze({
+                costLevelMultiplier: 1.5,
+                upgradeMode: 'instant', // No equipment timer in current game.
+                timeSeconds: 0
+            })
+        });
         function getUpgradeTime(baseTime, level, subIdx = 0) {
             return Math.max(1, Math.round(baseTime * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
 
         function getHeroUpgradeCostV194(hero, subIdx=0) {
-            return Math.max(1, Math.floor(hero.baseCost * Math.pow(1.8, subIdx) * Math.pow(1.2, Math.max(0, hero.level-1))));
+            return Math.max(1, Math.floor(hero.baseCost * Math.pow(KM_BALANCE_V216.hero.costTierMultiplier, subIdx) * Math.pow(KM_BALANCE_V216.hero.costLevelMultiplier, Math.max(0, hero.level-1))));
         }
         const HERO_RESOURCE_ICONS_V206 = {
             gold:'fa-coins text-yellow-400',food:'fa-wheat-awn text-red-400',
@@ -988,14 +1008,12 @@
         };
         function getHeroUpgradeCostsV206(hero,subIdx=0){
             const total=getHeroUpgradeCostV194(hero,subIdx);
-            const resourceGroups={
-                infantry:['food','ore','wood'],cavalry:['food','gold','herb'],archer:['wood','herb','magicDust']
-            };
+            const resourceGroups=KM_BALANCE_V216.hero.resourcesByArmy;
             const types=resourceGroups[hero.type]||['gold','food','wood'];
             const rotation=(Math.max(0,Number(hero.level)-1)+subIdx)%types.length;
             const primary=types[rotation],secondary=types[(rotation+1)%types.length];
-            const first=Math.max(1,Math.round(total*0.65));
-            const second=Math.max(1,Math.round(total*0.35));
+            const first=Math.max(1,Math.round(total*KM_BALANCE_V216.hero.costPrimaryShare));
+            const second=Math.max(1,Math.round(total*KM_BALANCE_V216.hero.costSecondaryShare));
             return {[primary]:first,[secondary]:second};
         }
         function heroCostsHtmlV206(costs){
@@ -1003,7 +1021,7 @@
         }
         function canPayHeroCostsV206(costs){return Object.entries(costs).every(([k,n])=>(Number(gameState.resources[k])||0)>=n);}
         function getHeroUpgradeTimeV194(hero) {
-            return Math.max(1, Math.round(hero.baseTime * Math.pow(1.3, Math.max(0, hero.level-1))));
+            return Math.max(1, Math.round(hero.baseTime * Math.pow(KM_BALANCE_V216.hero.timeLevelMultiplier, Math.max(0, hero.level-1))));
         }
         function canUpgradeHeroTierV194(index) {
             const hero=HEROES[index];
@@ -1019,7 +1037,7 @@
         }
         function getEquipCostV194(eq,currentLevel) {
             // v2.0.1: 군단 장비 강화 비용은 단계마다 50% 증가, 소수점 반올림
-            return Math.max(1, Math.round(eq.baseCost * Math.pow(1.5, Math.max(0, Number(currentLevel)||0))));
+            return Math.max(1, Math.round(eq.baseCost * Math.pow(KM_BALANCE_V216.equipment.costLevelMultiplier, Math.max(0, Number(currentLevel)||0))));
         }
 
         function addResource(type, amount) { gameState.resources[type] = (gameState.resources[type] || 0) + amount; return true; }
@@ -1031,7 +1049,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.15: show finer increments so live production is visible.
+            // v2.0.16: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1274,6 +1292,32 @@
                 .map(r=>`${r.hero.name} Lv.${r.requiredLevel}`).join(' · ');
         }
 
+        // Hero/equipment read-only view models. Redesigns can use these
+        // without accessing the mutable save state or recalculating costs.
+        function kmHeroViewModelV216(index) {
+            const h=HEROES[index]; if(!h) return null;
+            const tier=HEROES.filter(x=>x.type===h.type).findIndex(x=>x.id===h.id);
+            const costs=getHeroUpgradeCostsV206(h,tier);
+            const job=gameState.upgradesInProgress['hero:'+index];
+            return {id:h.id,index,type:h.type,name:h.name,icon:h.icon,
+                level:h.level,stats:{...getHeroStats(h)},costs:{...costs},
+                timeSeconds:getHeroUpgradeTimeV194(h),
+                busy:!!job,remainingSeconds:job?Math.max(0,Math.ceil((job.endTime-Date.now())/1000)):0};
+        }
+        function kmEquipmentViewModelV216(armyType,equipKey) {
+            const eq=EQUIP_TYPES[equipKey], army=ARMY_EQUIPMENT[armyType];
+            if(!eq||!army)return null;
+            const level=Number(army[equipKey]||0), cost=getEquipCostV194(eq,level);
+            return {armyType,key:equipKey,name:eq.name,icon:eq.icon,level,
+                resource:eq.costType,cost,canAfford:(gameState.resources[eq.costType]||0)>=cost,
+                timeSeconds:KM_BALANCE_V216.equipment.timeSeconds};
+        }
+        window.KingMisoGrowthBridge=Object.freeze({
+            version:'1.0',balance:KM_BALANCE_V216,
+            hero:kmHeroViewModelV216,equipment:kmEquipmentViewModelV216,
+            heroes:()=>HEROES.map((_,i)=>kmHeroViewModelV216(i)),
+            equipmentForArmy:(type)=>Object.keys(EQUIP_TYPES).map(key=>kmEquipmentViewModelV216(type,key))
+        });
         function renderHeroes() {
             const container = document.getElementById('heroes-container');
             container.innerHTML = '';
@@ -2165,7 +2209,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.15 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.16 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -2573,7 +2617,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.15: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.16: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
