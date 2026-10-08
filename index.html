@@ -387,6 +387,20 @@
 .km-hero-row>div:last-child{flex-shrink:0;align-items:center}
 .km-equip-row .km-upgrade-btn{min-width:142px}
 @media(max-width:390px){.km-upgrade-btn{min-width:118px;padding:8px!important}.km-equip-row .km-upgrade-btn{min-width:126px}.km-hero-row>div:last-child{gap:4px}.km-hero-row>div:last-child>button:first-child{padding:8px 7px;font-size:10px}}
+
+/* v2.0.8: consistent hero/equipment geometry for narrow iPhone screens */
+.km-hero-row,.km-equip-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(142px,42%);align-items:center;column-gap:10px;min-height:92px}
+.km-hero-row>div:first-child,.km-equip-row>div:first-child{display:flex;align-items:center;gap:9px;min-width:0;width:100%}
+.km-hero-row>div:first-child>div:first-child,.km-equip-row>div:first-child>div:first-child{width:42px!important;height:44px!important;min-width:42px!important;flex:0 0 42px;display:flex;align-items:center;justify-content:center;padding:0!important;font-size:19px!important;line-height:1;border-radius:11px}
+.km-hero-row>div:first-child>div:nth-child(2),.km-equip-row>div:first-child>div:nth-child(2){min-width:0;flex:1}
+.km-hero-row>div:last-child{display:grid!important;grid-template-columns:46px minmax(0,1fr);gap:7px!important;min-width:0;width:100%;align-items:stretch!important}
+.km-hero-row>div:last-child>button:first-child{width:46px;min-width:46px;height:70px;min-height:70px;padding:0!important;display:flex;align-items:center;justify-content:center;font-size:11px!important;border-radius:12px}
+.km-upgrade-btn,.km-equip-row .km-upgrade-btn{width:100%;min-width:0!important;min-height:70px;height:auto;padding:9px 6px!important;box-sizing:border-box;border-radius:13px;gap:4px}
+.km-upgrade-btn>span:first-child{font-size:14px!important;line-height:1.2}
+.km-upgrade-btn>span:last-child{width:100%;max-width:none;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px!important;line-height:1.35;font-size:11px}
+.km-upgrade-btn>span:last-child>span{white-space:nowrap}
+.km-equip-row>.km-upgrade-btn{justify-self:stretch}
+@media(max-width:390px){.km-hero-row,.km-equip-row{grid-template-columns:minmax(0,1fr) minmax(132px,44%);column-gap:6px}.km-hero-row>div:last-child{grid-template-columns:40px minmax(0,1fr);gap:5px!important}.km-hero-row>div:last-child>button:first-child{width:40px;min-width:40px}.km-hero-row>div:first-child>div:first-child,.km-equip-row>div:first-child>div:first-child{width:38px!important;min-width:38px!important;flex-basis:38px;height:42px!important}.km-upgrade-btn{padding:8px 4px!important}}
 </style>
 
 <style id="v141-fixes">
@@ -846,7 +860,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.7";
+        const GAME_VERSION = "v2.0.8";
         
         const gameState = {
             level: 1,
