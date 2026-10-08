@@ -874,7 +874,8 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.10";
+        const GAME_VERSION = "v2.0.11";
+        window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
             level: 1,
@@ -2163,9 +2164,10 @@
                 const el=document.getElementById('res-'+key);
                 if (!el) continue;
                 const n=Number(gameState.resources?.[key])||0;
-                el.textContent=n<1000000
-                    ? Math.floor(n).toLocaleString('en-US')
-                    : formatHudNumber(n);
+                // Display-only compact formatting; the saved resource value remains exact.
+                el.textContent=formatHudNumber(n);
+                el.title=Math.floor(n).toLocaleString('en-US');
+                el.setAttribute('aria-label',Math.floor(n).toLocaleString('en-US'));
             }
         }
         function productionTickV201() {
@@ -2250,7 +2252,7 @@
             kmSaveStatusV204=message;
             let el=document.getElementById('km-save-status-v204');
             if(!el){el=document.createElement('div');el.id='km-save-status-v204';el.style.cssText='position:fixed;right:8px;bottom:139px;z-index:9999;background:#172554;color:white;border:1px solid #818cf8;border-radius:8px;padding:4px 7px;font:10px sans-serif;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.9 · 저장 '+message;
+            el.textContent=GAME_VERSION+' · 저장 '+message;
         }
         // v2.0.5 offline progress. Only production resources; premium currency is excluded.
         const KM_OFFLINE_CAP_V205=12*60*60;
@@ -2387,7 +2389,7 @@
         function kmSetEngineStatus(message){
             let el=document.getElementById('km-engine-status');
             if(!el){el=document.createElement('div');el.id='km-engine-status';el.style.cssText='position:fixed;bottom:110px;right:8px;z-index:9999;background:#082f49;color:#fff;font:11px sans-serif;padding:5px 8px;border:1px solid #38bdf8;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.9 · '+message;
+            el.textContent=GAME_VERSION+' · '+message;
         }
         let kmEngineTickCount=0;
         setInterval(()=>{
@@ -2533,7 +2535,7 @@
     const functions=['startGameEngine','productionTickV201','updateUI','renderBuildings',
       'renderGathering','renderHeroes','renderShop','kmSnapshotV204','kmRestoreV204'];
     const missingFunctions=functions.filter(name=>typeof window[name]!=='function');
-    const result={version:'v2.0.9',ok:missing.length===0&&missingFunctions.length===0,
+    const result={version:window.KM_APP_VERSION||'unknown',ok:missing.length===0&&missingFunctions.length===0,
       missingIds:missing,missingFunctions:missingFunctions};
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
@@ -2544,7 +2546,7 @@
         alert('게임 로그인 후 백업할 수 있습니다.');return;
       }
       const payload={format:'KingMiso-save-backup',schemaVersion:1,
-        gameVersion:'v2.0.9',exportedAt:new Date().toISOString(),
+        gameVersion:window.KM_APP_VERSION||'unknown',exportedAt:new Date().toISOString(),
         accountId:window.currentCustomId,state:kmSnapshotV204()};
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
       const url=URL.createObjectURL(blob);
@@ -2572,6 +2574,27 @@
     var observe=function(){var h=document.querySelector('.top-bar');if(h)new ResizeObserver(alignHUD).observe(h);};
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe);else observe();
   }
+})();
+</script>
+<script id="km-v211-healthcheck">
+(function(){
+  'use strict';
+  window.kmHealthCheckV211=function(){
+    const contract=typeof window.kmCheckUIContractV209==='function'?window.kmCheckUIContractV209():null;
+    const resources=['gold','food','wood','ore','herb','magicDust','gem','pureGold','emerald','ruby','sapphire'];
+    const missing=resources.filter(k=>!document.getElementById('res-'+k));
+    const formatted=resources.every(k=>{
+      const el=document.getElementById('res-'+k);
+      return !el || typeof el.textContent==='string';
+    });
+    const result={version:window.KM_APP_VERSION||'unknown',uiContractOK:!!contract?.ok,
+      resourceHUDOK:missing.length===0&&formatted,missingResourceIds:missing,
+      backupExportAvailable:typeof window.kmExportBackupV209==='function'};
+    result.ok=result.uiContractOK&&result.resourceHUDOK&&result.backupExportAvailable;
+    if(!result.ok) console.warn('[KingMiso health check]',result);
+    return result;
+  };
+  window.addEventListener('load',()=>window.kmHealthCheckV211());
 })();
 </script>
 </body>
