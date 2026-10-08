@@ -1697,6 +1697,7 @@
             updateResourceHudV200();
         }
         function updateUI() {
+            try { syncHeaderProfileV196(); } catch(err) { console.warn("Profile header sync error",err); }
             try { updateUIUnsafe(); }
             catch (err) { console.error('KingMiso UI refresh error:', err); }
         }
@@ -1721,6 +1722,7 @@
                 if(preview) preview.innerHTML = `<img src="${gameState.profileImageBase64}" class="w-full h-full object-cover">`;
                 syncHeaderProfileV196();
                 updateUI();
+                if(window.currentCustomId) kmLocalWriteV204(window.currentCustomId);
                 if(window.cloudSaveGame) window.cloudSaveGame();
                 showNotification('프로필 사진이 변경되었습니다.');
             };
@@ -1737,6 +1739,7 @@
                 gameState.kingdomName = inputVal;
                 syncHeaderProfileV196();
                 updateUI();
+                if(window.currentCustomId) kmLocalWriteV204(window.currentCustomId);
                 if(window.cloudSaveGame) window.cloudSaveGame();
                 showNotification(`왕국 이름이 '${inputVal}'(으)로 변경되었습니다.`);
             } else {
@@ -2184,7 +2187,7 @@
             kmSaveStatusV204=message;
             let el=document.getElementById('km-save-status-v204');
             if(!el){el=document.createElement('div');el.id='km-save-status-v204';el.style.cssText='position:fixed;right:8px;bottom:139px;z-index:9999;background:#172554;color:white;border:1px solid #818cf8;border-radius:8px;padding:4px 7px;font:10px sans-serif;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.4 · 저장 '+message;
+            el.textContent='v2.0.4p · 저장 '+message;
         }
         function kmRestoreV204(data){
             if(!data||typeof data!=='object'||!data.resources||typeof data.resources!=='object')throw Error('잘못된 저장 데이터');
@@ -2192,6 +2195,7 @@
             gameState.resources=Object.assign({gold:0,food:0,wood:0,ore:0,herb:0,magicDust:0,gem:0,pureGold:0,emerald:0,ruby:0,sapphire:0},data.resources);
             if(!gameState.upgradesInProgress||typeof gameState.upgradesInProgress!=='object')gameState.upgradesInProgress={};
             applyProgressionV15();
+            syncHeaderProfileV196();
         }
         async function attemptLogin() {
             const id=document.getElementById('login-id').value.trim();
@@ -2231,6 +2235,7 @@
                 kmLocalWriteV204(id);
                 document.getElementById('login-overlay').style.display='none';
                 startGameEngine();
+                syncHeaderProfileV196();
                 if(!cloudReady)kmSetSaveStatusV204('기기에만 저장 (서버 미연결)');
             }catch(e){
                 console.error('KingMiso login/load error',e);
@@ -2275,7 +2280,7 @@
         function kmSetEngineStatus(message){
             let el=document.getElementById('km-engine-status');
             if(!el){el=document.createElement('div');el.id='km-engine-status';el.style.cssText='position:fixed;bottom:110px;right:8px;z-index:9999;background:#082f49;color:#fff;font:11px sans-serif;padding:5px 8px;border:1px solid #38bdf8;border-radius:8px;pointer-events:none';document.body.appendChild(el);}
-            el.textContent='v2.0.4 · '+message;
+            el.textContent='v2.0.4p · '+message;
         }
         let kmEngineTickCount=0;
         setInterval(()=>{
