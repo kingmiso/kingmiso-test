@@ -692,8 +692,10 @@
             </div>
 
             <button class="btn-3d btn-green w-full py-2.5 text-xs mb-2" onclick="kmExportBackupV209()"><i class="fa-solid fa-download mr-1"></i> 게임 진행 데이터 백업 (JSON)</button>
-            <button class="btn-3d btn-purple w-full py-2.5 text-xs mb-2" onclick="document.getElementById('km-restore-file-v212').click()"><i class="fa-solid fa-file-import mr-1"></i> 백업 파일 검증 · 복원</button>
-            <input type="file" id="km-restore-file-v212" accept=".json,application/json" class="hidden" onchange="kmImportBackupV212(event)">
+            <label class="btn-3d btn-purple w-full py-2.5 text-xs mb-2 relative block text-center cursor-pointer" style="overflow:hidden">
+                <i class="fa-solid fa-file-import mr-1"></i> 백업 파일 검증 · 복원
+                <input type="file" id="km-restore-file-v212" accept=".json,application/json" aria-label="KingMiso 백업 JSON 파일 선택" onchange="kmImportBackupV212(event)" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:100px">
+            </label>
             <p id="km-restore-result-v212" class="text-[10px] text-amber-200 mb-2" aria-live="polite"></p>
             <p class="text-[10px] text-slate-400 mb-3">대규모 디자인 업데이트 전 백업 파일을 보관하세요. 계정 비밀번호는 포함하지 않습니다.</p>
             <button class="btn-3d btn-blue w-full py-2 text-xs" onclick="closeProfileModal(); playSfx('click');">닫기</button>
@@ -877,7 +879,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.12";
+        const GAME_VERSION = "v2.0.13";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -2543,7 +2545,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.12: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.13: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
@@ -2582,6 +2584,7 @@
     const output=document.getElementById('km-restore-result-v212');
     if(input)input.value='';
     if(!file)return;
+    if(output)output.textContent='선택한 백업 파일 검증 중: '+file.name;
     try{
       if(!window.currentCustomId||typeof kmRestoreV204!=='function')throw Error('먼저 복원할 계정으로 로그인하세요.');
       if(file.size>8*1024*1024||file.size<30)throw Error('백업 파일 크기가 올바르지 않습니다 (최대 8MB).');
