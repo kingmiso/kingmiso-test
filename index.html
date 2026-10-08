@@ -879,7 +879,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.14";
+        const GAME_VERSION = "v2.0.15";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -1031,7 +1031,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.14: show finer increments so live production is visible.
+            // v2.0.15: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -2165,18 +2165,44 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        function updateResourceHudV200() {
-            const keys=['gold','food','wood','ore','herb','magicDust','gem','pureGold','emerald','ruby','sapphire'];
-            for (const key of keys) {
-                const el=document.getElementById('res-'+key);
-                if (!el) continue;
-                const n=Number(gameState.resources?.[key])||0;
-                // Display-only compact formatting; the saved resource value remains exact.
+        // v2.0.15 UI adapter: presentation-only boundary between state and HUD DOM.
+        // Future redesigns can replace selectors here without changing resource production.
+        const KM_HUD_RESOURCE_KEYS = Object.freeze([
+            'gold','food','wood','ore','herb','magicDust',
+            'gem','pureGold','emerald','ruby','sapphire'
+        ]);
+        const KM_HUD_SELECTORS = Object.freeze(
+            Object.fromEntries(KM_HUD_RESOURCE_KEYS.map(key => [key,'res-'+key]))
+        );
+        function kmHudSnapshotV215() {
+            const resources=gameState.resources||{};
+            return Object.fromEntries(KM_HUD_RESOURCE_KEYS.map(key => [key, Number(resources[key])||0]));
+        }
+        function kmHudRenderV215(snapshot) {
+            for (const key of KM_HUD_RESOURCE_KEYS) {
+                const el=document.getElementById(KM_HUD_SELECTORS[key]);
+                if (!el) continue; // A redesigned screen may temporarily omit a HUD slot.
+                const n=snapshot[key];
                 el.textContent=formatHudNumber(n);
-                el.title=Math.floor(n).toLocaleString('en-US');
-                el.setAttribute('aria-label',Math.floor(n).toLocaleString('en-US'));
+                const exact=Math.floor(n).toLocaleString('en-US');
+                el.title=exact;
+                el.setAttribute('aria-label',exact);
             }
         }
+        function updateResourceHudV200() {
+            kmHudRenderV215(kmHudSnapshotV215());
+        }
+        function kmHudCompatibilityV215() {
+            const missing=KM_HUD_RESOURCE_KEYS.filter(key=>!document.getElementById(KM_HUD_SELECTORS[key]));
+            const invalid=KM_HUD_RESOURCE_KEYS.filter(key=>!Number.isFinite(Number(gameState.resources?.[key])));
+            return {version:GAME_VERSION,expected:KM_HUD_RESOURCE_KEYS.length,
+                found:KM_HUD_RESOURCE_KEYS.length-missing.length,missing,invalid,
+                ok:missing.length===0&&invalid.length===0};
+        }
+        window.KingMisoUIBridge=Object.freeze({
+            version:'1.0', snapshot:kmHudSnapshotV215,
+            renderHUD:updateResourceHudV200, check:kmHudCompatibilityV215
+        });
         function productionTickV201() {
             const now=Date.now();
             // Catch up when Safari suspends timers in the background, capped at 12h.
@@ -2547,7 +2573,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.14: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.15: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
