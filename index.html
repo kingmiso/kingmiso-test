@@ -533,6 +533,92 @@
 @media(prefers-reduced-motion:reduce){
  .km-login-loading-emblem-v224,.km-login-loading-bar-v224{animation:none}
 }
+
+/* v2.0.25: responsive fantasy login art + compact medieval parchment form.
+   Only the login overlay is styled. Game screens, authentication and saves are unchanged. */
+#login-overlay.km-login-v225{
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  isolation:isolate;box-sizing:border-box;
+  padding:0 14px max(8px,env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,#62b7f4 0%,#192b43 70%,#0b172a 100%) !important;
+}
+#login-overlay.km-login-v225::before{display:none}
+.km-login-scenery-v225{
+  position:absolute;z-index:0;left:0;right:0;top:0;
+  height:min(100%,560px);pointer-events:none;
+  background-image:linear-gradient(180deg,transparent 0%,transparent 80%,#0b172a 100%),url('km_login_fantasy_v225.jpg');
+  background-position:center top,center top;
+  background-size:100% 100%,100% auto;
+  background-repeat:no-repeat;
+}
+.km-login-form-wrap-v225{
+  position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:100%;max-width:340px;margin:0 auto;
+}
+.km-login-card-v225{
+  position:relative;width:100%;border:3px ridge #b68b45;border-radius:12px;
+  background:linear-gradient(135deg,rgba(252,235,189,.98),rgba(218,182,117,.97));
+  box-shadow:0 0 0 2px rgba(65,35,13,.85),0 6px 0 rgba(43,25,14,.75),0 13px 27px rgba(0,0,0,.52),
+  inset 0 0 0 3px rgba(255,251,213,.45),inset 0 0 26px rgba(114,66,22,.16);
+  overflow:hidden;
+}
+.km-login-card-v225::before,.km-login-card-v225::after{
+  content:'✦';position:absolute;z-index:1;color:#956123;font-size:12px;top:5px;pointer-events:none;
+}
+.km-login-card-v225::before{left:9px}
+.km-login-card-v225::after{right:9px}
+.km-login-panel-v225{padding:9px 16px 9px}
+.km-login-heading-v225{
+  color:#633712;font-family:Georgia,'Noto Serif KR',serif;
+  font-size:15px;font-weight:900;text-align:center;letter-spacing:-.2px;margin-bottom:7px;
+  text-shadow:0 1px #fff4d7;
+}
+.km-login-ornament-v225{color:#9b692a;font-size:16px;margin:0 6px}
+.km-login-field-label-v225{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.km-login-input-row-v225{
+  position:relative;display:flex;align-items:center;height:35px;margin-bottom:7px;
+  border:1px solid #a78250;border-radius:5px;background:rgba(255,248,220,.9);
+  box-shadow:inset 0 1px 3px rgba(79,47,21,.12);
+}
+.km-login-input-row-v225 i{position:absolute;left:11px;color:#9c713b;font-size:12px;pointer-events:none}
+.km-login-input-v225{
+  display:block;box-sizing:border-box;width:100%;height:100%;padding:6px 10px 6px 32px;
+  color:#392917;background:transparent;border:0;outline:0;font-size:13px;font-weight:700;
+  font-family:inherit;
+}
+.km-login-input-v225::placeholder{color:#856d4f;opacity:1}
+.km-login-input-row-v225:focus-within{border-color:#6e8cc2;box-shadow:0 0 0 2px rgba(65,109,170,.24)}
+.km-login-enter-v225{
+  display:block;width:100%;min-height:38px;padding:6px 10px;border-radius:6px;
+  border:1px solid #fff1ac;border-bottom:3px solid #885119;
+  background:linear-gradient(180deg,#fff0ae,#e4b654 58%,#bb792a);
+  box-shadow:inset 0 1px rgba(255,255,255,.55),0 2px 5px rgba(56,32,13,.24);
+  color:#4a2c11;font-size:13px;font-weight:900;letter-spacing:-.2px;
+  text-shadow:0 1px rgba(255,255,255,.5);touch-action:manipulation;
+}
+.km-login-enter-v225:active{transform:translateY(1px)}
+.km-login-footer-v225{text-align:center;color:#775732;font-size:9px;font-weight:700;margin-top:6px;line-height:1.3}
+.km-login-version-v225{font-size:10px;color:#f1e0bc;text-shadow:0 1px 4px #000;letter-spacing:.4px}
+.km-login-loading-v225{min-height:175px;padding:20px;text-align:center}
+.km-login-loading-emblem-v225{font-size:28px;color:#8a5c1c;animation:km-login-pulse-v224 1.5s ease-in-out infinite}
+.km-login-loading-title-v225{font-size:14px;font-weight:900;color:#583510;margin:7px 0}
+.km-login-loading-track-v225{width:90%;height:9px;background:#6e563c;border:1px solid #f9dc8c;border-radius:30px;overflow:hidden}
+.km-login-loading-bar-v225{height:100%;width:35%;background:linear-gradient(90deg,#7199d2,#ffdf7e);animation:km-login-load-v224 1.8s infinite}
+.km-login-loading-text-v225{font-size:11px;color:#684e2d;margin-top:7px}
+@media(max-height:680px){
+ .km-login-panel-v225{padding:7px 13px}
+ .km-login-heading-v225{font-size:14px;margin-bottom:5px}
+ .km-login-input-row-v225{height:32px;margin-bottom:5px}
+ .km-login-footer-v225{font-size:8px;margin-top:4px}
+ .km-login-scenery-v225{height:min(100%,515px)}
+}
+@media(max-width:360px){
+ .km-login-panel-v225{padding:8px 12px}
+ .km-login-ornament-v225{margin:0 3px}
+}
+@media(prefers-reduced-motion:reduce){
+ .km-login-loading-emblem-v225,.km-login-loading-bar-v225{animation:none}
+}
 </style>
 
 <style id="v141-fixes">
@@ -902,28 +988,27 @@
         </div>
     </div>
 
-    <div id="login-overlay" class="fixed inset-0 z-[2000] flex flex-col items-center justify-end p-4 overflow-hidden bg-slate-950 km-login-v224">
-        <div class="km-login-art-caption-v224" aria-hidden="true">MY LITTLE KINGDOM</div>
-        <div class="km-login-form-wrap-v224">
-            <div class="km-login-status-v224"><i class="fa-solid fa-cloud mr-1"></i> 클라우드 동기화 모드</div>
-            <div class="km-login-card-v224">
-                <div id="panel-login" class="km-login-panel-v224">
-                    <h2 class="km-login-panel-title-v224"><i class="fa-solid fa-crown mr-2"></i>왕국에 입장하기</h2>
-                    <label for="login-id" class="km-login-field-label-v224">왕국 아이디</label>
-                    <input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username" class="km-login-input-v224">
-                    <label for="login-pw" class="km-login-field-label-v224">비밀번호</label>
-                    <input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password" class="km-login-input-v224">
-                    <button onclick="attemptLogin(); playSfx('click');" class="km-login-enter-v224"><i class="fa-solid fa-right-to-bracket mr-2"></i>왕국 접속 / 자동 가입</button>
-                    <p class="km-login-help-v224">새 아이디는 자동으로 가입됩니다. 기존 왕국은 이전 아이디와 비밀번호로 접속하세요.</p>
+    <div id="login-overlay" class="fixed inset-0 z-[2000] flex flex-col items-center justify-end overflow-hidden km-login-v225">
+        <div class="km-login-scenery-v225" aria-hidden="true"></div>
+        <div class="km-login-form-wrap-v225">
+            <div class="km-login-card-v225">
+                <div id="panel-login" class="km-login-panel-v225">
+                    <div class="km-login-heading-v225"><span class="km-login-ornament-v225">❧</span><i class="fa-solid fa-crown"></i> 왕국의 문을 열다 <span class="km-login-ornament-v225">❧</span></div>
+                    <label for="login-id" class="km-login-field-label-v225">왕국 아이디</label>
+                    <div class="km-login-input-row-v225"><i class="fa-solid fa-user-shield"></i><input type="text" id="login-id" placeholder="왕국 아이디" autocomplete="username" class="km-login-input-v225"></div>
+                    <label for="login-pw" class="km-login-field-label-v225">비밀번호</label>
+                    <div class="km-login-input-row-v225"><i class="fa-solid fa-key"></i><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password" class="km-login-input-v225"></div>
+                    <button onclick="attemptLogin(); playSfx('click');" class="km-login-enter-v225"><i class="fa-solid fa-crown mr-1"></i> 왕국 접속 / 자동 가입</button>
+                    <div class="km-login-footer-v225"><i class="fa-solid fa-cloud"></i> 기존 계정으로 접속 가능 · 새 아이디는 자동 가입</div>
                 </div>
-                <div id="panel-loading" class="km-login-loading-v224 hidden flex-col items-center justify-center" role="status" aria-live="polite">
-                    <div class="km-login-loading-emblem-v224"><i class="fa-solid fa-crown"></i></div>
-                    <p class="km-login-loading-title-v224">왕국의 문을 여는 중...</p>
-                    <div class="km-login-loading-track-v224"><div class="km-login-loading-bar-v224"></div></div>
-                    <p class="km-login-loading-text-v224" id="loading-text">서버 통신중...</p>
+                <div id="panel-loading" class="km-login-loading-v225 hidden flex-col items-center justify-center" role="status" aria-live="polite">
+                    <div class="km-login-loading-emblem-v225"><i class="fa-solid fa-crown"></i></div>
+                    <p class="km-login-loading-title-v225">왕국의 문을 여는 중...</p>
+                    <div class="km-login-loading-track-v225"><div class="km-login-loading-bar-v225"></div></div>
+                    <p class="km-login-loading-text-v225" id="loading-text">서버 통신중...</p>
                 </div>
             </div>
-            <div class="km-login-version-v224">KingMiso <span id="km-login-version-v224">v2.0.24</span></div>
+            <div class="km-login-version-v225">KingMiso <span id="km-login-version-v224">v2.0.25</span></div>
         </div>
     </div>
 
@@ -1022,7 +1107,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.24";
+        const GAME_VERSION = "v2.0.25";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
