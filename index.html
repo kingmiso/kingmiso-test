@@ -879,7 +879,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.17";
+        const GAME_VERSION = "v2.0.18";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -974,7 +974,7 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
-        // v2.0.17 balance configuration: formulas remain unchanged by default.
+        // v2.0.18 balance configuration: formulas remain unchanged by default.
         // All values below are tuning knobs, not saved player progress.
         const KM_BALANCE_V216 = Object.freeze({
             production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
@@ -994,7 +994,7 @@
                 timeSeconds: 0
             })
         });
-        // v2.0.17: building and gathering balance is configured separately.
+        // v2.0.18: building and gathering balance is configured separately.
         // Defaults intentionally reproduce the pre-existing costs, timers and production.
         const KM_ECONOMY_V217 = Object.freeze({
             building: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
@@ -1082,7 +1082,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.17: show finer increments so live production is visible.
+            // v2.0.18: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1662,6 +1662,7 @@
         }
 
         function updateBattleStageUI(isFailed = false) {
+            if(!BATTLE_V12.running && gameState.isBattling) gameState.isBattling=false;
             const floorV192 = syncBattleFloorDisplayV192(isFailed);
             const hintEl = document.getElementById('floor-advantage-hint');
             const statusTitle = document.getElementById('battle-status-title');
@@ -2242,7 +2243,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.17 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.18 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -2474,6 +2475,12 @@
 
         // v2.0.3: start production BEFORE optional UI initialization.
         function startGameEngine() {
+            // Active battle animations cannot survive reload / JSON restore.
+            // Clear stale persisted battle flags before updating battle UI.
+            gameState.isBattling=false;
+            BATTLE_V12.running=false;
+            const oldControls=document.getElementById('battle-controls-box');
+            if(oldControls) oldControls.classList.remove('battle-hidden-v121');
             if (!gameState.upgradesInProgress || typeof gameState.upgradesInProgress!=='object') gameState.upgradesInProgress={};
             if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
             kmLastResourceTickV202=Date.now();
@@ -2650,7 +2657,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.17: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.18: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
