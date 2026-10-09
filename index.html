@@ -984,40 +984,82 @@
 @media(max-width:360px){.km-login-panel-v232{padding:5px 12px 11px}.km-login-input-v232{height:38px}.km-login-button-v232{min-height:42px}}
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v232{animation:none}}
 
-/* v2.0.33: Exact artwork-aligned functional login; existing game code untouched. */
+/* v2.0.34: art-aligned, single-visual login controls. 
+   Illustration remains at natural aspect ratio; gameplay code untouched. */
 #login-overlay.km-login-v233{
  position:fixed!important;inset:0!important;z-index:2000!important;
  display:block!important;width:100%!important;height:100vh!important;height:100dvh!important;
  overflow-x:hidden!important;overflow-y:auto!important;
  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
  margin:0!important;padding:0!important;background:#0b203d!important;
+ scroll-padding-top:0!important;
 }
-/* IMPORTANT: the login must actually disappear after successful auth. */
 #login-overlay.km-login-v233[style*="display: none"],
 #login-overlay.km-login-v233[style*="display:none"]{display:none!important}
 #login-overlay.km-login-v233::before,#login-overlay.km-login-v233::after{display:none!important;content:none!important}
 .km-login-poster-v233{position:relative;width:100%;max-width:500px;margin:0 auto;aspect-ratio:852/1846;background:#102846;}
 .km-login-art-v233{display:block!important;width:100%!important;height:auto!important;aspect-ratio:852/1846;object-fit:contain!important;max-width:none!important;pointer-events:none;user-select:none}
 .km-login-controls-v233{position:absolute;inset:0;pointer-events:none;}
-.km-login-input-box-v233{position:absolute;left:16.1%;width:65.7%;height:3.45%;display:flex;align-items:center;box-sizing:border-box;background:#0d213d;border:1px solid #718eac;border-radius:8px;pointer-events:auto;box-shadow:inset 0 1px 3px #0005;}
-.km-login-id-v233{top:67.65%}.km-login-pw-v233{top:72.15%}
-.km-login-input-box-v233>i{flex:none;margin-left:11px;font-size:clamp(12px,3.4vw,17px);color:#adc2d9}
-.km-login-input-box-v233 input{min-width:0;width:100%;height:100%;background:transparent;border:0;outline:0;padding:0 10px;color:#fff;font-size:16px;font-family:inherit;box-sizing:border-box;}
-.km-login-input-box-v233 input::placeholder{color:#9eb3cf;opacity:1}
+/* Original art already contains the input borders, icons and placeholders.
+   Do not draw a second set on top. Align invisible real inputs to artwork. */
+.km-login-input-box-v233{
+ position:absolute;left:16.3%;width:65.3%;height:3.72%;
+ display:flex;align-items:center;box-sizing:border-box;
+ background:transparent;border:1px solid transparent;border-radius:8px;
+ pointer-events:auto;box-shadow:none;
+}
+.km-login-id-v233{top:69.30%}.km-login-pw-v233{top:73.83%}
+.km-login-input-box-v233>i{display:none!important}
+.km-login-input-box-v233 input{
+ min-width:0;width:100%;height:100%;background:transparent;
+ border:0;outline:0;padding:0 9px 0 37px;color:#fff;
+ font-size:clamp(14px,3.7vw,18px);font-family:inherit;box-sizing:border-box;
+ caret-color:#ffdd83;
+}
+.km-login-input-box-v233 input::placeholder{color:transparent!important;opacity:0!important}
+.km-login-input-box-v233:focus-within,
+.km-login-input-box-v233:has(input:not(:placeholder-shown)){
+ background:#0d213d;border-color:#829cba;box-shadow:inset 0 1px 3px #0005;
+}
 .km-login-input-box-v233:focus-within{border-color:#f5d083;box-shadow:0 0 0 2px #f5d08344}
-.km-pw-eye-v233{flex:none;width:36px;height:100%;color:#b5c7de;background:transparent;border:0;font-size:14px;pointer-events:auto;}
-.km-login-submit-v233{position:absolute;top:76.6%;left:15.8%;width:66.1%;height:4.6%;border:0;border-radius:9px;background:transparent;pointer-events:auto;touch-action:manipulation;}
+.km-pw-eye-v233{
+ flex:none;width:36px;height:100%;color:transparent!important;
+ background:transparent;border:0;font-size:14px;pointer-events:auto;
+}
+.km-pw-eye-v233>i{visibility:hidden!important}
+.km-login-submit-v233{
+ position:absolute;top:78.65%;left:16.0%;width:65.8%;height:4.62%;
+ border:0;border-radius:9px;background:transparent;pointer-events:auto;touch-action:manipulation;
+}
 .km-login-submit-v233:active{background:#ffdf7733;box-shadow:inset 0 0 0 2px #ffe9ad}
-.km-login-cloud-v233,.km-login-settings-v233{position:absolute;top:85.7%;height:4.1%;border:0;background:transparent;pointer-events:auto;border-radius:24px;touch-action:manipulation;}
-.km-login-cloud-v233{left:17.6%;width:30.4%}.km-login-settings-v233{left:50.1%;width:29.6%}
+.km-login-cloud-v233,.km-login-settings-v233{
+ position:absolute;top:88.0%;height:4.15%;border:0;background:transparent;
+ pointer-events:auto;border-radius:24px;touch-action:manipulation;
+}
+.km-login-cloud-v233{left:17.8%;width:30.4%}
+.km-login-settings-v233{left:50.3%;width:29.6%}
 .km-login-cloud-v233:active,.km-login-settings-v233:active{background:#ffffff22}
-.km-login-loading-v233{position:absolute;top:64.6%;left:12%;width:76%;min-height:20%;padding:10% 6% 5%;box-sizing:border-box;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;border:2px solid #d9b368;border-radius:16px;background:linear-gradient(150deg,#18395f,#08192f);color:#fbe8bf;box-shadow:0 5px 24px #000b;}
-.km-login-loading-crest-v233{font-size:26px;color:#f5ce77}.km-login-loading-title-v233{font-size:clamp(13px,3.4vw,18px);font-weight:900}
+.km-login-loading-v233{
+ position:absolute;top:67.1%;left:12%;width:76%;min-height:19%;padding:9% 6% 5%;
+ box-sizing:border-box;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+ text-align:center;border:2px solid #d9b368;border-radius:16px;
+ background:linear-gradient(150deg,#18395f,#08192f);color:#fbe8bf;box-shadow:0 5px 24px #000b;
+}
+.km-login-loading-crest-v233{font-size:26px;color:#f5ce77}
+.km-login-loading-title-v233{font-size:clamp(13px,3.4vw,18px);font-weight:900}
 .km-login-loading-track-v233{height:9px;width:100%;border:1px solid #d1a75c;border-radius:50px;overflow:hidden;background:#08152c}
 .km-login-loading-bar-v233{height:100%;width:36%;background:linear-gradient(90deg,#66b6ff,#f9d27a);animation:km-login-load-v224 1.8s infinite}
 .km-login-loading-text-v233{font-size:12px;color:#bed2e8}
-.km-login-version-v233{position:absolute;top:91.35%;left:48%;width:30%;height:1.6%;display:flex;align-items:center;justify-content:center;background:#1a2335;color:#f2f0e9;font-size:clamp(8px,2.2vw,12px);font-weight:700;pointer-events:none;white-space:nowrap;}
-@media(min-width:500px){.km-login-input-box-v233>i{font-size:17px}}
+/* Mask the old baked v2.0.31 caption with the current version in exactly one place. */
+.km-login-version-v233{display:none!important}
+.km-login-poster-v233::after{
+ content:"☁ 클라우드 동기화 모드   KingMiso v2.0.34";
+ position:absolute;top:92.8%;left:23%;width:55%;height:2.5%;
+ display:flex;align-items:center;justify-content:center;
+ background:#24242c;border-radius:24px;color:#f5e5bb;
+ font-size:clamp(8px,2.4vw,12px);font-weight:700;
+ white-space:nowrap;pointer-events:none;
+}
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 </style>
 
@@ -1511,7 +1553,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.33";
+        const GAME_VERSION = "v2.0.34";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -3466,8 +3508,13 @@
         document.addEventListener('touchstart', unlockKingMisoAudio, { once: true, passive: true });
 
         window.onload = function() {
-            document.getElementById('login-overlay').style.display = 'flex';
+            const loginOverlay = document.getElementById('login-overlay');
+            loginOverlay.style.display = 'block';
             showLoginPanel('login');
+            // Mobile Safari can restore a previous scroll offset and hide the KINGMISO logo.
+            // Reset only the login panel's own scroll position, not the game viewport.
+            loginOverlay.scrollTop = 0;
+            requestAnimationFrame(() => { if(loginOverlay.style.display !== 'none') loginOverlay.scrollTop = 0; });
         };
     </script>
 
