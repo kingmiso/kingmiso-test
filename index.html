@@ -698,7 +698,21 @@
             </label>
             <p id="km-restore-result-v212" class="text-[10px] text-amber-200 mb-2" aria-live="polite"></p>
             <p class="text-[10px] text-slate-400 mb-3">대규모 디자인 업데이트 전 백업 파일을 보관하세요. 계정 비밀번호는 포함하지 않습니다.</p>
+            <button class="btn-3d btn-blue w-full py-2.5 text-xs mb-2" onclick="kmOpenDiagnosticsV219()"><i class="fa-solid fa-chart-line mr-1"></i> 개발자용 밸런스 진단 (읽기 전용)</button>
             <button class="btn-3d btn-blue w-full py-2 text-xs" onclick="closeProfileModal(); playSfx('click');">닫기</button>
+        </div>
+    </div>
+
+    <div id="km-diagnostics-modal-v219" class="modal-bg" style="z-index: 150;" onclick="if(event.target===this)kmCloseDiagnosticsV219()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width:520px;max-height:82vh">
+            <div class="flex items-center justify-between gap-2 mb-3">
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-chart-line text-cyan-400 mr-1"></i> 밸런스 진단 · v2.0.19</h3>
+                <button class="text-slate-300 text-lg px-2" onclick="kmCloseDiagnosticsV219()" aria-label="진단 닫기"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-3">현재 저장 상태를 읽기만 합니다. 생산·비용·시간·층수·저장값은 변경하지 않습니다.</p>
+            <div id="km-diagnostics-content-v219" class="space-y-3 text-xs" aria-live="polite"></div>
+            <button class="btn-3d btn-blue w-full py-2.5 text-xs mt-3" onclick="kmRenderDiagnosticsV219()">현재 값 다시 검사</button>
+            <button class="btn-3d btn-purple w-full py-2.5 text-xs mt-2" onclick="kmCloseDiagnosticsV219()">닫기</button>
         </div>
     </div>
 
@@ -879,7 +893,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.18";
+        const GAME_VERSION = "v2.0.19";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -974,7 +988,7 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
-        // v2.0.18 balance configuration: formulas remain unchanged by default.
+        // v2.0.19 balance configuration: formulas remain unchanged by default.
         // All values below are tuning knobs, not saved player progress.
         const KM_BALANCE_V216 = Object.freeze({
             production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
@@ -994,7 +1008,7 @@
                 timeSeconds: 0
             })
         });
-        // v2.0.18: building and gathering balance is configured separately.
+        // v2.0.19: building and gathering balance is configured separately.
         // Defaults intentionally reproduce the pre-existing costs, timers and production.
         const KM_ECONOMY_V217 = Object.freeze({
             building: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
@@ -1082,7 +1096,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.18: show finer increments so live production is visible.
+            // v2.0.19: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1848,6 +1862,97 @@
             catch (err) { console.error('KingMiso UI refresh error:', err); }
         }
 
+        // v2.0.19 READ-ONLY diagnostics. Do not call save, production ticks,
+        // spendResource, updateUI, upgrade actions or battle actions here.
+        const KM_DIAG_RESOURCE_NAMES_V219=Object.freeze({
+            gold:'금화',food:'식량',wood:'목재',ore:'철광석',herb:'약초',magicDust:'마력수정',
+            pureGold:'순금',emerald:'에메랄드',ruby:'루비',sapphire:'사파이어',gem:'다이아'
+        });
+        function kmDiagSnapshotV219() {
+            const resources={...gameState.resources};
+            const rates=kmProductionRatesV217();
+            const buildings=Object.keys(BUILDINGS).map(key=>({
+                name:BUILDINGS[key].name,...window.KingMisoEconomyBridge.building(key)
+            }));
+            const gathering=Object.keys(GATHERING_NODES).map(key=>({
+                name:GATHERING_NODES[key].name,...window.KingMisoEconomyBridge.gathering(key)
+            }));
+            const heroes=HEROES.map((_,index)=>kmHeroViewModelV216(index));
+            const equipment=Object.keys(ARMY_EQUIPMENT).flatMap(army=>
+                Object.keys(EQUIP_TYPES).map(key=>kmEquipmentViewModelV216(army,key)));
+            const floor=Math.max(1,Number(gameState.towerFloor)||1);
+            const battleCost=getTowerEntryCosts(floor);
+            const jobs=Object.entries(gameState.upgradesInProgress||{}).map(([key,item])=>({
+                key,type:item.type,remainingSeconds:Math.max(0,Math.ceil((Number(item.endTime)-Date.now())/1000))
+            }));
+            const hud=kmHudCompatibilityV215();
+            const issues=[];
+            for(const [key,value] of Object.entries(resources)){
+                if(!Number.isFinite(Number(value))||Number(value)<0) issues.push('자원 수치 확인: '+key);
+            }
+            if(hud.missing.length)issues.push('상단 자원 표시 누락 '+hud.missing.length+'개');
+            if(hud.invalid.length)issues.push('자원 데이터 형식 오류 '+hud.invalid.length+'개');
+            if(!Number.isInteger(Number(gameState.towerFloor))||Number(gameState.towerFloor)<1)issues.push('전투 층수 확인 필요');
+            if(Boolean(gameState.isBattling)!==Boolean(BATTLE_V12.running))issues.push('전투 실행 상태 불일치');
+            for(const h of heroes) if(!h||!Number.isFinite(h.timeSeconds)||h.timeSeconds<0)issues.push('영웅 강화 시간 오류');
+            for(const b of [...buildings,...gathering])if(!Number.isFinite(b.cost)||!Number.isFinite(b.timeSeconds))issues.push('건물/채집 비용·시간 오류');
+            return {version:GAME_VERSION,checkedAt:new Date().toLocaleString(),resources,rates,
+                buildings,gathering,heroes,equipment,floor,battleCost,jobs,
+                squadSize:(gameState.selectedSquad||[]).length,hud,issues};
+        }
+        function kmDiagFormatV219(n) {return Number.isFinite(Number(n))?Number(n).toLocaleString('ko-KR',{maximumFractionDigits:2}):'—';}
+        function kmDiagTimeV219(n){const v=Math.max(0,Math.ceil(Number(n)||0));return v>=3600?Math.floor(v/3600)+'시간 '+Math.floor(v%3600/60)+'분':v>=60?Math.floor(v/60)+'분 '+v%60+'초':v+'초';}
+        function kmDiagSectionV219(root,title,headers,rows){
+            const section=document.createElement('section');section.className='rounded-xl border border-slate-600 bg-slate-900/60 p-2.5';
+            const heading=document.createElement('h4');heading.className='font-bold text-cyan-300 mb-2';heading.textContent=title;section.appendChild(heading);
+            const scroll=document.createElement('div');scroll.className='overflow-x-auto';
+            const table=document.createElement('table');table.className='w-full text-[11px] text-left';table.style.minWidth='285px';
+            const thead=document.createElement('thead');const tr=document.createElement('tr');
+            headers.forEach(label=>{const th=document.createElement('th');th.textContent=label;th.className='pb-1 pr-2 text-slate-400 whitespace-nowrap';tr.appendChild(th);});
+            thead.appendChild(tr);table.appendChild(thead);
+            const tbody=document.createElement('tbody');
+            rows.forEach(row=>{const line=document.createElement('tr');line.className='border-t border-slate-700/70';
+                row.forEach(value=>{const td=document.createElement('td');td.textContent=String(value);td.className='py-1.5 pr-2 text-slate-100 whitespace-nowrap';line.appendChild(td);});tbody.appendChild(line);});
+            table.appendChild(tbody);scroll.appendChild(table);section.appendChild(scroll);root.appendChild(section);
+        }
+        function kmRenderDiagnosticsV219(){
+            const root=document.getElementById('km-diagnostics-content-v219');if(!root)return;
+            root.replaceChildren();
+            try {
+                const d=kmDiagSnapshotV219();
+                const summary=document.createElement('div');summary.className='rounded-lg border border-slate-600 p-2.5 bg-slate-900 text-[11px]';
+                summary.textContent=d.version+' · '+d.checkedAt+' · '+(d.issues.length?'점검 필요 '+d.issues.length+'건':'기본 검사 이상 없음')+' · 전투 '+d.floor+'층 · 편성 '+d.squadSize+'/5';
+                root.appendChild(summary);
+                if(d.issues.length)kmDiagSectionV219(root,'주의 항목',['상태'],d.issues.map(x=>[x]));
+                const keys=['gold','food','wood','ore','herb','magicDust','pureGold','emerald','ruby','sapphire','gem'];
+                kmDiagSectionV219(root,'자원 보유량 · 초당 생산량',['자원','현재 보유','초당 증가'],keys.map(key=>[
+                    KM_DIAG_RESOURCE_NAMES_V219[key],kmDiagFormatV219(d.resources[key]||0),kmDiagFormatV219(d.rates[key]||0)
+                ]));
+                kmDiagSectionV219(root,'건물 · 다음 업그레이드',['건물','레벨','필요 자원','시간'],d.buildings.map(x=>[
+                    x.name,'Lv.'+x.level,(KM_DIAG_RESOURCE_NAMES_V219[x.resource]||x.resource)+' '+kmDiagFormatV219(x.cost),kmDiagTimeV219(x.timeSeconds)
+                ]));
+                kmDiagSectionV219(root,'채집장 · 다음 업그레이드',['채집장','레벨','필요 자원','시간'],d.gathering.map(x=>[
+                    x.name,'Lv.'+x.level,(KM_DIAG_RESOURCE_NAMES_V219[x.resource]||x.resource)+' '+kmDiagFormatV219(x.cost),kmDiagTimeV219(x.timeSeconds)
+                ]));
+                kmDiagSectionV219(root,'영웅 · 다음 강화 (전체)',['영웅','레벨','비용','시간'],d.heroes.map(x=>[
+                    x.name,'Lv.'+x.level,Object.entries(x.costs).map(([key,n])=>(KM_DIAG_RESOURCE_NAMES_V219[key]||key)+' '+kmDiagFormatV219(n)).join(' / '),kmDiagTimeV219(x.timeSeconds)
+                ]));
+                const armyNames={infantry:'보병',cavalry:'기병',archer:'궁병'};
+                kmDiagSectionV219(root,'장비 · 다음 강화 (즉시)',['군단 · 장비','레벨','필요 재화'],d.equipment.map(x=>[
+                    (armyNames[x.armyType]||x.armyType)+' '+x.name,'Lv.'+x.level,(KM_DIAG_RESOURCE_NAMES_V219[x.resource]||x.resource)+' '+kmDiagFormatV219(x.cost)
+                ]));
+                kmDiagSectionV219(root,'전투 · 진행 중인 강화',['항목','값'],[
+                    ['현재 층수',d.floor+'층'],['입장 비용',Object.entries(d.battleCost).map(([k,v])=>(KM_DIAG_RESOURCE_NAMES_V219[k]||k)+' '+kmDiagFormatV219(v)).join(' / ')],
+                    ['진행 중인 강화',d.jobs.length+'개'],['HUD 표시 요소',d.hud.found+'/'+d.hud.expected]
+                ].concat(d.jobs.map(x=>[x.key,kmDiagTimeV219(x.remainingSeconds)])));
+            }catch(err){const msg=document.createElement('p');msg.className='text-red-300';msg.textContent='진단 표시 오류: '+(err?.message||String(err));root.appendChild(msg);}
+        }
+        function kmOpenDiagnosticsV219(){
+            const modal=document.getElementById('km-diagnostics-modal-v219');if(!modal)return;
+            modal.style.display='flex';kmRenderDiagnosticsV219();
+        }
+        function kmCloseDiagnosticsV219(){const modal=document.getElementById('km-diagnostics-modal-v219');if(modal)modal.style.display='none';}
+        window.KingMisoDiagnostics=Object.freeze({version:'1.0',snapshot:kmDiagSnapshotV219,refresh:kmRenderDiagnosticsV219});
         function openProfileModal() {
             document.getElementById('kingdom-name-input').value = gameState.kingdomName;
             const preview=document.getElementById('modal-preview-avatar');
@@ -2243,7 +2348,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.18 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.19 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -2657,7 +2762,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.18: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.19: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
