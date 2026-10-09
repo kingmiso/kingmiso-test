@@ -714,6 +714,88 @@
  .km-login-form-wrap-v226{width:min(48vw,420px)}
 }
 @media(prefers-reduced-motion:reduce){.km-login-loading-icon-v226,.km-login-loading-bar-v226{animation:none}}
+
+/* v2.0.27 — Safari-safe proportional illustration. The background fills only
+   the side gutters; the real foreground image is NEVER stretched or cropped. */
+#login-overlay.km-login-v226{
+  height:100vh!important;height:100dvh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  background:#0b1931!important;
+}
+#login-overlay.km-login-v226::before{
+  content:""!important;display:block!important;
+  position:absolute;inset:-12px;z-index:0;pointer-events:none;
+  background:url('km_login_full_v226.jpg') center center / cover no-repeat;
+  filter:blur(18px) brightness(.64);opacity:.9;
+}
+#login-overlay.km-login-v226 .km-login-full-art-v226{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:none!important;max-width:none!important;
+  pointer-events:none;
+}
+#login-overlay.km-login-v226 .km-login-lower-shade-v226{
+  inset:auto 0 0!important;height:9%!important;
+  background:linear-gradient(transparent,rgba(6,16,34,.8))!important;
+}
+#login-overlay.km-login-v226 .km-login-form-wrap-v226{
+  top:68.3%!important;left:50%!important;
+  transform:translateX(-50%)!important;
+  width:min(63vw,310px)!important;max-width:310px!important;
+}
+#login-overlay.km-login-v226 .km-login-card-v226{
+  border-radius:10px!important;border-width:1px!important;
+  box-shadow:0 0 0 2px #8a6b37,0 5px 12px #0009,inset 0 0 0 1px #415a80!important;
+}
+#login-overlay.km-login-v226 .km-login-panel-v226{
+  padding:7px 11px 8px!important;
+}
+#login-overlay.km-login-v226 .km-login-crest-v226{
+  height:19px!important;width:38px!important;font-size:12px!important;
+  margin:-5px auto 4px!important;
+}
+#login-overlay.km-login-v226 .km-login-label-v226{
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;
+}
+#login-overlay.km-login-v226 .km-login-input-wrap-v226{
+  height:32px!important;margin:0 0 6px!important;border-radius:5px!important;
+}
+#login-overlay.km-login-v226 .km-login-input-wrap-v226 input{
+  font-size:12px!important;padding:5px 7px 5px 30px!important;
+}
+#login-overlay.km-login-v226 .km-login-input-wrap-v226 i{
+  left:9px!important;font-size:11px!important;
+}
+#login-overlay.km-login-v226 .km-login-action-v226{
+  height:37px!important;font-size:11px!important;border-radius:6px!important;
+  border-bottom-width:3px!important;letter-spacing:-.3px!important;
+}
+#login-overlay.km-login-v226 .km-login-note-v226{
+  font-size:8px!important;line-height:1.2!important;margin:5px 0 0!important;
+}
+#login-overlay.km-login-v226 .km-login-foot-v226{
+  bottom:1.2%!important;font-size:9px!important;gap:9px!important;
+  background:rgba(9,21,42,.6);border-radius:20px;padding:3px 7px;
+}
+#login-overlay.km-login-v226 .km-login-loading-v226{
+  padding:12px 10px!important;min-height:150px!important;
+}
+/* Short Safari viewports: keep the action button above the browser chrome. */
+@media(max-height:640px){
+  #login-overlay.km-login-v226 .km-login-form-wrap-v226{top:66%!important;width:min(66vw,290px)!important}
+  #login-overlay.km-login-v226 .km-login-panel-v226{padding:5px 9px!important}
+  #login-overlay.km-login-v226 .km-login-crest-v226{display:none!important}
+  #login-overlay.km-login-v226 .km-login-input-wrap-v226{height:29px!important;margin-bottom:4px!important}
+  #login-overlay.km-login-v226 .km-login-action-v226{height:34px!important}
+  #login-overlay.km-login-v226 .km-login-note-v226{display:none!important}
+}
+@media(min-aspect-ratio:3/4){
+  #login-overlay.km-login-v226 .km-login-form-wrap-v226{width:min(34vh,310px)!important}
+}
 </style>
 
 <style id="v141-fixes">
@@ -1105,7 +1187,7 @@
                 </div>
             </div>
         </div>
-        <div class="km-login-foot-v226"><span><i class="fa-solid fa-cloud"></i> 클라우드 동기화 모드</span><span>KingMiso v2.0.26</span></div>
+        <div class="km-login-foot-v226"><span><i class="fa-solid fa-cloud"></i> 클라우드 동기화 모드</span><span>KingMiso v2.0.27</span></div>
     </div>
 
     <script>
@@ -1203,7 +1285,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.26";
+        const GAME_VERSION = "v2.0.27";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
