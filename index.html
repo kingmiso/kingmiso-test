@@ -715,7 +715,7 @@
 }
 @media(prefers-reduced-motion:reduce){.km-login-loading-icon-v226,.km-login-loading-bar-v226{animation:none}}
 
-/* v2.0.28 — Safari-safe proportional illustration. The background fills only
+/* v2.0.29 — Safari-safe proportional illustration. The background fills only
    the side gutters; the real foreground image is NEVER stretched or cropped. */
 #login-overlay.km-login-v226{
   height:100vh!important;height:100dvh!important;
@@ -797,7 +797,7 @@
   #login-overlay.km-login-v226 .km-login-form-wrap-v226{width:min(34vh,310px)!important}
 }
 
-/* v2.0.28: seamless side continuation, not dark blurred letterboxing.
+/* v2.0.29: seamless side continuation, not dark blurred letterboxing.
    The portrait remains proportional. Mirrored edge scenery fills side gutters. */
 #login-overlay.km-login-v226{
   --km-art-w-v228: min(100%, 46.0747168dvh); /* 851 / 1847 */
@@ -847,6 +847,48 @@
     background-position:center center!important;
     filter:blur(3px) brightness(.9)!important;
   }
+}
+
+/* v2.0.29: clean royal framing for portrait art; no reflected or distorted scenery. */
+#login-overlay.km-login-v226{
+  background:#10213e!important;
+  --km-art-w-v229:min(100%,46.0747168dvh);
+  --km-side-v229:max(0px,calc((100% - var(--km-art-w-v229))/2));
+}
+#login-overlay.km-login-v226::before,
+#login-overlay.km-login-v226::after{
+  content:""!important;display:block!important;
+  position:absolute!important;top:0!important;bottom:0!important;
+  width:var(--km-side-v229)!important;height:100%!important;
+  background-image:none!important;background-size:auto!important;
+  background-repeat:no-repeat!important;
+  transform:none!important;filter:none!important;opacity:1!important;
+  z-index:0!important;pointer-events:none!important;
+  border:0!important;
+}
+#login-overlay.km-login-v226::before{
+  left:0!important;right:auto!important;
+  background:linear-gradient(90deg,#0c1c35 0%,#203a55 50%,#41564b 100%)!important;
+  box-shadow:inset -2px 0 0 rgba(237,199,118,.48)!important;
+}
+#login-overlay.km-login-v226::after{
+  right:0!important;left:auto!important;
+  background:linear-gradient(90deg,#53738b 0%,#2b5276 46%,#0c1c35 100%)!important;
+  box-shadow:inset 2px 0 0 rgba(237,199,118,.48)!important;
+}
+#login-overlay.km-login-v226 .km-login-full-art-v226{
+  width:var(--km-art-w-v229)!important;height:100%!important;
+  left:50%!important;top:0!important;right:auto!important;
+  transform:translateX(-50%)!important;
+  object-fit:contain!important;object-position:center center!important;
+}
+@media(min-aspect-ratio:1/1){
+ #login-overlay.km-login-v226::before{
+  background:linear-gradient(90deg,#0a1a34,#34524d)!important;
+ }
+ #login-overlay.km-login-v226::after{
+  background:linear-gradient(90deg,#456a86,#0a1a34)!important;
+ }
 }
 </style>
 
@@ -1239,7 +1281,7 @@
                 </div>
             </div>
         </div>
-        <div class="km-login-foot-v226"><span><i class="fa-solid fa-cloud"></i> 클라우드 동기화 모드</span><span>KingMiso v2.0.28</span></div>
+        <div class="km-login-foot-v226"><span><i class="fa-solid fa-cloud"></i> 클라우드 동기화 모드</span><span>KingMiso v2.0.29</span></div>
     </div>
 
     <script>
@@ -1337,7 +1379,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.28";
+        const GAME_VERSION = "v2.0.29";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
