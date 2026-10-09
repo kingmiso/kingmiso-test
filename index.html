@@ -1080,6 +1080,31 @@
  white-space:nowrap;pointer-events:none;
 }
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
+
+
+/* v2.0.36: royal domain dashboard (presentation only, existing upgrade logic intact) */
+#screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
+#screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
+#screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
+.km-domain-hero-v236{height:190px;position:relative;border-radius:16px;overflow:hidden;border:2px solid #c8a762;box-shadow:0 9px 24px #0009,0 0 0 3px #ffe9ad16;margin:7px 0 15px}
+.km-domain-hero-v236 img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 42%}
+.km-domain-hero-shade-v236{position:absolute;inset:0;background:linear-gradient(180deg,transparent 28%,#071b32c9 80%,#071b32ed 100%);pointer-events:none}
+.km-domain-hero-caption-v236{position:absolute;left:14px;right:14px;bottom:12px;display:flex;flex-direction:column;gap:3px;text-shadow:0 2px 5px #000}
+.km-domain-eyebrow-v236{color:#ffe09a;font-size:9px;letter-spacing:.16em;font-weight:900}
+.km-domain-hero-caption-v236 strong{color:#fff3d1;font-size:17px;line-height:1.2}
+.km-domain-hero-caption-v236>span:last-child{color:#e4e8ef;font-size:11px}
+.km-domain-section-label-v236{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;color:#f5d68e;font-weight:900;font-size:12px}
+.km-domain-section-label-v236 span:last-child{font-size:9px;color:#93a9c6;font-weight:500}
+.km-domain-shortcuts-v236{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:18px}
+.km-domain-shortcuts-v236 button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:94px;padding:9px 2px 7px;gap:3px;border-radius:13px;border:1px solid #d1aa5a91;background:linear-gradient(155deg,#254467,#122742 68%,#13223a);color:#f8e6bb;box-shadow:inset 0 1px #ffffff26,0 5px 10px #0005}
+.km-domain-icon-v236{font-size:27px;line-height:1.25;filter:drop-shadow(0 2px 2px #0006)}
+.km-domain-name-v236{font-size:12px;font-weight:900;white-space:nowrap}
+.km-domain-action-v236{font-size:9px;color:#b6c7dd}
+.km-domain-upgrades-label-v236{margin-bottom:10px}
+#screen-domain #buildings-container .card{background:linear-gradient(145deg,#203753ed,#14263ded)!important;border:1px solid #bda06865!important;border-radius:14px!important;box-shadow:0 5px 12px #0005!important}
+#screen-domain #buildings-container .card .progress-bar-container{margin-top:8px}
+@media(max-width:350px){.km-domain-shortcuts-v236{gap:5px}.km-domain-name-v236{font-size:11px}.km-domain-icon-v236{font-size:23px}.km-domain-hero-v236{height:168px}}
+
 </style>
 
 <style id="v141-fixes">
@@ -1155,12 +1180,23 @@
     <div id="screen-domain" class="screen-panel active">
         <h2 class="text-base font-bold mb-2 text-slate-100"><i class="fa-solid fa-chess-rook mr-1 text-blue-400"></i>나의 영지</h2>
         <div class="mb-3 text-xs text-slate-400">건물의 최저 레벨이 왕국 레벨이 됩니다.</div>
-        <div class="page-art-banner" style="background-image:url('ref_domain.webp')">
-<button class="art-hotspot" style="left:4%;top:8%;width:46%;height:44%" onclick="openV15Build('building','farm')" aria-label="농장으로 이동"></button>
-<button class="art-hotspot" style="left:50%;top:8%;width:46%;height:44%" onclick="openV15Build('building','mine')" aria-label="금광으로 이동"></button>
-<button class="art-hotspot" style="left:4%;top:52%;width:46%;height:44%" onclick="openV15Build('building','sawmill')" aria-label="제재소로 이동"></button>
-<button class="art-hotspot" style="left:50%;top:52%;width:46%;height:44%" onclick="openV15Build('building','forge')" aria-label="대장간으로 이동"></button>
-</div>
+        <section class="km-domain-hero-v236" aria-label="나의 왕국 전경">
+            <img src="km_domain_scene_v236.jpg" alt="하늘을 나는 비행선과 푸른 지붕의 왕국 성, 폭포" loading="eager">
+            <div class="km-domain-hero-shade-v236"></div>
+            <div class="km-domain-hero-caption-v236">
+                <span class="km-domain-eyebrow-v236">✦ MY LITTLE KINGDOM ✦</span>
+                <strong>나만의 왕국을 키워보세요</strong>
+                <span>건물을 성장시키고 자원을 생산하세요</span>
+            </div>
+        </section>
+        <div class="km-domain-section-label-v236"><span>🏰 왕국 주요 시설</span><span>시설을 눌러 자세히 보기</span></div>
+        <div class="km-domain-shortcuts-v236">
+            <button type="button" onclick="openV15Build('building','farm'); playSfx('click')" aria-label="농장 상세 보기"><span class="km-domain-icon-v236">🌾</span><span class="km-domain-name-v236">농장</span><span class="km-domain-action-v236">살펴보기 ›</span></button>
+            <button type="button" onclick="openV15Build('building','mine'); playSfx('click')" aria-label="금광 상세 보기"><span class="km-domain-icon-v236">⛏️</span><span class="km-domain-name-v236">금광</span><span class="km-domain-action-v236">살펴보기 ›</span></button>
+            <button type="button" onclick="openV15Build('building','sawmill'); playSfx('click')" aria-label="제재소 상세 보기"><span class="km-domain-icon-v236">🪵</span><span class="km-domain-name-v236">제재소</span><span class="km-domain-action-v236">살펴보기 ›</span></button>
+            <button type="button" onclick="openV15Build('building','forge'); playSfx('click')" aria-label="대장간 상세 보기"><span class="km-domain-icon-v236">⚒️</span><span class="km-domain-name-v236">대장간</span><span class="km-domain-action-v236">살펴보기 ›</span></button>
+        </div>
+        <div class="km-domain-section-label-v236 km-domain-upgrades-label-v236"><span>⚒️ 건물 성장 현황</span><span>레벨업 · 생산량</span></div>
         <div id="buildings-container"></div>
     </div>
 
@@ -1572,7 +1608,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.35";
+        const GAME_VERSION = "v2.0.36";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
