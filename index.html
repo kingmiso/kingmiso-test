@@ -414,7 +414,7 @@
 .screen-panel { top:var(--km-header-height,112px)!important; }
 #notification-container { top:calc(var(--km-header-height,112px) + 8px)!important; }
 
-        /* v2.0.23: responsive power card, scoped to profile modal */
+        /* v2.0.24: responsive power card, scoped to profile modal */
         .km-profile-overview{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center}
         .km-profile-avatar-area{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
         .km-power-card{position:relative;overflow:hidden;min-width:0;min-height:98px;padding:12px 11px;border-radius:15px;border:1px solid rgba(251,191,36,.64);background:linear-gradient(125deg,#3a245a 0%,#17294d 50%,#0e1b34 100%);box-shadow:0 3px 0 #854d0e,0 9px 20px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.14)}
@@ -425,7 +425,7 @@
         .km-power-meta{position:relative;margin-top:5px;color:#cbd5e1;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .km-power-meta i{color:#93c5fd;margin-right:2px}
         @media(max-width:355px){.km-profile-overview{grid-template-columns:80px minmax(0,1fr);gap:8px}.km-power-card{padding:11px 8px}.km-power-value{font-size:17px}}
-/* v2.0.23: compact live power badge beside small profile (top-left) */
+/* v2.0.24: compact live power badge beside small profile (top-left) */
 .km-header-power-v221{
     display:inline-flex;align-items:center;justify-content:center;gap:3px;
     flex:0 0 auto;min-width:56px;max-width:91px;
@@ -442,7 +442,7 @@
     .km-header-power-v221{padding:5px 4px;font-size:9px;max-width:82px}
     #audio-toggle-btn{padding-left:4px;padding-right:4px}
 }
-/* v2.0.23: readable header label without forcing horizontal overflow */
+/* v2.0.24: readable header label without forcing horizontal overflow */
 .km-header-power-v221{min-width:0;max-width:none;padding:5px 5px;gap:2px;font-size:10px;letter-spacing:-.35px}
 .km-header-power-label-v222{color:#fcd34d;font-size:9px;white-space:nowrap}
 @media(max-width:430px){
@@ -456,7 +456,7 @@
   .km-header-power-v221 i{display:none}
   #header-kingdom-name{max-width:32px}
 }
-/* v2.0.23: future fantasy skin tokens. Existing screens are untouched. */
+/* v2.0.24: future fantasy skin tokens. Existing screens are untouched. */
 :root{
     --km-skin-navy:#0e1b34;
     --km-skin-royal:#233c73;
@@ -464,6 +464,74 @@
     --km-skin-azure:#42b8f5;
     --km-skin-parchment:#fff0cb;
     --km-skin-card-radius:16px;
+}
+
+/* v2.0.24 — login-only fantasy skin; gameplay selectors remain untouched. */
+#login-overlay.km-login-v224{
+  isolation:isolate;
+  padding:0 16px max(14px,env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg,rgba(4,13,35,.05) 0%,rgba(6,15,38,.02) 40%,rgba(6,13,31,.45) 66%,#081327 98%),
+    url('km_login_fantasy_v224.jpg') center 38%/cover no-repeat !important;
+}
+#login-overlay.km-login-v224::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(90deg,rgba(4,12,31,.15),transparent 20%,transparent 80%,rgba(4,12,31,.15));
+}
+.km-login-art-caption-v224{display:none}
+.km-login-form-wrap-v224{
+  width:100%;max-width:390px;position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding-bottom:4px;
+}
+.km-login-status-v224{
+  border:1px solid rgba(245,207,112,.55);border-radius:999px;
+  background:rgba(10,24,48,.86);color:#ffe8ab;
+  font-size:10px;font-weight:800;padding:6px 14px;
+  box-shadow:0 3px 18px #08122588;letter-spacing:.3px;
+}
+.km-login-card-v224{
+  width:100%;border:1.5px solid #b58d4e;border-radius:19px;
+  background:linear-gradient(145deg,rgba(15,30,57,.96),rgba(10,21,44,.97));
+  box-shadow:0 0 0 3px rgba(5,12,29,.55),0 16px 40px rgba(0,0,0,.55),
+  inset 0 1px 0 rgba(255,232,174,.22);
+  overflow:hidden;
+}
+.km-login-panel-v224{padding:15px 19px 14px}
+.km-login-panel-title-v224{text-align:center;color:#ffe6a0;font-size:16px;font-weight:900;margin:0 0 11px;text-shadow:0 2px 4px #0009}
+.km-login-field-label-v224{display:block;font-size:10px;font-weight:800;color:#cbd9f3;margin:0 0 4px 3px}
+.km-login-input-v224{
+  display:block;width:100%;height:39px;padding:9px 12px;margin-bottom:9px;
+  border:1px solid #536a91;border-radius:10px;background:#101d36;color:#fff;
+  font-size:13px;font-weight:700;outline:none;
+}
+.km-login-input-v224:focus{border-color:#f4ce75;box-shadow:0 0 0 2px #f4ce7538}
+.km-login-enter-v224{
+  display:block;width:100%;min-height:47px;margin:3px 0 9px;border-radius:11px;
+  background:linear-gradient(180deg,#ffe9a2 0%,#e6ad4b 62%,#b87724 100%);
+  border:1px solid #ffe4a3;border-bottom:4px solid #875016;
+  color:#38240e;font-size:14px;font-weight:950;text-shadow:0 1px #fff6;
+  box-shadow:0 5px 12px #0007;touch-action:manipulation;
+}
+.km-login-enter-v224:active{transform:translateY(2px);border-bottom-width:2px}
+.km-login-help-v224{color:#9fb3d1;text-align:center;font-size:10px;line-height:1.5;margin:0}
+.km-login-version-v224{color:#b9c6dc;font-size:10px;text-shadow:0 2px 5px #000}
+.km-login-loading-v224{min-height:220px;padding:26px 20px;text-align:center}
+.km-login-loading-emblem-v224{color:#ffdf7b;font-size:35px;animation:km-login-pulse-v224 1.5s ease-in-out infinite}
+.km-login-loading-title-v224{font-weight:900;color:#ffe4a2;margin:9px 0}
+.km-login-loading-track-v224{width:90%;height:10px;border:1px solid #d4a651;border-radius:99px;background:#0b1730;overflow:hidden}
+.km-login-loading-bar-v224{height:100%;width:35%;border-radius:99px;background:linear-gradient(90deg,#75bfff,#e3b454);animation:km-login-load-v224 1.8s ease-in-out infinite}
+.km-login-loading-text-v224{font-size:11px;color:#d3def3;margin-top:11px}
+@keyframes km-login-pulse-v224{50%{transform:scale(1.1);opacity:.7}}
+@keyframes km-login-load-v224{0%{transform:translateX(-110%)}100%{transform:translateX(290%)}}
+@media(max-height:690px){
+ .km-login-panel-v224{padding:11px 15px 10px}
+ .km-login-input-v224{height:35px;margin-bottom:6px}
+ .km-login-enter-v224{min-height:42px}
+ .km-login-panel-title-v224{margin-bottom:6px}
+}
+@media(prefers-reduced-motion:reduce){
+ .km-login-loading-emblem-v224,.km-login-loading-bar-v224{animation:none}
 }
 </style>
 
@@ -728,7 +796,7 @@
                 <button onclick="closeProfileModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <!-- v2.0.23: profile identity + calculated power. The power card is read-only. -->
+            <!-- v2.0.24: profile identity + calculated power. The power card is read-only. -->
             <div class="km-profile-overview mb-3">
                 <div class="km-profile-avatar-area">
                     <div class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-indigo-500 flex items-center justify-center overflow-hidden relative shadow cursor-pointer group" onclick="document.getElementById('profile-image-input').click()">
@@ -771,7 +839,7 @@
     <div id="km-diagnostics-modal-v219" class="modal-bg" style="z-index: 150;" onclick="if(event.target===this)kmCloseDiagnosticsV219()">
         <div class="modal-content" onclick="event.stopPropagation()" style="max-width:520px;max-height:82vh">
             <div class="flex items-center justify-between gap-2 mb-3">
-                <h3 class="font-bold text-sm"><i class="fa-solid fa-chart-line text-cyan-400 mr-1"></i> 밸런스 진단 · v2.0.23</h3>
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-chart-line text-cyan-400 mr-1"></i> 밸런스 진단 · v2.0.24</h3>
                 <button class="text-slate-300 text-lg px-2" onclick="kmCloseDiagnosticsV219()" aria-label="진단 닫기"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">현재 저장 상태를 읽기만 합니다. 생산·비용·시간·층수·저장값은 변경하지 않습니다.</p>
@@ -834,32 +902,28 @@
         </div>
     </div>
 
-    <div id="login-overlay" class="fixed inset-0 z-[2000] flex flex-col items-center justify-center p-4 overflow-hidden bg-slate-950">
-        <div class="relative z-10 text-center mb-6 w-full max-w-xs">
-            <div class="text-5xl text-yellow-400 mb-2 animate-bounce"><i class="fa-solid fa-crown"></i></div>
-            <h1 class="text-4xl text-white font-chewy tracking-wide drop-shadow-[0_4px_10px_rgba(37,99,235,0.8)]">KingMiso Shot</h1>
-            <p class="text-white font-bold text-xs bg-indigo-600 inline-block px-3 py-1 rounded-full border border-indigo-400 mt-2 shadow">
-                <i class="fa-solid fa-cloud mr-1"></i>클라우드 동기화 모드
-            </p>
-        </div>
-
-        <div class="w-full max-w-xs bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700 z-10">
-            <div id="panel-login" class="p-5">
-                <h2 class="text-base font-bold text-slate-100 mb-3"><i class="fa-solid fa-right-to-bracket text-indigo-400 mr-2"></i>왕국 접속</h2>
-                <input type="text" id="login-id" placeholder="아이디 입력" class="w-full mb-2.5 px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <input type="password" id="login-pw" placeholder="비밀번호 입력" class="w-full mb-4 px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white font-bold text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                <button onclick="attemptLogin(); playSfx('click');" class="btn-3d btn-blue w-full py-3 text-xs font-bold shadow-lg mb-3">접속 / 자동 가입</button>
-                <div class="text-center text-[11px] text-slate-400">미입력 아이디는 즉시 자동 가입됩니다.</div>
-            </div>
-            
-            <div id="panel-loading" class="p-6 hidden flex-col items-center justify-center">
-                <div class="flex items-center justify-center gap-3 mb-4 mt-2">
-                    <i class="fa-solid fa-shield-cat text-3xl text-blue-400 animate-bounce"></i>
-                    <i class="fa-solid fa-khanda text-2xl text-yellow-400 animate-spin"></i>
-                    <i class="fa-solid fa-dragon text-3xl text-rose-400 animate-bounce"></i>
+    <div id="login-overlay" class="fixed inset-0 z-[2000] flex flex-col items-center justify-end p-4 overflow-hidden bg-slate-950 km-login-v224">
+        <div class="km-login-art-caption-v224" aria-hidden="true">MY LITTLE KINGDOM</div>
+        <div class="km-login-form-wrap-v224">
+            <div class="km-login-status-v224"><i class="fa-solid fa-cloud mr-1"></i> 클라우드 동기화 모드</div>
+            <div class="km-login-card-v224">
+                <div id="panel-login" class="km-login-panel-v224">
+                    <h2 class="km-login-panel-title-v224"><i class="fa-solid fa-crown mr-2"></i>왕국에 입장하기</h2>
+                    <label for="login-id" class="km-login-field-label-v224">왕국 아이디</label>
+                    <input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username" class="km-login-input-v224">
+                    <label for="login-pw" class="km-login-field-label-v224">비밀번호</label>
+                    <input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password" class="km-login-input-v224">
+                    <button onclick="attemptLogin(); playSfx('click');" class="km-login-enter-v224"><i class="fa-solid fa-right-to-bracket mr-2"></i>왕국 접속 / 자동 가입</button>
+                    <p class="km-login-help-v224">새 아이디는 자동으로 가입됩니다. 기존 왕국은 이전 아이디와 비밀번호로 접속하세요.</p>
                 </div>
-                <p class="text-slate-200 font-bold text-xs" id="loading-text">서버 통신중...</p>
+                <div id="panel-loading" class="km-login-loading-v224 hidden flex-col items-center justify-center" role="status" aria-live="polite">
+                    <div class="km-login-loading-emblem-v224"><i class="fa-solid fa-crown"></i></div>
+                    <p class="km-login-loading-title-v224">왕국의 문을 여는 중...</p>
+                    <div class="km-login-loading-track-v224"><div class="km-login-loading-bar-v224"></div></div>
+                    <p class="km-login-loading-text-v224" id="loading-text">서버 통신중...</p>
+                </div>
             </div>
+            <div class="km-login-version-v224">KingMiso <span id="km-login-version-v224">v2.0.24</span></div>
         </div>
     </div>
 
@@ -958,7 +1022,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.23";
+        const GAME_VERSION = "v2.0.24";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -1053,7 +1117,7 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
-        // v2.0.23 balance configuration: formulas remain unchanged by default.
+        // v2.0.24 balance configuration: formulas remain unchanged by default.
         // All values below are tuning knobs, not saved player progress.
         const KM_BALANCE_V216 = Object.freeze({
             production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
@@ -1073,7 +1137,7 @@
                 timeSeconds: 0
             })
         });
-        // v2.0.23: building and gathering balance is configured separately.
+        // v2.0.24: building and gathering balance is configured separately.
         // Defaults intentionally reproduce the pre-existing costs, timers and production.
         const KM_ECONOMY_V217 = Object.freeze({
             building: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
@@ -1161,7 +1225,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.23: show finer increments so live production is visible.
+            // v2.0.24: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1374,7 +1438,7 @@
             return { hp, atk };
         }
 
-        // v2.0.23: read-only combat power model, independent of DOM and saved state.
+        // v2.0.24: read-only combat power model, independent of DOM and saved state.
         // All HEROES are counted as requested (not only the active 5-person squad).
         // maxTowerFloor is the highest *cleared* floor; towerFloor is the next attempt.
         function kmPowerSnapshotV220() {
@@ -1977,7 +2041,7 @@
             try { syncHeaderProfileV196(); } catch(err) { console.warn("Profile header sync error",err); }
             try { updateUIUnsafe(); }
             catch (err) { console.error('KingMiso UI refresh error:', err); }
-            // v2.0.23: refresh top power badge even with profile closed.
+            // v2.0.24: refresh top power badge even with profile closed.
             // Throttle repeated 100ms production ticks; never change game state.
             try {
                 const now=Date.now();
@@ -1988,7 +2052,7 @@
             } catch(err){ console.warn('Combat power refresh error',err); }
         }
 
-        // v2.0.23 READ-ONLY diagnostics. Do not call save, production ticks,
+        // v2.0.24 READ-ONLY diagnostics. Do not call save, production ticks,
         // spendResource, updateUI, upgrade actions or battle actions here.
         const KM_DIAG_RESOURCE_NAMES_V219=Object.freeze({
             gold:'금화',food:'식량',wood:'목재',ore:'철광석',herb:'약초',magicDust:'마력수정',
@@ -2041,7 +2105,7 @@
                 row.forEach(value=>{const td=document.createElement('td');td.textContent=String(value);td.className='py-1.5 pr-2 text-slate-100 whitespace-nowrap';line.appendChild(td);});tbody.appendChild(line);});
             table.appendChild(tbody);scroll.appendChild(table);section.appendChild(scroll);root.appendChild(section);
         }
-        // v2.0.23 read-only balance preview: seconds to accumulate a resource shortfall.
+        // v2.0.24 read-only balance preview: seconds to accumulate a resource shortfall.
         // Assumes production rates stay constant and no other purchases occur.
         function kmBalancePreviewV220(costs,resources,rates){
             let seconds=0,unavailable=[];
@@ -2060,7 +2124,7 @@
             if(preview.unavailable.length)return '자동 생산 없음: '+preview.unavailable.map(k=>KM_DIAG_RESOURCE_NAMES_V219[k]||k).join(', ');
             return preview.affordable?'현재 자원으로 가능':'약 '+kmDiagTimeV219(preview.seconds)+' 후 가능';
         }
-        // v2.0.23: one-step growth preview. This never modifies HEROES,
+        // v2.0.24: one-step growth preview. This never modifies HEROES,
         // ARMY_EQUIPMENT, gameState, saved data or any actual balance constants.
         function kmPreviewStatsV222(hero,equipment,level) {
             const mult=1+0.15*(level-1);
@@ -2112,7 +2176,7 @@
         window.KingMisoUpgradePreview=Object.freeze({
             version:'1.0',snapshot:kmUpgradeImpactV222
         });
-        // v2.0.23: read-only, currency-separated upgrade efficiency diagnostics.
+        // v2.0.24: read-only, currency-separated upgrade efficiency diagnostics.
         // Comparing different currencies as if they had the same value would be misleading.
         function kmEfficiencyPreviewV223(impact){
             const equipmentByResource={};
@@ -2194,7 +2258,7 @@
                 note.className='text-[10px] text-slate-400 px-1';
                 note.textContent='한 번의 강화만 가정한 예상치입니다. 영웅 잠금·선행 강화·자원 부족은 상태에 별도 표시하며, 서로 다른 재화의 효율 순위를 의미하지 않습니다.';
                 root.appendChild(note);
-                // v2.0.23: comparisons respect the resource type.
+                // v2.0.24: comparisons respect the resource type.
                 const efficiency=kmEfficiencyPreviewV223(impact);
                 for(const [resource,rows] of Object.entries(efficiency.equipmentByResource)){
                     kmDiagSectionV219(root,
@@ -2629,7 +2693,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.23 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.24 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -3043,7 +3107,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.23: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.24: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
