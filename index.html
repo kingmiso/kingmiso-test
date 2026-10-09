@@ -413,6 +413,18 @@
 @media(max-width:360px){.km-resource-board .resource-item{gap:2px;font-size:10px!important}.km-resource-board .resource-item i,.km-resource-board .resource-item span{font-size:10px!important}}
 .screen-panel { top:var(--km-header-height,112px)!important; }
 #notification-container { top:calc(var(--km-header-height,112px) + 8px)!important; }
+
+        /* v2.0.20: responsive power card, scoped to profile modal */
+        .km-profile-overview{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center}
+        .km-profile-avatar-area{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+        .km-power-card{position:relative;overflow:hidden;min-width:0;min-height:98px;padding:12px 11px;border-radius:15px;border:1px solid rgba(251,191,36,.64);background:linear-gradient(125deg,#3a245a 0%,#17294d 50%,#0e1b34 100%);box-shadow:0 3px 0 #854d0e,0 9px 20px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.14)}
+        .km-power-card:before{content:"";position:absolute;width:110px;height:110px;right:-48px;top:-54px;border-radius:50%;background:radial-gradient(circle,rgba(253,224,71,.24),transparent 72%);pointer-events:none}
+        .km-power-title{position:relative;font-size:11px;font-weight:900;letter-spacing:.2px;color:#fde68a;white-space:nowrap}
+        .km-power-title i{color:#facc15;margin-right:4px}
+        .km-power-value{position:relative;margin-top:4px;font-size:clamp(17px,5.4vw,25px);line-height:1.23;font-weight:950;letter-spacing:-.7px;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff4b3;text-shadow:0 1px 2px #78350f,0 0 14px rgba(250,204,21,.28)}
+        .km-power-meta{position:relative;margin-top:5px;color:#cbd5e1;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .km-power-meta i{color:#93c5fd;margin-right:2px}
+        @media(max-width:355px){.km-profile-overview{grid-template-columns:80px minmax(0,1fr);gap:8px}.km-power-card{padding:11px 8px}.km-power-value{font-size:17px}}
 </style>
 
 <style id="v141-fixes">
@@ -671,14 +683,22 @@
                 <button onclick="closeProfileModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="flex flex-col items-center mb-3">
-                <div class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-indigo-500 flex items-center justify-center overflow-hidden relative shadow mb-1 cursor-pointer group" onclick="document.getElementById('profile-image-input').click()">
-                    <div id="modal-preview-avatar" class="w-full h-full flex items-center justify-center bg-indigo-950 text-white text-2xl">
-                        <i class="fa-solid fa-crown text-yellow-400"></i>
+            <!-- v2.0.20: profile identity + calculated power. The power card is read-only. -->
+            <div class="km-profile-overview mb-3">
+                <div class="km-profile-avatar-area">
+                    <div class="w-20 h-20 rounded-2xl bg-slate-800 border-2 border-indigo-500 flex items-center justify-center overflow-hidden relative shadow cursor-pointer group" onclick="document.getElementById('profile-image-input').click()">
+                        <div id="modal-preview-avatar" class="w-full h-full flex items-center justify-center bg-indigo-950 text-white text-2xl">
+                            <i class="fa-solid fa-crown text-yellow-400"></i>
+                        </div>
                     </div>
+                    <input type="file" id="profile-image-input" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
+                    <span class="text-[9px] text-slate-400 text-center">사진 변경</span>
                 </div>
-                <input type="file" id="profile-image-input" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
-                <div class="text-[10px] text-slate-400">클릭하여 프로필 사진 변경</div>
+                <div class="km-power-card" aria-live="polite" aria-label="왕국 종합 전투력">
+                    <div class="km-power-title"><i class="fa-solid fa-bolt"></i> 왕국 종합 전투력</div>
+                    <div id="km-power-value-v220" class="km-power-value">—</div>
+                    <div class="km-power-meta"><i class="fa-solid fa-shield-halved"></i> <span id="km-power-detail-v220">전체 영웅 · 영지 · 전투</span></div>
+                </div>
             </div>
 
             <div class="space-y-2 mb-3">
@@ -706,7 +726,7 @@
     <div id="km-diagnostics-modal-v219" class="modal-bg" style="z-index: 150;" onclick="if(event.target===this)kmCloseDiagnosticsV219()">
         <div class="modal-content" onclick="event.stopPropagation()" style="max-width:520px;max-height:82vh">
             <div class="flex items-center justify-between gap-2 mb-3">
-                <h3 class="font-bold text-sm"><i class="fa-solid fa-chart-line text-cyan-400 mr-1"></i> 밸런스 진단 · v2.0.19</h3>
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-chart-line text-cyan-400 mr-1"></i> 밸런스 진단 · v2.0.20</h3>
                 <button class="text-slate-300 text-lg px-2" onclick="kmCloseDiagnosticsV219()" aria-label="진단 닫기"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">현재 저장 상태를 읽기만 합니다. 생산·비용·시간·층수·저장값은 변경하지 않습니다.</p>
@@ -893,7 +913,7 @@
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.19";
+        const GAME_VERSION = "v2.0.20";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -988,7 +1008,7 @@
         function getUpgradeCost(baseCost, level, subIdx = 0) {
             return Math.max(1, Math.round(baseCost * Math.pow(1.2, Math.max(0, Number(level)-1))));
         }
-        // v2.0.19 balance configuration: formulas remain unchanged by default.
+        // v2.0.20 balance configuration: formulas remain unchanged by default.
         // All values below are tuning knobs, not saved player progress.
         const KM_BALANCE_V216 = Object.freeze({
             production: Object.freeze({ rateMultiplier: 1, offlineCapHours: 12 }),
@@ -1008,7 +1028,7 @@
                 timeSeconds: 0
             })
         });
-        // v2.0.19: building and gathering balance is configured separately.
+        // v2.0.20: building and gathering balance is configured separately.
         // Defaults intentionally reproduce the pre-existing costs, timers and production.
         const KM_ECONOMY_V217 = Object.freeze({
             building: Object.freeze({costGrowth:1.2,timeBaseSeconds:3,timeGrowth:1.2}),
@@ -1096,7 +1116,7 @@
             return false;
         }
         function formatHudNumber(num) {
-            // v2.0.19: show finer increments so live production is visible.
+            // v2.0.20: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
             const n = Number(num) || 0, a = Math.abs(n);
             const compact = (divisor, suffix, digits) =>
@@ -1309,6 +1329,50 @@
             return { hp, atk };
         }
 
+        // v2.0.20: read-only combat power model, independent of DOM and saved state.
+        // All HEROES are counted as requested (not only the active 5-person squad).
+        // maxTowerFloor is the highest *cleared* floor; towerFloor is the next attempt.
+        function kmPowerSnapshotV220() {
+            let totalAttack=0,totalHP=0,totalHeroLevels=0;
+            for(const hero of HEROES){
+                const stats=getHeroStats(hero);
+                totalAttack+=Math.max(0,Number(stats.atk)||0);
+                totalHP+=Math.max(0,Number(stats.hp)||0);
+                totalHeroLevels+=Math.max(0,Number(hero.level)||0);
+            }
+            const buildingLevels=Object.values(BUILDINGS).reduce((sum,b)=>sum+Math.max(0,Number(b.level)||0),0);
+            const gatheringLevels=Object.values(GATHERING_NODES).reduce((sum,n)=>sum+Math.max(0,Number(n.level)||0),0);
+            const kingdomLevel=Math.max(0,Number(gameState.level)||0);
+            const clearedFloor=Math.max(0,Number(gameState.maxTowerFloor)||0);
+            const heroAttackPower=totalAttack*totalHeroLevels;
+            const territoryPower=kingdomLevel*(buildingLevels+gatheringLevels);
+            const battlePower=clearedFloor*1000;
+            return Object.freeze({totalAttack,totalHP,totalHeroLevels,buildingLevels,gatheringLevels,
+                kingdomLevel,clearedFloor,heroAttackPower,territoryPower,battlePower,
+                total:heroAttackPower+totalHP+territoryPower+battlePower});
+        }
+        function kmFormatPowerV220(value){
+            const n=Math.max(0,Math.floor(Number(value)||0));
+            if(n<=1000000)return n.toLocaleString('ko-KR');
+            const suffix=n>=1e9?'B':'M',unit=n>=1e9?1e9:1e6;
+            // Keep up to 3 decimals for legibility; no rounding above the actual value.
+            return (Math.floor(n/unit*1000)/1000).toFixed(3).replace(/0+$/,'').replace(/\.$/,'')+suffix;
+        }
+        function kmRenderPowerV220(){
+            const value=document.getElementById('km-power-value-v220');
+            if(!value)return;
+            const p=kmPowerSnapshotV220();
+            value.textContent=kmFormatPowerV220(p.total);
+            value.title='정확한 전투력: '+p.total.toLocaleString('ko-KR');
+            const detail=document.getElementById('km-power-detail-v220');
+            if(detail){
+                detail.textContent='영웅 '+HEROES.length+'명 · 최고 클리어 '+p.clearedFloor+'층';
+                detail.title='공격력 합계 '+p.totalAttack.toLocaleString('ko-KR')+' × 영웅 레벨 합계 '+p.totalHeroLevels.toLocaleString('ko-KR')
+                    +' + 체력 합계 '+p.totalHP.toLocaleString('ko-KR')+' + 왕국 레벨 '+p.kingdomLevel+' × 건물·채집 레벨 합계 '+(p.buildingLevels+p.gatheringLevels)
+                    +' + 최고 클리어 층 '+p.clearedFloor+' × 1,000';
+            }
+        }
+        window.KingMisoPower=Object.freeze({version:'1.0',snapshot:kmPowerSnapshotV220,format:kmFormatPowerV220,refresh:kmRenderPowerV220});
         function toggleHeroAccordion(type) {
             gameState.openHeroAccordions[type] = !gameState.openHeroAccordions[type];
             renderHeroes();
@@ -1860,9 +1924,12 @@
             try { syncHeaderProfileV196(); } catch(err) { console.warn("Profile header sync error",err); }
             try { updateUIUnsafe(); }
             catch (err) { console.error('KingMiso UI refresh error:', err); }
+            // Refresh profile power only when its modal is visible.
+            try { if(document.getElementById('profile-modal')?.style.display==='flex') kmRenderPowerV220(); }
+            catch(err){ console.warn('Combat power refresh error',err); }
         }
 
-        // v2.0.19 READ-ONLY diagnostics. Do not call save, production ticks,
+        // v2.0.20 READ-ONLY diagnostics. Do not call save, production ticks,
         // spendResource, updateUI, upgrade actions or battle actions here.
         const KM_DIAG_RESOURCE_NAMES_V219=Object.freeze({
             gold:'금화',food:'식량',wood:'목재',ore:'철광석',herb:'약초',magicDust:'마력수정',
@@ -1915,6 +1982,25 @@
                 row.forEach(value=>{const td=document.createElement('td');td.textContent=String(value);td.className='py-1.5 pr-2 text-slate-100 whitespace-nowrap';line.appendChild(td);});tbody.appendChild(line);});
             table.appendChild(tbody);scroll.appendChild(table);section.appendChild(scroll);root.appendChild(section);
         }
+        // v2.0.20 read-only balance preview: seconds to accumulate a resource shortfall.
+        // Assumes production rates stay constant and no other purchases occur.
+        function kmBalancePreviewV220(costs,resources,rates){
+            let seconds=0,unavailable=[];
+            for(const [key,rawCost] of Object.entries(costs||{})){
+                const cost=Math.max(0,Number(rawCost)||0);
+                const have=Math.max(0,Number(resources[key])||0);
+                const deficit=Math.max(0,cost-have);
+                if(!deficit)continue;
+                const rate=Math.max(0,Number(rates[key])||0);
+                if(!rate){unavailable.push(key);continue;}
+                seconds=Math.max(seconds,deficit/rate);
+            }
+            return {seconds:Math.ceil(seconds),unavailable,affordable:seconds===0&&!unavailable.length};
+        }
+        function kmBalancePreviewTextV220(preview){
+            if(preview.unavailable.length)return '자동 생산 없음: '+preview.unavailable.map(k=>KM_DIAG_RESOURCE_NAMES_V219[k]||k).join(', ');
+            return preview.affordable?'현재 자원으로 가능':'약 '+kmDiagTimeV219(preview.seconds)+' 후 가능';
+        }
         function kmRenderDiagnosticsV219(){
             const root=document.getElementById('km-diagnostics-content-v219');if(!root)return;
             root.replaceChildren();
@@ -1937,6 +2023,20 @@
                 kmDiagSectionV219(root,'영웅 · 다음 강화 (전체)',['영웅','레벨','비용','시간'],d.heroes.map(x=>[
                     x.name,'Lv.'+x.level,Object.entries(x.costs).map(([key,n])=>(KM_DIAG_RESOURCE_NAMES_V219[key]||key)+' '+kmDiagFormatV219(n)).join(' / '),kmDiagTimeV219(x.timeSeconds)
                 ]));
+                // Non-destructive preview; costs, production and save data are never modified.
+                const forecastRows=[...d.buildings.map(x=>({name:'건물 · '+x.name,costs:{[x.resource]:x.cost}})),
+                    ...d.gathering.map(x=>({name:'채집 · '+x.name,costs:{[x.resource]:x.cost}})),
+                    ...d.heroes.filter(Boolean).map(x=>({name:'영웅 · '+x.name,costs:x.costs}))];
+                kmDiagSectionV219(root,'밸런스 시뮬레이션 · 다음 강화 자원 충당 예상',['대상','자원 확보 예상'],
+                    forecastRows.map(x=>[x.name,kmBalancePreviewTextV220(kmBalancePreviewV220(x.costs,d.resources,d.rates))]));
+                const p=kmPowerSnapshotV220();
+                kmDiagSectionV219(root,'종합 전투력 산식',['항목','계산 결과'],[
+                    ['전체 영웅 공격력 합계 × 레벨 합계',kmDiagFormatV219(p.heroAttackPower)],
+                    ['전체 영웅 체력 합계',kmDiagFormatV219(p.totalHP)],
+                    ['왕국 레벨 × 영지·채집 합산 레벨',kmDiagFormatV219(p.territoryPower)],
+                    ['최종 클리어 층 × 1,000',kmDiagFormatV219(p.battlePower)],
+                    ['종합 전투력',kmDiagFormatV219(p.total)]
+                ]);
                 const armyNames={infantry:'보병',cavalry:'기병',archer:'궁병'};
                 kmDiagSectionV219(root,'장비 · 다음 강화 (즉시)',['군단 · 장비','레벨','필요 재화'],d.equipment.map(x=>[
                     (armyNames[x.armyType]||x.armyType)+' '+x.name,'Lv.'+x.level,(KM_DIAG_RESOURCE_NAMES_V219[x.resource]||x.resource)+' '+kmDiagFormatV219(x.cost)
@@ -1959,6 +2059,7 @@
             if(preview) preview.innerHTML=gameState.profileImageBase64
                 ? `<img src="${gameState.profileImageBase64}" class="w-full h-full object-cover" alt="프로필">`
                 : `<i class="fa-solid fa-crown text-yellow-300"></i>`;
+            kmRenderPowerV220();
             document.getElementById('profile-modal').style.display = 'flex';
         }
         function closeProfileModal(event) { if (!event || event.target.id === 'profile-modal') document.getElementById('profile-modal').style.display = 'none'; }
@@ -2348,7 +2449,7 @@
         // v2.0.2: 검증된 원본 gameLoop 방식으로 건물/채집 생산을 직접 계산.
         // 실제 경과 시간을 사용하므로 브라우저 타이머 지연에도 초당 생산량이 일정함.
         let kmLastResourceTickV202 = Date.now();
-        // v2.0.19 UI adapter: presentation-only boundary between state and HUD DOM.
+        // v2.0.20 UI adapter: presentation-only boundary between state and HUD DOM.
         // Future redesigns can replace selectors here without changing resource production.
         const KM_HUD_RESOURCE_KEYS = Object.freeze([
             'gold','food','wood','ore','herb','magicDust',
@@ -2762,7 +2863,7 @@
     if(!result.ok)console.warn('[KingMiso UI contract] future redesign compatibility issue',result);
     return result;
   };
-  // v2.0.19: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
+  // v2.0.20: checksum and strict restore preflight. Legacy v2.0.9+ backups remain readable.
   async function kmDigestV212(state){
     if(!crypto || !crypto.subtle) return null;
     const bytes=new TextEncoder().encode(JSON.stringify(state));
