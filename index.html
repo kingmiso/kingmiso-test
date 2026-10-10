@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.43: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.44: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1462,6 +1462,33 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
 #v15-build-modal[data-work-state=working] .v15-build-art,#v15-build-modal[data-work-state=complete] .v15-build-art{height:90px!important;margin-bottom:8px}
 #v15-build-modal[data-work-state=working] #v15-build-desc{display:none}
 #v15-build-modal[data-work-state=working] #km-workshop243{margin:8px 0;padding:8px}
+</style><style>/* Let the frame size itself around the complete identity contents. */
+.top-bar [onclick*="openProfileModal"],body.km-domain240 .top-bar [onclick*="openProfileModal"]{width:auto!important;max-width:none!important;flex:0 1 auto!important;box-sizing:border-box;grid-template-columns:none!important;padding:3px 8px 3px 3px!important;border:1px solid #c6aa6a!important;border-radius:24px!important;background:#10283dcc!important;overflow:visible!important}
+#header-kingdom-name,body.km-domain240 #header-kingdom-name{max-width:none;width:auto;flex:0 1 auto;min-width:0;padding-right:2px}
+.top-bar>div:first-child>div:first-child{flex-shrink:1!important}.top-bar #header-kingdom-level{flex-shrink:0}
+#v15-build-modal .v15-build-body{display:flex;flex-direction:column;padding:0!important;overflow:hidden!important;gap:0;background:#091c2e}
+#v15-build-modal .v15-build-body>.km-detail-label,#v15-build-modal #v15-build-desc,#v15-build-modal #km-detail-progress,#v15-build-modal #km-detail-status{display:none!important}
+#v15-build-modal[data-work-state=working] #km-action-cost239,#v15-build-modal[data-work-state=complete] #km-action-cost239{display:none!important}
+#v15-build-modal .v15-build-art,#v15-build-modal[data-work-state] .v15-build-art{position:relative;flex:1 1 auto;height:auto!important;min-height:170px;width:100%;margin:0!important;border:0;overflow:hidden;box-shadow:inset 0 65px 45px -30px #021323cc,inset 0 -40px 35px -25px #04162ee6}
+#v15-build-modal .km-detail-titleline{position:absolute;top:10px;left:10px;right:10px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:5px;padding:8px 10px;background:#061a30dc;border:1px solid #c9ad6d88;border-radius:9px;box-shadow:0 4px 12px #0003}#v15-build-modal #v15-build-title{font-size:16px}#v15-build-modal #km-detail-level{font-size:11px;white-space:nowrap}
+#v15-build-modal .km-scene-badge243{display:none}
+#km-scene-pin244{position:absolute;left:50%;top:51%;transform:translate(-50%,-50%)!important;z-index:4;display:flex;align-items:center;flex-direction:column;gap:3px;border:1px solid #f3d087;border-radius:12px;padding:8px 14px;background:linear-gradient(#16344ce6,#071b30ed);color:#ffe6b2;box-shadow:0 4px 14px #0007,inset 0 1px #ffe7a644;white-space:nowrap}
+#km-scene-pin244 strong{font-size:12px}#km-scene-pin244 small{font-size:9px;color:#c0d4e4}.km-site-tool244{font-size:27px;line-height:29px;display:block;transform-origin:50% 80%;color:#ffcf78}
+#km-scene-pin244:active{filter:brightness(1.3)}
+#v15-build-modal[data-work-state=working] .km-site-tool244{animation:km-site-strike244 .85s ease-in-out infinite}
+#v15-build-modal[data-work-state=working] #km-scene-pin244{box-shadow:0 0 22px #f0bd5066,0 5px 14px #0008}
+#v15-build-modal .km-hammer243{transform-box:view-box;transform-origin:33px 28px}
+#km-scene-info244{position:absolute;z-index:5;left:8px;right:8px;bottom:8px;background:#071b30f2;border:1px solid #d7b775;border-radius:10px;padding:8px;box-shadow:0 5px 20px #0009}
+#km-scene-info244[hidden]{display:none!important}#km-scene-info244 #km-detail-output{margin:0 0 6px;padding:5px 7px;font-size:10px}#km-scene-info244 #v15-build-cost{margin:0;padding:6px 7px}#km-scene-info244 #v15-build-cost strong{font-size:16px}#km-scene-info244 .km-owned{font-size:9px}
+#v15-build-modal #km-workshop243{flex:0 0 auto;border-radius:0;border-width:1px 0 0;margin:0!important;padding:10px 12px!important;background:linear-gradient(120deg,#213a4e,#0a2035);box-shadow:none;min-height:76px}
+#v15-build-modal .km-work-info243 p{font-size:10px}#v15-build-modal .km-work-icon243{flex-basis:42px;height:42px}
+#v15-build-modal[data-work-state=working] #v15-build-go{display:none!important}
+#v15-build-modal .km-detail-actions239{padding:8px 12px}#km-build-cancel242{margin-top:0;min-height:36px}
+@keyframes km-site-strike244{0%,100%{transform:rotate(-23deg) translateY(-2px)}50%{transform:rotate(23deg) translateY(3px)}}
+@media(max-width:380px){#header-kingdom-name,body.km-domain240 #header-kingdom-name{font-size:11px}#header-kingdom-level,body.km-domain240 #header-kingdom-level{font-size:11px}.top-bar [onclick*="openProfileModal"]{gap:3px!important}#km-header-power-v221,body.km-domain240 #km-header-power-v221{font-size:10px;gap:2px}}
+@media(prefers-reduced-motion:reduce){#v15-build-modal .km-site-tool244{animation:none!important}}
+#v15-build-modal .v15-build-art:before{top:0;transform:none;width:100%;height:100%;aspect-ratio:auto}
+#km-scene-pin244[aria-expanded=true]{top:27%;padding:4px 12px}#km-scene-pin244[aria-expanded=true] .km-site-tool244{display:none}
 </style></head>
 <body>
 
@@ -1920,7 +1947,7 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.43";
+        const GAME_VERSION = "v2.0.44";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -4262,5 +4289,22 @@ kmRefreshBuild238=function(){
  modal.querySelector('.km-scene-badge243 b').textContent=task?'왕실 작업 진행 중':state==='complete'?'왕국의 새로운 성장':kind==='building'?'왕실 건설 작업장':'왕실 채집 작업장';
 };
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit243);else kmInit243();
+</script><script>// Scene-based detail UI: no changes to economy, timers, or saved state.
+function kmInit244(){
+ const body=document.querySelector('#v15-build-modal .v15-build-body'),art=body.querySelector('.v15-build-art');
+ const title=body.querySelector('.km-detail-titleline');art.prepend(title);
+ const drawer=document.createElement('div');drawer.id='km-scene-info244';drawer.hidden=true;drawer.append(document.getElementById('km-detail-output'),document.getElementById('v15-build-cost'));art.append(drawer);
+ const pin=document.createElement('button');pin.id='km-scene-pin244';pin.type='button';pin.setAttribute('aria-controls',drawer.id);pin.setAttribute('aria-expanded','false');pin.innerHTML='<span class="km-site-tool244" aria-hidden="true">⚒</span><strong>작업 정보</strong><small>터치하여 생산량·자원 보기</small>';
+ pin.onclick=()=>{drawer.hidden=!drawer.hidden;pin.setAttribute('aria-expanded',String(!drawer.hidden));pin.querySelector('small').textContent=drawer.hidden?'터치하여 생산량·자원 보기':'다시 터치하여 닫기';};art.append(pin);
+ body.append(document.getElementById('km-workshop243'));
+ document.getElementById('km-detail-progress').setAttribute('aria-hidden','true');
+}
+const kmRefreshBefore244=kmRefreshBuild238;
+kmRefreshBuild238=function(){kmRefreshBefore244();if(!v15BuildTarget)return;const {kind,key}=v15BuildTarget,obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],job=gameState.upgradesInProgress[kind+':'+key];
+ if(!job&&!kmBuildCompleted238)document.getElementById('km-work-caption243').textContent='예상 시간 '+kmDuration241(kmGrowthTimeV217(obj.level,kind==='building'?'building':'gathering'));
+};
+const kmOpenBefore244=openV15Build;
+openV15Build=function(kind,key){kmOpenBefore244(kind,key);const drawer=document.getElementById('km-scene-info244');if(drawer)drawer.hidden=true;const pin=document.getElementById('km-scene-pin244');if(pin){pin.setAttribute('aria-expanded','false');pin.querySelector('small').textContent='터치하여 생산량·자원 보기';}document.querySelector('#v15-build-modal .v15-build-body').scrollTop=0;};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit244);else kmInit244();
 </script></body>
 </html>
