@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.42: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.43: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1438,6 +1438,30 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
 #profile-image-input{display:none!important}.km-profile-overview{margin-bottom:16px}.km-profile-avatar-area>div:first-child{width:66px;height:66px;border-radius:50%;overflow:hidden;border:2px solid #c4a361;background:#152d45;cursor:pointer}#modal-preview-avatar{height:100%;display:flex;align-items:center;justify-content:center;background:#10283e}#modal-preview-avatar:empty:before{content:'♛';font-size:32px;color:#efc575}#modal-preview-avatar img{width:100%;height:100%;object-fit:cover}.km-profile-avatar-area{font-size:10px;gap:5px}.km-profile-avatar-area>span{font-size:10px}
 #profile-modal label:not(.btn-3d){display:block;font-size:11px;margin-bottom:6px;color:#c2d2df}#profile-modal .km-power-card{background:linear-gradient(135deg,#263e54,#10243b);border-color:#b69b64}#profile-modal .km-power-value{font-size:24px}#kingdom-levelup-modal .modal-content{text-align:center}#kingdom-levelup-modal h2{color:#ffe1a0;font-size:22px}#popup-reward-text{padding:14px;margin:15px 0;background:#071a2d;border:1px solid #8c7959;border-radius:9px}
 #modal-preview-avatar:has(>i):before{content:'♛';font-size:32px;color:#efc575}#modal-preview-avatar>i{display:none}.modal-content>label.btn-3d{border-bottom:2px solid #8c7750!important}
+</style><style>/* A single identity line, shared by every tab and every device. */
+.top-bar>div:first-child>div:first-child,body.km-domain240 .top-bar>div:first-child>div:first-child{display:flex;align-items:center;gap:5px;padding-bottom:0;min-width:0;flex:1;flex-shrink:1}
+.top-bar [onclick*="openProfileModal"],body.km-domain240 .top-bar [onclick*="openProfileModal"]{display:flex;align-items:center;gap:4px;min-width:0;padding:0;flex-shrink:1}
+.top-bar [onclick*="openProfileModal"]:before{display:none!important}
+#header-profile-avatar,body.km-domain240 #header-profile-avatar{width:30px!important;height:30px!important;flex-shrink:0;margin:0}
+#header-kingdom-level,body.km-domain240 #header-kingdom-level{font-size:12px;white-space:nowrap;padding:0;margin:0}
+#header-kingdom-name,body.km-domain240 #header-kingdom-name{font-size:13px;max-width:78px;min-width:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}
+#km-header-power-v221,body.km-domain240 #km-header-power-v221{position:static;display:flex;align-self:center;flex-shrink:0;max-width:none;padding:0;gap:3px;font-size:11px;white-space:nowrap}
+.km-header-power-label-v222,body.km-domain240 .km-header-power-label-v222{display:inline!important;font-size:9px!important}#km-header-power-v221 i{display:none}
+.top-bar>div:first-child,body.km-domain240 .top-bar>div:first-child{min-height:36px;margin-bottom:5px;gap:5px}#audio-toggle-btn{flex-shrink:0}
+#v15-build-modal .v15-build-art{position:relative;overflow:hidden;height:clamp(110px,21dvh,165px)!important;box-shadow:inset 0 -35px 30px -20px #031426}
+.km-scene-badge243{position:absolute;bottom:8px;left:10px;display:flex;align-items:center;gap:6px;padding:5px 9px;background:#071c30de;border:1px solid #d3b67988;border-radius:20px;color:#f4dfb3;font-size:10px}.km-scene-badge243 span{width:5px;height:5px;border-radius:50%;background:#eac575;box-shadow:0 0 7px #ffc75f}
+.km-atmosphere243{position:absolute;inset:0;pointer-events:none;background:linear-gradient(0deg,#061a3055,transparent 60%)}.km-atmosphere243 i{position:absolute;bottom:8%;left:20%;width:3px;height:3px;border-radius:50%;background:#ffe2a1;box-shadow:0 0 7px 2px #ffce7188;animation:km-mote243 5s linear infinite}.km-atmosphere243 i:nth-child(2){left:42%;animation-delay:-2s}.km-atmosphere243 i:nth-child(3){left:64%;animation-delay:-4s}.km-atmosphere243 i:nth-child(4){left:80%;animation-delay:-1s}.km-atmosphere243 i:nth-child(5){left:32%;animation-delay:-3s}
+#km-workshop243{display:flex;align-items:center;gap:10px;padding:10px;margin:10px 0 13px;border:1px solid #ba9b5f66;border-radius:10px;background:radial-gradient(ellipse at 0 50%,#95704033,transparent 70%),linear-gradient(110deg,#182f43,#091d31);box-shadow:inset 0 1px #e2c89216}
+.km-work-icon243{flex:0 0 48px;height:48px;border:1px solid #c1a66e60;background:#0b2034;border-radius:50%;padding:4px}.km-work-icon243 svg{width:100%;height:100%;fill:#c5a465}.km-anvil243{fill:#86a6b8}.km-hammer243{transform-origin:33px 28px}.km-spark243{stroke:#ffe0a0;stroke-width:2;fill:none;opacity:0}.km-work-info243{flex:1;min-width:0}.km-work-info243>div:first-child{display:flex;justify-content:space-between;gap:5px;font-size:11px;color:#f5dfad}.km-work-info243 b{font-variant-numeric:tabular-nums;color:#a1dfce}.km-work-info243 p{font-size:9px;color:#b3c7d7;margin:5px 0 8px}.km-work-track243{height:5px;background:#031326;border-radius:9px;overflow:hidden}.km-work-track243>span{display:block;height:100%;background:linear-gradient(90deg,#659d91,#e8d294);border-radius:9px;transition:width .3s linear;position:relative;overflow:hidden}.km-work-steps243{display:flex;justify-content:space-between;font-size:8px;color:#728c9f;margin-top:5px}
+[data-state=ready] .km-work-steps243 span:first-child,[data-state=working] .km-work-steps243 span:nth-child(2),[data-state=complete] .km-work-steps243 span:last-child{color:#ffe0a0}
+[data-state=working] .km-hammer243{animation:km-hammer243 1.3s ease-in-out infinite}[data-state=working] .km-spark243{animation:km-spark243 1.3s infinite}[data-state=working] .km-work-track243>span:after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent,#fff8,transparent);animation:km-glint243 2s linear infinite}
+[data-work-state=working] .km-scene-badge243 span{animation:km-pulse243 1.4s infinite}[data-work-state=complete] .v15-build-art:after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent,#ffe9af88,transparent);animation:km-glint243 1.3s ease-out 1;pointer-events:none}#km-workshop243[data-state=complete]{border-color:#87c8a7;box-shadow:inset 0 0 20px #74c7a414}
+@keyframes km-hammer243{0%,100%{transform:rotate(-20deg)}45%,60%{transform:rotate(20deg)}}@keyframes km-spark243{0%,40%,80%,100%{opacity:0}50%{opacity:1}}@keyframes km-mote243{0%{transform:translate(0,0);opacity:0}25%{opacity:.8}100%{transform:translate(12px,-80px);opacity:0}}@keyframes km-glint243{from{transform:translateX(-100%)}to{transform:translateX(100%)}}@keyframes km-pulse243{50%{opacity:.4}}
+@media(max-height:650px){#v15-build-modal .v15-build-art{height:100px!important}#km-workshop243{padding:7px;margin:8px 0}.km-work-icon243{flex-basis:40px;height:40px}}
+@media(prefers-reduced-motion:reduce){#v15-build-modal *,#v15-build-modal *:after{animation:none!important;transition:none!important}}
+#v15-build-modal[data-work-state=working] .v15-build-art,#v15-build-modal[data-work-state=complete] .v15-build-art{height:90px!important;margin-bottom:8px}
+#v15-build-modal[data-work-state=working] #v15-build-desc{display:none}
+#v15-build-modal[data-work-state=working] #km-workshop243{margin:8px 0;padding:8px}
 </style></head>
 <body>
 
@@ -1896,7 +1920,7 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.42";
+        const GAME_VERSION = "v2.0.43";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -4218,5 +4242,25 @@ kmRefreshHero239=function(){kmRefreshHeroBefore242();const i=kmHeroSelected239;i
 function kmInit242(){const footer=document.querySelector('.km-detail-actions239'),btn=document.createElement('button');btn.id='km-build-cancel242';btn.className='km-cancel-action242';btn.hidden=true;btn.textContent='작업 취소 · 자원 50% 반환';footer.append(btn);document.querySelectorAll('.modal-content>div:first-child>button').forEach(b=>{if(b.querySelector('.fa-xmark')){b.textContent='×';b.setAttribute('aria-label','닫기');b.classList.add('km-popup-close242');}});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit242);else kmInit242();
 document.addEventListener('keydown',e=>{const box=document.getElementById('km-cancel242');if(box.hidden)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();kmCloseCancel242();}if(e.key==='Tab'){const a=document.getElementById('km-cancel-keep242'),b=document.getElementById('km-cancel-confirm242');if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}}},true);
+</script><script>// Presentation-only workshop states follow the existing saved upgrade job.
+function kmInit243(){
+ const art=document.querySelector('#v15-build-modal .v15-build-art');
+ art.insertAdjacentHTML('beforeend','<div class="km-atmosphere243" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="km-scene-badge243"><span></span><b>왕실 작업장</b></div>');
+ document.getElementById('km-detail-output').insertAdjacentHTML('beforebegin',`<section id="km-workshop243" data-state="ready" aria-label="작업 상태"><div class="km-work-icon243" aria-hidden="true"><svg viewBox="0 0 64 64"><path class="km-anvil243" d="M9 40h44l-8 10H27l-7-5H9zM29 50h13l5 7H23z"/><g class="km-hammer243"><path d="m30 12 7 5-17 27-5-4z"/><path d="m26 5 19 12-6 10-19-12z"/></g><path class="km-spark243" d="m45 30 3-6m1 13 7-2m-15-4-1-7"/></svg></div><div class="km-work-info243"><div><strong id="km-work-title243"></strong><b id="km-work-percent243"></b></div><p id="km-work-caption243"></p><div class="km-work-track243" role="progressbar" aria-label="작업 진행률" aria-valuemin="0" aria-valuemax="100"><span></span></div><div class="km-work-steps243"><span>준비</span><span>작업 중</span><span>완료</span></div></div></section>`);
+}
+const kmRefreshBefore243=kmRefreshBuild238;
+kmRefreshBuild238=function(){
+ kmRefreshBefore243();if(!v15BuildTarget||!document.getElementById('km-workshop243'))return;
+ const {kind,key}=v15BuildTarget,task=gameState.upgradesInProgress[kind+':'+key],obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key];
+ const state=task?'working':kmBuildCompleted238?'complete':document.getElementById('v15-build-go').disabled?'poor':'ready';
+ const modal=document.getElementById('v15-build-modal'),work=document.getElementById('km-workshop243');modal.dataset.workState=state;work.dataset.state=state;
+ const pct=task?Math.min(100,Math.max(0,100*(1-(task.endTime-Date.now())/(Math.max(1,task.totalTime)*1000)))):state==='complete'?100:0;
+ document.getElementById('km-work-title243').textContent=task?(kind==='building'?'왕실 건설단 작업 중':'채집장 확장 작업 중'):state==='complete'?'업그레이드 완료':state==='poor'?'자원 준비 중':'작업 준비 완료';
+ document.getElementById('km-work-percent243').textContent=task?Math.floor(pct)+'%':state==='complete'?'✓':'Lv.'+obj.level;
+ document.getElementById('km-work-caption243').textContent=task?'남은 시간 '+kmDuration241(Math.max(0,task.endTime-Date.now())/1000):state==='complete'?'늘어난 생산량이 영지에 적용되었습니다.':state==='poor'?'필요한 자원을 모으면 시작할 수 있습니다.':'시작하면 작업 상황을 여기서 확인할 수 있습니다.';
+ const track=work.querySelector('[role=progressbar]');track.setAttribute('aria-valuenow',String(Math.floor(pct)));track.firstElementChild.style.width=pct+'%';
+ modal.querySelector('.km-scene-badge243 b').textContent=task?'왕실 작업 진행 중':state==='complete'?'왕국의 새로운 성장':kind==='building'?'왕실 건설 작업장':'왕실 채집 작업장';
+};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit243);else kmInit243();
 </script></body>
 </html>
