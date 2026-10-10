@@ -15,3 +15,5 @@
 
 - v2.0.41 authorized production change: each completed facility upgrade adds its pre-upgrade level plus castle level captured when construction starts to its base output per second. Old saves retain their current output; future increases persist in productionV241.
 - Durations use Dd HH:MM:SS. Map touch feedback must preserve translate(-50%,-50%) anchors.
+
+- v2.0.42: omit the day prefix for durations below one day; show larger level/nickname/power without the domain title in the HUD. Active building/gathering/hero jobs can be cancelled with exactly 50% of paid resources refunded once. New jobs persist paidCostsV242; legacy jobs infer unchanged pre-upgrade costs.

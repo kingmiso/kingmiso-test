@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.41: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.42: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1395,6 +1395,49 @@ body.km-domain240 .top-bar>div:first-child>div:first-child{gap:5px}body.km-domai
 #km-detail-time,#km-action-cost239,#progress-text-hero{font-variant-numeric:tabular-nums}
 .km-production-gain241{display:block;color:#a1e8c0;font-size:10px;margin:4px 0 8px}
 .km-gather239 .progress-bar-container{height:18px!important}.km-gather239 .progress-bar-text{display:block!important;font-size:9px;line-height:16px;text-shadow:0 1px 2px #000}
+</style><style>/* Common royal panel finish, with deliberate spacing and consistent actions. */
+:root{--km-panel242:linear-gradient(140deg,#203b55,#0a1d32 48%,#061528);--km-frame242:#bfa16a}
+body.km-domain240 .top-bar [onclick*="openProfileModal"]:before{display:none;content:none}
+body.km-domain240 .top-bar [onclick*="openProfileModal"]{grid-template-columns:36px auto minmax(0,1fr);grid-template-rows:20px;gap:5px;background:none;min-width:0}
+body.km-domain240 #header-profile-avatar{width:34px!important;height:34px!important;grid-row:1;grid-column:1}
+body.km-domain240 #header-kingdom-level{grid-row:1;grid-column:2;font-size:13px;font-weight:800}
+body.km-domain240 #header-kingdom-name{grid-row:1;grid-column:3;font-size:14px;max-width:105px;font-weight:800}
+body.km-domain240 .top-bar>div:first-child>div:first-child{position:relative;padding-bottom:16px;min-width:0;display:block}
+body.km-domain240 #km-header-power-v221{position:absolute;left:41px;bottom:0;padding:0;font-size:12px;max-width:175px;color:#f4d994}
+body.km-domain240 .km-header-power-label-v222{font-size:11px!important}
+body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
+#v15-build-modal .v15-build-card,.modal-bg .modal-content,#km-hero-detail239,#km-offline-modal-v205>div,.km-confirm-card242{background:var(--km-panel242)!important;border:1px solid var(--km-frame242)!important;box-shadow:inset 0 0 0 3px #09172c,inset 0 0 0 4px #d4b37138,0 18px 50px #0009!important;border-radius:16px!important;color:#e4edf6}
+.modal-bg{background:#020c1dc9!important;backdrop-filter:blur(5px);padding:12px!important}
+.modal-bg .modal-content{width:min(406px,100%)!important;max-width:406px!important;max-height:calc(100dvh - 32px)!important;overflow-y:auto!important;padding:20px!important}
+.modal-content>div:first-child:has(h3){display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #c6a66970;padding-bottom:12px;margin-bottom:15px}
+.modal-content h3{color:#ffe3a2!important;font-size:17px!important;font-weight:800;margin:0}
+.km-popup-close242,#v15-build-modal .v15-close,#km-hero-close239{width:34px;height:34px;border:1px solid #bc9d646e!important;background:linear-gradient(#294159,#11263d)!important;color:#ffe2a8!important;border-radius:9px!important;font-size:23px!important;box-shadow:inset 0 1px #ffffff15}
+.modal-content button.btn-3d,.modal-content>button,#km-offline-ok-v205,#v15-build-go{background:linear-gradient(#ffe2a0,#e5b249 52%,#bf8524)!important;color:#33200a!important;border:1px solid #f8da90!important;border-bottom:3px solid #8d5d20!important;border-radius:9px!important;min-height:42px;font-weight:800;text-shadow:0 1px #fff7;box-shadow:inset 0 1px #fff7,0 3px 8px #0003!important}
+#v15-build-go:disabled,.modal-content button:disabled{background:linear-gradient(#4c5a65,#263b4d)!important;border-color:#6e8291!important;color:#b5c9db!important;text-shadow:none}
+#v15-build-modal .km-detail-heading{padding:10px 13px;background:linear-gradient(90deg,#162f49,#0b2036);border-bottom:1px solid #c3a36d77;color:#ffe6b4;font-size:13px}
+#v15-build-modal .v15-build-body{background:radial-gradient(ellipse at 50% 0,#36536736,transparent 65%);padding:0 14px 10px}
+#v15-build-modal .v15-build-art{width:calc(100% + 28px);margin:0 -14px 13px;border-bottom:2px solid #b7975666;height:clamp(80px,18dvh,140px)!important}
+#v15-build-title{color:#fff0c8;font-size:20px}#km-detail-level{background:#06172a85;border:1px solid #bc995750;padding:3px 6px;border-radius:5px;color:#f6d582}
+#km-detail-output{background:#092336a8;border:1px solid #71857a70;border-left:3px solid #74b897;padding:7px 9px;margin-top:10px}
+#v15-build-cost{background:linear-gradient(120deg,#213c52,#0c2137);border:1px solid #bca27066;box-shadow:inset 0 1px #fff1;padding:9px 11px}
+.km-detail-actions239{background:linear-gradient(#152c42,#0a1c31);border-top:1px solid #c4a56677;padding:8px 12px 12px}#km-action-cost239{color:#e6d0a4;font-size:11px}#km-detail-status{color:#a9bdcb}
+.km-cancel-action242{display:block;width:100%;min-height:34px;margin-top:7px;border:1px solid #b27b6d88;border-radius:7px;background:#351e2380;color:#f1c4ac;font-size:11px;font-weight:700}
+.km-cancel-action242[hidden],#km-cancel242[hidden]{display:none!important}
+#km-cancel242{position:fixed;inset:0;z-index:20000;background:#020b1ed9;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:18px}
+.km-confirm-card242{width:min(370px,100%);padding:23px}.km-confirm-card242 h2{font-size:19px;color:#ffe3a2;margin:0 0 12px}.km-confirm-card242 p{font-size:13px;color:#bbcdde;line-height:1.6}
+#km-refund242>div{display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:1px solid #8597a433;font-size:13px}#km-refund242 b{margin-left:auto;color:#a4e1bd}
+.km-confirm-actions242{display:flex;gap:9px;margin-top:18px}.km-confirm-actions242 button{flex:1;min-height:43px;border:1px solid #ad9467;border-radius:8px;background:#213b52;color:#f5e2ba;font-weight:700}.km-confirm-actions242 button:last-child{background:linear-gradient(#dfb065,#a16b2a);color:#241509}
+#equipment-list-container>div{background:#10263b!important;border:1px solid #6a788952!important;padding:10px;margin-bottom:9px;border-radius:9px}.km-equip-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#km-hero-detail239{background:var(--km-panel242)!important;padding:15px}.km-hero-actions239{background:#0b2035}
+@media(max-height:650px){#v15-build-modal .v15-build-art{height:78px!important}.km-detail-heading{padding-block:6px!important}.km-detail-actions239{padding-top:5px;padding-bottom:8px}}
+/* Popups keep their layout even while remote utility styles are unavailable. */
+.modal-content .flex{display:flex}.modal-content .items-center{align-items:center}.modal-content .justify-between{justify-content:space-between}.modal-content .gap-2{gap:8px}.modal-content .flex-1{flex:1;min-width:0}.modal-content .w-full{width:100%}.modal-content .hidden{display:none!important}.modal-content .relative{position:relative}.modal-content .block{display:block}.modal-content .text-center{text-align:center}
+.modal-content>button,.modal-content>label.btn-3d{display:block;width:100%;margin-top:9px;padding:10px 12px;font-size:12px;box-sizing:border-box}
+.modal-content>label.btn-3d{background:linear-gradient(#294860,#162c42)!important;border:1px solid #ae9568;border-radius:9px;color:#f0dfbb}
+.modal-content p{font-size:11px;line-height:1.6;color:#b7c9d9}.modal-content input[type=text]{background:#081b2d;border:1px solid #718395;border-radius:7px;color:#fff0d1;min-height:39px;padding:8px;font-size:14px}
+#profile-image-input{display:none!important}.km-profile-overview{margin-bottom:16px}.km-profile-avatar-area>div:first-child{width:66px;height:66px;border-radius:50%;overflow:hidden;border:2px solid #c4a361;background:#152d45;cursor:pointer}#modal-preview-avatar{height:100%;display:flex;align-items:center;justify-content:center;background:#10283e}#modal-preview-avatar:empty:before{content:'♛';font-size:32px;color:#efc575}#modal-preview-avatar img{width:100%;height:100%;object-fit:cover}.km-profile-avatar-area{font-size:10px;gap:5px}.km-profile-avatar-area>span{font-size:10px}
+#profile-modal label:not(.btn-3d){display:block;font-size:11px;margin-bottom:6px;color:#c2d2df}#profile-modal .km-power-card{background:linear-gradient(135deg,#263e54,#10243b);border-color:#b69b64}#profile-modal .km-power-value{font-size:24px}#kingdom-levelup-modal .modal-content{text-align:center}#kingdom-levelup-modal h2{color:#ffe1a0;font-size:22px}#popup-reward-text{padding:14px;margin:15px 0;background:#071a2d;border:1px solid #8c7959;border-radius:9px}
+#modal-preview-avatar:has(>i):before{content:'♛';font-size:32px;color:#efc575}#modal-preview-avatar>i{display:none}.modal-content>label.btn-3d{border-bottom:2px solid #8c7750!important}
 </style></head>
 <body>
 
@@ -1853,7 +1896,7 @@ body.km-domain240 .top-bar>div:first-child>div:first-child{gap:5px}body.km-domai
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.41";
+        const GAME_VERSION = "v2.0.42";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -1985,7 +2028,7 @@ body.km-domain240 .top-bar>div:first-child>div:first-child{gap:5px}body.km-domai
         }
 // Upgrade production increments, kept separate from rendering and cost configuration.
 const KM_PRODUCTION_V241=Object.freeze({version:1,increment:'facilityLevel + castleLevel'});
-function kmDuration241(seconds){const n=Number(seconds),s=Number.isFinite(n)?Math.max(0,Math.ceil(n)):0,p=v=>String(v).padStart(2,'0');return Math.floor(s/86400)+'d '+p(Math.floor(s%86400/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60);}
+function kmDuration241(seconds){const n=Number(seconds),s=Number.isFinite(n)?Math.max(0,Math.ceil(n)):0,p=v=>String(v).padStart(2,'0');return (s>=86400?Math.floor(s/86400)+'d ':'')+p(Math.floor(s%86400/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60);}
 function kmFacilityRaw241(kind,key){const obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],saved=gameState.productionV241?.[kind+':'+key];return Number.isFinite(saved)&&saved>=0?saved:(Number(obj.prodRate)||0)*Math.max(1,Number(obj.level)||1);}
 function kmFacilityRate241(kind,key){return kmFacilityRaw241(kind,key)*(kind==='building'?KM_ECONOMY_V217.production.buildingMultiplier:KM_ECONOMY_V217.production.gatheringMultiplier);}
 function kmFacilityGain241(kind,key){const obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key];return Math.max(1,Number(obj.level)||1)+Math.max(1,Number(gameState.level)||1);}
@@ -2230,7 +2273,7 @@ function kmInitPresentation238(){
  const footer=document.querySelector('.bottom-wrapper');const fitFooter=()=>{if(footer)document.documentElement.style.setProperty('--km-footer-height',Math.ceil(footer.getBoundingClientRect().height)+'px');kmFitDomain238();};if(footer&&typeof ResizeObserver!=='undefined')new ResizeObserver(fitFooter).observe(footer);fitFooter();
  const view=document.querySelector('.km-map-viewport');if(view&&typeof ResizeObserver!=='undefined')new ResizeObserver(kmFitDomain238).observe(view);
  window.addEventListener('resize',kmFitDomain238);kmFitDomain238();
- document.addEventListener('keydown',e=>{const modal=document.getElementById('v15-build-modal');if(modal.style.display!=='flex')return;if(e.key==='Escape'){e.preventDefault();closeV15Build();}if(e.key==='Tab'){const nodes=[...modal.querySelectorAll('button:not([disabled]),[tabindex="0"]')];const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}});
+ document.addEventListener('keydown',e=>{const modal=document.getElementById('v15-build-modal');if(document.getElementById('km-cancel242')?.hidden===false||modal.style.display!=='flex')return;if(e.key==='Escape'){e.preventDefault();closeV15Build();}if(e.key==='Tab'){const nodes=[...modal.querySelectorAll('button:not([disabled]),[tabindex="0"]')];const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInitPresentation238);else kmInitPresentation238();
 
@@ -2244,7 +2287,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const cost = kmGrowthCostV217(b.baseCost,b.level,'building');
             if (spendResource(b.costType, cost)) {
                 const timeSec = kmGrowthTimeV217(b.level,'building');
-                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key, productionGainV241:kmFacilityGain241('building',key) };
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key, productionGainV241:kmFacilityGain241('building',key), paidCostsV242:{[b.costType]:cost} };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderBuildings(); kmDomainEffect(key,'start');
                 if(window.cloudSaveGame) window.cloudSaveGame();
@@ -2304,7 +2347,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const cost = kmGrowthCostV217(node.baseCost,node.level,'gathering');
             if (spendResource(node.costType, cost)) {
                 const timeSec = kmGrowthTimeV217(node.level,'gathering');
-                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key, productionGainV241:kmFacilityGain241('gather',key) };
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key, productionGainV241:kmFacilityGain241('gather',key), paidCostsV242:{[node.costType]:cost} };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderGathering();
                 if(window.cloudSaveGame) window.cloudSaveGame();
@@ -2536,7 +2579,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             if (canPayHeroCostsV206(heroCostsV206)) {
                 Object.entries(heroCostsV206).forEach(([key,amount])=>{gameState.resources[key]-=amount;});
                 const timeSec = getHeroUpgradeTimeV194(h);
-                gameState.upgradesInProgress[progressKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'hero', subKey: index };
+                gameState.upgradesInProgress[progressKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'hero', subKey: index, paidCostsV242:{...heroCostsV206} };
                 scheduleUpgradeCompletionV16(progressKey);
                 renderHeroes();
                 playSfx('click');
@@ -4146,7 +4189,7 @@ function kmRefreshHero239(){const i=kmHeroSelected239;if(i===null)return;const h
 function renderShop(){document.getElementById('shop-container').innerHTML=SHOP_ITEMS.map(item=>`<div class="shop-item">${kmResourceArt238(item.rewardType|| (item.costType==='cash'?'crown':'gem'))}<strong>${item.name}</strong><p>${item.desc}</p><button class="btn-3d btn-orange" onclick="buyShopItem('${item.id}');playSfx('click')">${item.btnText}</button></div>`).join('');}
 const kmBattleUnits239=renderBattleUnitsV12;
 renderBattleUnitsV12=function(){kmBattleUnits239();BATTLE_V12.heroes.forEach((u,i)=>{const el=document.querySelector('#fighter-v12-'+i+' .unit');if(el){const col=u.type==='archer'?3:u.type==='cavalry'?2:HEROES[u.idx]?.level>=10?1:0;el.style.setProperty('--sprite-pos',`${col*100/3}% 0%`);}});const el=document.getElementById('enemy-unit-v12');if(el)el.style.setProperty('--sprite-pos',`${BATTLE_V12.enemy.boss?100:((Math.max(1,gameState.towerFloor||1)-1)%3)*100/3}% 100%`);};
-function kmInit239(){const card=document.querySelector('.v15-build-card'),body=card.querySelector('.v15-build-body'),art=card.querySelector('.v15-build-art');body.prepend(art);const footer=document.createElement('div');footer.className='km-detail-actions239';footer.append(document.getElementById('km-detail-status'),document.getElementById('v15-build-go'));card.append(footer);document.querySelector('#screen-heroes>div:not(#heroes-container)')?.remove();document.addEventListener('keydown',e=>{if(e.key==='Escape')kmCloseHero239();});kmFitDomain238();}
+function kmInit239(){const card=document.querySelector('.v15-build-card'),body=card.querySelector('.v15-build-body'),art=card.querySelector('.v15-build-art');body.prepend(art);const footer=document.createElement('div');footer.className='km-detail-actions239';footer.append(document.getElementById('km-detail-status'),document.getElementById('v15-build-go'));card.append(footer);document.querySelector('#screen-heroes>div:not(#heroes-container)')?.remove();document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('km-cancel242')?.hidden!==false)kmCloseHero239();});kmFitDomain238();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit239);else kmInit239();
 heroCostsHtmlV206=function(costs){return Object.entries(costs).map(([key,n])=>`<span>${kmResourceArt238(key)}${formatNumber(n)}</span>`).join('');};
 updateSquadSummary=function(){const box=document.getElementById('battle-squad-preview-container'),badge=document.getElementById('squad-count-num-badge');if(badge)badge.textContent=gameState.selectedSquad.length;if(box)box.innerHTML=gameState.selectedSquad.length?gameState.selectedSquad.map(i=>`<div class="km-squad-chip239 km-portrait239" title="${HEROES[i].name}" style="${kmPortrait239(i)}"><span>Lv.${HEROES[i].level}</span></div>`).join(''):'<span style="font-size:11px;color:#9ab0c8">원정대에 영웅을 편성하세요.</span>';};
@@ -4162,5 +4205,18 @@ const kmSwitchBefore240=switchTab;
 switchTab=function(tab){document.body.classList.toggle('km-domain240',tab==='domain');kmSwitchBefore240(tab);requestAnimationFrame(kmFitDomain238);};
 function kmInit240(){document.body.classList.toggle('km-domain240',document.getElementById('screen-domain').classList.contains('active'));const chat=document.getElementById('inline-chat-container');const resize=()=>{document.documentElement.style.setProperty('--km-chat-height240',Math.ceil(chat.getBoundingClientRect().height)+'px');kmFitDomain238();};new ResizeObserver(resize).observe(chat);resize();document.querySelector('.km-map-viewport').scrollTo(0,0);document.getElementById('audio-toggle-btn').setAttribute('aria-label','배경 음악 켜기 또는 끄기');}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit240);else kmInit240();
+</script><div id="km-cancel242" hidden role="dialog" aria-modal="true" aria-labelledby="km-cancel-title242"><div class="km-confirm-card242"><h2 id="km-cancel-title242">진행 중인 작업을 취소할까요?</h2><p>현재 레벨과 생산량은 유지됩니다.<br>사용한 자원의 50%를 돌려받습니다.</p><div id="km-refund242"></div><div class="km-confirm-actions242"><button id="km-cancel-keep242" onclick="kmCloseCancel242()">계속 진행</button><button id="km-cancel-confirm242" onclick="kmConfirmCancel242()">취소하고 반환</button></div></div></div><script>// Cancel only active timed upgrades. The paid resource snapshot is persisted with each job.
+function kmPaidCosts242(job){if(job.paidCostsV242)return job.paidCostsV242;if(job.type==='building'||job.type==='gather'){const kind=job.type,obj=kind==='building'?BUILDINGS[job.subKey]:GATHERING_NODES[job.subKey];return obj?{[obj.costType]:kmGrowthCostV217(obj.baseCost,obj.level,kind==='building'?'building':'gathering')}:{};}if(job.type==='hero'){const h=HEROES[job.subKey];return h?getHeroUpgradeCostsV206(h,HEROES.filter(x=>x.type===h.type).findIndex(x=>x.id===h.id)):{};}return {};}
+let kmCancelTarget242=null,kmCancelFocus242=null;
+function kmAskCancel242(key){const job=gameState.upgradesInProgress[key];if(!job)return;if(job.endTime<=Date.now()){finishUpgradeV16(key);kmRefreshBuild238();return;}kmCancelTarget242={key,endTime:job.endTime};kmCancelFocus242=document.activeElement;const costs=kmPaidCosts242(job);document.getElementById('km-refund242').innerHTML=Object.entries(costs).map(([k,n])=>`<div>${kmResourceArt238(k)}<span>${KM_RESOURCE_VIEW_238[k]?.[0]||k}</span><b>+${(Number(n)*.5).toLocaleString('ko-KR',{maximumFractionDigits:1})}</b></div>`).join('');document.getElementById('km-cancel242').hidden=false;document.getElementById('km-cancel-keep242').focus();}
+function kmCloseCancel242(){document.getElementById('km-cancel242').hidden=true;kmCancelTarget242=null;if(kmCancelFocus242?.isConnected)kmCancelFocus242.focus({preventScroll:true});}
+function kmConfirmCancel242(){const target=kmCancelTarget242;if(!target)return false;const job=gameState.upgradesInProgress[target.key];if(!job||job.endTime!==target.endTime){kmCloseCancel242();return false;}if(job.endTime<=Date.now()){kmCloseCancel242();finishUpgradeV16(target.key);kmRefreshBuild238();showNotification('이미 완료된 작업입니다.');return false;}const refunds=Object.entries(kmPaidCosts242(job)).filter(([k,n])=>Object.hasOwn(gameState.resources,k)&&Number.isFinite(Number(n))&&Number(n)>=0).map(([k,n])=>[k,Number(n)*.5]);delete gameState.upgradesInProgress[target.key];if(v16Timers[target.key]){clearTimeout(v16Timers[target.key]);delete v16Timers[target.key];}refunds.forEach(([k,n])=>gameState.resources[k]+=n);kmCloseCancel242();syncProgressionV15();renderBuildings();renderGathering();renderHeroes();updateUI();kmRefreshBuild238();if(window.cloudSaveGame)window.cloudSaveGame();showNotification('작업 취소 · 사용 자원 50% 반환');return true;}
+const kmRefreshBuildBefore242=kmRefreshBuild238;
+kmRefreshBuild238=function(){kmRefreshBuildBefore242();const btn=document.getElementById('km-build-cancel242');if(!btn)return;const t=v15BuildTarget,key=t?(t.kind==='building'?'building:':'gather:')+t.key:null;btn.hidden=!key||!gameState.upgradesInProgress[key];btn.onclick=()=>kmAskCancel242(key);};
+const kmRefreshHeroBefore242=kmRefreshHero239;
+kmRefreshHero239=function(){kmRefreshHeroBefore242();const i=kmHeroSelected239;if(i===null)return;const key='hero:'+i,old=document.getElementById('km-hero-cancel242');old?.remove();if(gameState.upgradesInProgress[key]){const btn=document.createElement('button');btn.id='km-hero-cancel242';btn.className='km-cancel-action242';btn.textContent='훈련 취소 · 자원 50% 반환';btn.onclick=()=>kmAskCancel242(key);document.querySelector('.km-hero-actions239').after(btn);}};
+function kmInit242(){const footer=document.querySelector('.km-detail-actions239'),btn=document.createElement('button');btn.id='km-build-cancel242';btn.className='km-cancel-action242';btn.hidden=true;btn.textContent='작업 취소 · 자원 50% 반환';footer.append(btn);document.querySelectorAll('.modal-content>div:first-child>button').forEach(b=>{if(b.querySelector('.fa-xmark')){b.textContent='×';b.setAttribute('aria-label','닫기');b.classList.add('km-popup-close242');}});}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit242);else kmInit242();
+document.addEventListener('keydown',e=>{const box=document.getElementById('km-cancel242');if(box.hidden)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();kmCloseCancel242();}if(e.key==='Tab'){const a=document.getElementById('km-cancel-keep242'),b=document.getElementById('km-cancel-confirm242');if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus();}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus();}}},true);
 </script></body>
 </html>
