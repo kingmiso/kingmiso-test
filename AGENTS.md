@@ -9,3 +9,6 @@
 - Keep gameplay progression, save compatibility and economy intact. UI assets and layout must remain separate from balance configuration and economic logic.
 - Verify construction start/progress/completion once, hero unlocks, chat navigation and tab switching.
 - Never claim a live GitHub deployment unless it has actually been deployed.
+
+- Distribute deployment files in a flat ZIP, without nested asset folders, for iPhone GitHub uploads.
+- Finish the domain visual composition before proceeding to further changes in other game sections. Domain HUD and bottom navigation should overlay the map as one continuous game scene.

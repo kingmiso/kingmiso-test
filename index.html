@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.39: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.40: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1334,6 +1334,51 @@ body:has(#km-hero-detail239:not([hidden])) #notification-container{display:none!
 #battle-arena .fighter-v12 .unit,#battle-arena .enemy-v12 .unit{background-position:var(--sprite-pos,0% 0%)!important;background-size:400% 200%!important}
 #battle-arena .enemy-v12.boss .unit{width:110px!important;height:110px!important}
 #km-action-cost239{font-size:11px;color:#f1d69e;text-align:center;margin:1px 0 5px;line-height:16px}
+</style><style id="km-domain240">/* Domain-only composition. The world continues underneath its HUD and navigation. */
+body.km-domain240 #screen-domain{top:0!important;bottom:var(--km-chat-height240,44px)!important;border:1px solid #bda16b8c;border-top:0;border-bottom:0}
+body.km-domain240 .km-map-shell{background-image:var(--km-map-portrait)!important;background-size:100% 100%!important;background-position:center!important}
+body.km-domain240 .km-domain-map{box-shadow:none;background-size:100% 100%!important}
+body.km-domain240 .km-map-viewport{inset:0;scroll-padding-top:90px;scroll-padding-bottom:70px}
+body.km-domain240 .top-bar{background:linear-gradient(180deg,#07162de8 0%,#07172bbb 66%,#07172b20 100%)!important;backdrop-filter:none;border:0;box-shadow:none;padding:7px 10px 14px;gap:0;z-index:40;color:#fff1d6}
+body.km-domain240 .top-bar>div:first-child{min-height:37px;gap:8px;margin-bottom:5px}
+body.km-domain240 .top-bar>div:first-child>div:first-child{gap:9px;flex:1}
+body.km-domain240 .top-bar [onclick*="openProfileModal"]{display:grid;grid-template-columns:32px auto auto;grid-template-rows:19px 14px;column-gap:5px;row-gap:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;align-items:center}
+body.km-domain240 .top-bar [onclick*="openProfileModal"]:before{content:'영지';grid-column:2/4;grid-row:1;font-size:16px;font-weight:800;letter-spacing:.04em;color:#fff3d6;text-shadow:0 2px 3px #000}
+body.km-domain240 #header-profile-avatar{grid-column:1;grid-row:1/3;width:31px!important;height:31px!important;border:1px solid #ddc282;box-shadow:0 0 0 2px #14253a,0 0 9px #f4d28c38}
+body.km-domain240 #header-kingdom-level{grid-column:2;grid-row:2;font-size:9px;color:#efcf87}
+body.km-domain240 #header-kingdom-name{grid-column:3;grid-row:2;font-size:9px;color:#d6e2f1;max-width:64px}
+body.km-domain240 #km-header-power-v221{font-size:9px;color:#d1bd87;align-self:end;padding-bottom:3px;max-width:74px}
+body.km-domain240 #audio-toggle-btn{width:26px;height:26px;border-color:#70859d66;background:#08182e66}
+body.km-domain240 .resource-item.gem{height:25px!important;background:#071326a6!important;border-color:#bc99df80!important;border-radius:6px!important;min-width:52px;font-size:10px;flex-direction:row;align-items:center;justify-content:center}
+body.km-domain240 .km-resource-board{padding:3px 5px 2px!important;border:1px solid #d3b98565!important;border-radius:7px;background:linear-gradient(110deg,#07172ddd,#10263cb5)!important;box-shadow:inset 0 1px #ffffff0d,0 2px 8px #0002}
+body.km-domain240 .km-basic-resources{padding:0;border:0;gap:3px!important}
+body.km-domain240 .km-basic-resources .resource-item{height:23px!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:2px!important;border:0!important}
+body.km-domain240 .km-basic-resources .resource-item .km-resource-art{width:17px;height:17px}
+body.km-domain240 .km-basic-resources .resource-item span:not(.km-resource-art){font-size:8px!important;line-height:12px;font-weight:600;letter-spacing:-.02em}
+body.km-domain240 .km-rare-resources{border-top:1px solid #b7c2d01f!important;margin:0!important;padding:1px 0 0!important;gap:0!important;justify-content:space-around}
+body.km-domain240 .km-rare-resources .resource-item{height:16px!important;font-size:8px;gap:4px!important}
+body.km-domain240 .km-rare-resources .km-resource-art{width:15px!important;height:15px!important}
+body.km-domain240 .bottom-wrapper{background:none!important;border:0;box-shadow:none;pointer-events:none}
+body.km-domain240 .bottom-nav{height:58px;padding:5px 7px 3px;gap:3px;pointer-events:auto;background:linear-gradient(180deg,#06172b38,#07182cea 38%,#071427fa);border-top:1px solid #d9b96c70;box-shadow:0 -12px 22px #06172b2b}
+body.km-domain240 .nav-btn{border-radius:0;background:none!important;box-shadow:none!important;gap:1px;font-size:10px;color:#a9bddd;text-shadow:0 1px 4px #000}
+body.km-domain240 .nav-btn.active{color:#ffe0a0;background:radial-gradient(ellipse at 50% 100%,#ddb75e2e,transparent 75%)!important}
+body.km-domain240 .nav-btn.active:after{bottom:-2px;width:31px;height:2px;background:linear-gradient(90deg,transparent,#f7d986,transparent);box-shadow:none}
+body.km-domain240 .km-nav-art{width:27px;height:27px;stroke:#152335;stroke-width:.75;filter:drop-shadow(0 1px 0 #c2d4ec66) drop-shadow(0 2px 3px #000)}
+body.km-domain240 .nav-btn.active .km-nav-art{filter:drop-shadow(0 1px 0 #fff0b9) drop-shadow(0 0 6px #f6cb6570)}
+body.km-domain240 #inline-chat-container{pointer-events:auto;min-height:42px;padding:3px 10px max(3px,env(safe-area-inset-bottom,0px))!important;background:#061629f5!important;border-top:1px solid #b298644f!important;gap:8px}
+body.km-domain240 #inline-chat-container #chat-messages{font-size:10px;line-height:15px;height:32px}.km-domain240 .km-chat-preview-line{height:15px}.km-domain240 .km-chat-preview-icon{font-size:16px;width:22px}
+body.km-domain240 .km-map-sign{min-width:64px;border:1px solid #d8c393a6;border-radius:5px;background:linear-gradient(135deg,#102942dc,#051628ed);padding:4px 7px;box-shadow:0 2px 5px #0008,inset 0 1px #fff1be14}
+body.km-domain240 .km-map-sign strong{font-size:10px;color:#fff5db;font-weight:700}.km-domain240 .km-map-sign em{font-size:9px;color:#dce8f4;margin-top:2px}
+body.km-domain240 .km-castle span{padding:5px 11px;border:1px solid #e6c786b0;border-radius:6px;background:linear-gradient(135deg,#18334ad9,#06152ce8);font-size:11px;box-shadow:0 3px 8px #0008}
+body.km-domain240 .km-map-controls{bottom:67px!important;right:8px!important;background:#061a2cad;border:1px solid #c6ad7670;border-radius:7px;padding:1px;box-shadow:0 2px 5px #0006}
+body.km-domain240 .km-map-controls button{width:27px;height:27px;font-size:17px}.km-domain240 .km-map-controls span{font-size:9px;min-width:29px}
+body.km-domain240 .km-map-progress{bottom:-19px;font-size:8px;min-height:14px}.km-domain240 .km-map-progress span{font-size:8px}
+body.km-domain240 #v15-build-modal{background:#03102244;backdrop-filter:blur(3px)}
+@media(prefers-reduced-motion:reduce){body.km-domain240 *{scroll-behavior:auto!important}}
+body.km-domain240 .top-bar{padding-top:5px;padding-bottom:6px}
+body.km-domain240 .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
+/* Larger devices retain a phone-shaped domain instead of stretching the painting. */
+@media(min-width:600px){body.km-domain240{--km-domain-gap240:max(0px,calc(100dvh - 744px))}body.km-domain240 .bottom-wrapper{bottom:var(--km-domain-gap240)!important}body.km-domain240 #screen-domain{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240))!important}body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}}
 </style></head>
 <body>
 
@@ -1792,7 +1837,7 @@ body:has(#km-hero-detail239:not([hidden])) #notification-container{display:none!
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.39";
+        const GAME_VERSION = "v2.0.40";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -4083,5 +4128,12 @@ document.addEventListener('DOMContentLoaded',()=>{['gold','food','herb','magic']
 document.addEventListener('keydown',e=>{const modal=document.getElementById('km-hero-detail239');if(modal.hidden||e.key!=='Tab')return;const list=[...modal.querySelectorAll('button:not(:disabled)')],first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
 const kmRefreshBuild239=kmRefreshBuild238;kmRefreshBuild238=function(){kmRefreshBuild239();if(!v15BuildTarget)return;let line=document.getElementById('km-action-cost239');if(!line){line=document.createElement('div');line.id='km-action-cost239';document.querySelector('.km-detail-actions239')?.prepend(line);}const {kind,key}=v15BuildTarget,obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],cfg=kind==='building'?'building':'gathering',job=gameState.upgradesInProgress[(kind==='building'?'building:':'gather:')+key];const value=job?'완료까지 '+Math.max(0,Math.ceil((job.endTime-Date.now())/1000))+'초':(KM_RESOURCE_VIEW_238[obj.costType]?.[0]||obj.costType)+' '+formatNumber(kmGrowthCostV217(obj.baseCost,obj.level,cfg))+' · '+kmGrowthTimeV217(obj.level,cfg)+'초';if(line.textContent!==value)line.textContent=value;};
 </script>
-</body>
+<script>// Domain composition only; no economic or persistence changes.
+const kmFitBefore240=kmFitDomain238;
+kmFitDomain238=function(){if(!document.body.classList.contains('km-domain240'))return kmFitBefore240();const view=document.querySelector('.km-map-viewport'),map=document.getElementById('km-domain-map');if(!view||!map)return;const z=Number(map.dataset.zoom)||1;map.style.width=view.clientWidth*z+'px';map.style.height=Math.max(460,view.clientHeight)*z+'px';};
+const kmSwitchBefore240=switchTab;
+switchTab=function(tab){document.body.classList.toggle('km-domain240',tab==='domain');kmSwitchBefore240(tab);requestAnimationFrame(kmFitDomain238);};
+function kmInit240(){document.body.classList.toggle('km-domain240',document.getElementById('screen-domain').classList.contains('active'));const chat=document.getElementById('inline-chat-container');const resize=()=>{document.documentElement.style.setProperty('--km-chat-height240',Math.ceil(chat.getBoundingClientRect().height)+'px');kmFitDomain238();};new ResizeObserver(resize).observe(chat);resize();document.querySelector('.km-map-viewport').scrollTo(0,0);document.getElementById('audio-toggle-btn').setAttribute('aria-label','배경 음악 켜기 또는 끄기');}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit240);else kmInit240();
+</script></body>
 </html>
