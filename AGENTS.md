@@ -23,3 +23,5 @@
 - v2.0.47: timed building, gathering and hero upgrades accelerate by 720 seconds per diamond; never charge completed jobs. Original job resources refund 50% on cancellation; acceleration diamonds are consumed. Gathering uses four compact illustrated cards with working controls.
 
 - v2.0.48 master style: fine gold borders, warm cream type, honey-gold buttons; flat periwinkle navigation silhouettes (house, pickaxe, cute face, crossed swords, shop). Avoid metallic bevels, bulky tile selection and oversized icons.
+
+- v2.0.49 supersedes thin borders: rounded cute colored navigation, substantial 2px UI outlines, roomy diamond capsule, no map zoom controls. Warm storybook gathering art in list and details.
