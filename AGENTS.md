@@ -21,3 +21,5 @@
 - v2.0.43: HUD level, nickname and power share one line. Domain/gather detail uses saved-job progress for workshop animation; honor reduced motion and keep action footer visible.
 
 - v2.0.47: timed building, gathering and hero upgrades accelerate by 720 seconds per diamond; never charge completed jobs. Original job resources refund 50% on cancellation; acceleration diamonds are consumed. Gathering uses four compact illustrated cards with working controls.
+
+- v2.0.48 master style: fine gold borders, warm cream type, honey-gold buttons; flat periwinkle navigation silhouettes (house, pickaxe, cute face, crossed swords, shop). Avoid metallic bevels, bulky tile selection and oversized icons.
