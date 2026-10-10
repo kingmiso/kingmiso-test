@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.44: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.45: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1489,6 +1489,20 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
 @media(prefers-reduced-motion:reduce){#v15-build-modal .km-site-tool244{animation:none!important}}
 #v15-build-modal .v15-build-art:before{top:0;transform:none;width:100%;height:100%;aspect-ratio:auto}
 #km-scene-pin244[aria-expanded=true]{top:27%;padding:4px 12px}#km-scene-pin244[aria-expanded=true] .km-site-tool244{display:none}
+</style><style>:root{--km-identity245:13px}
+.top-bar #header-kingdom-name,body.km-domain240 #header-kingdom-name,.top-bar #km-header-power-v221,body.km-domain240 #km-header-power-v221,.top-bar .km-header-power-label-v222,body.km-domain240 .km-header-power-label-v222,.top-bar #km-header-power-value-v221{font-size:var(--km-identity245)!important;font-weight:800}
+.top-bar>div:first-child{gap:4px!important}.top-bar #km-header-power-v221{gap:3px}
+#v15-build-modal .v15-build-art:before{left:50%;top:50%;transform:translate(-50%,-50%);width:var(--scene-width245,100%);height:var(--scene-height245,100%);aspect-ratio:2/1}
+#v15-build-modal #km-scene-pin244,#v15-build-modal #km-scene-pin244[aria-expanded=true]{left:auto;right:12px;top:68px;transform:none!important;width:48px;height:48px;min-height:48px;padding:5px;border-radius:50%;background:linear-gradient(#19384dde,#06192ceb);gap:0;box-shadow:0 3px 10px #0008,0 0 0 3px #ffe6a322}
+#km-scene-pin244>strong,#km-scene-pin244>small{display:none!important}#km-scene-pin244 .km-site-tool244,#km-scene-pin244[aria-expanded=true] .km-site-tool244{display:flex!important;align-items:center;justify-content:center;height:34px;line-height:1}.km-site-tool244 .km-resource-art{width:30px;height:30px}
+#km-scene-pin244:after{content:'+';position:absolute;right:-3px;bottom:-2px;width:17px;height:17px;border-radius:50%;background:#e6bc69;color:#14263a;font-size:14px;font-weight:bold;line-height:16px}#km-scene-pin244[aria-expanded=true]:after{content:'−'}
+#v15-build-modal[data-work-state=working] .km-site-tool244{animation:km-resource-breathe245 1.8s ease-in-out infinite}
+#v15-build-modal .km-detail-titleline{padding:6px 9px;top:9px}#v15-build-modal .km-detail-heading{padding-block:7px}
+#km-scene-info244{max-height:55%;overflow:auto;overscroll-behavior:contain}
+#v15-build-modal[data-work-state=ready] .km-work-track243,#v15-build-modal[data-work-state=poor] .km-work-track243,#v15-build-modal[data-work-state=ready] .km-work-steps243,#v15-build-modal[data-work-state=poor] .km-work-steps243{display:none}
+@keyframes km-resource-breathe245{50%{transform:scale(1.12);filter:brightness(1.2)}}
+@media(max-width:380px){:root{--km-identity245:12px}.top-bar #header-profile-avatar{width:27px!important;height:27px!important}.top-bar #audio-toggle-btn{width:25px!important;min-width:25px!important}.top-bar .resource-item.gem{min-width:49px}}
+@media(prefers-reduced-motion:reduce){#v15-build-modal .km-site-tool244{animation:none!important}}
 </style></head>
 <body>
 
@@ -1947,7 +1961,7 @@ body.km-domain240 .top-bar>div:first-child{min-height:46px;margin-bottom:6px}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.44";
+        const GAME_VERSION = "v2.0.45";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -4306,5 +4320,10 @@ kmRefreshBuild238=function(){kmRefreshBefore244();if(!v15BuildTarget)return;cons
 const kmOpenBefore244=openV15Build;
 openV15Build=function(kind,key){kmOpenBefore244(kind,key);const drawer=document.getElementById('km-scene-info244');if(drawer)drawer.hidden=true;const pin=document.getElementById('km-scene-pin244');if(pin){pin.setAttribute('aria-expanded','false');pin.querySelector('small').textContent='터치하여 생산량·자원 보기';}document.querySelector('#v15-build-modal .v15-build-body').scrollTop=0;};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit244);else kmInit244();
+</script><script>function kmSceneFit245(){const art=document.querySelector('#v15-build-modal .v15-build-art'),r=art.getBoundingClientRect();if(r.width&&r.height){const w=Math.max(r.width,r.height*2);art.style.setProperty('--scene-width245',w+'px');art.style.setProperty('--scene-height245',w/2+'px');}}
+function kmSceneUpdate245(){if(!v15BuildTarget)return;const {kind,key}=v15BuildTarget,obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],pin=document.getElementById('km-scene-pin244'),res=kind==='building'?obj.prodType:obj.resKey;pin.querySelector('.km-site-tool244').innerHTML=kmResourceArt238(res);pin.setAttribute('aria-label',obj.name+' 생산량 및 필요 자원 보기');pin.title='생산량 · 필요 자원';const heading=document.querySelector('.km-detail-heading');if(heading?.firstChild?.nodeType===3)heading.firstChild.textContent=kind==='gather'?'채집장 확장':'건물 업그레이드';kmSceneFit245();}
+const kmOpenBefore245=openV15Build;openV15Build=function(kind,key){kmOpenBefore245(kind,key);kmSceneUpdate245();requestAnimationFrame(kmSceneFit245);};
+function kmInit245(){new ResizeObserver(kmSceneFit245).observe(document.querySelector('#v15-build-modal .v15-build-art'));}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit245);else kmInit245();
 </script></body>
 </html>
