@@ -12,3 +12,6 @@
 
 - Distribute deployment files in a flat ZIP, without nested asset folders, for iPhone GitHub uploads.
 - Finish the domain visual composition before proceeding to further changes in other game sections. Domain HUD and bottom navigation should overlay the map as one continuous game scene.
+
+- v2.0.41 authorized production change: each completed facility upgrade adds its pre-upgrade level plus castle level captured when construction starts to its base output per second. Old saves retain their current output; future increases persist in productionV241.
+- Durations use Dd HH:MM:SS. Map touch feedback must preserve translate(-50%,-50%) anchors.

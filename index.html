@@ -388,7 +388,7 @@
         }
         button:not(:disabled):active, .btn-3d:not(:disabled):active,
         [role="button"]:not([aria-disabled="true"]):active, .km-touch-down {
-            transform: translateY(2px) scale(.965) !important;
+            /* Position is preserved; nested labels provide the press animation. */
             filter: brightness(.84) saturate(1.12) !important;
         }
 
@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.40: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.41: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -1379,6 +1379,22 @@ body.km-domain240 .top-bar{padding-top:5px;padding-bottom:6px}
 body.km-domain240 .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
 /* Larger devices retain a phone-shaped domain instead of stretching the painting. */
 @media(min-width:600px){body.km-domain240{--km-domain-gap240:max(0px,calc(100dvh - 744px))}body.km-domain240 .bottom-wrapper{bottom:var(--km-domain-gap240)!important}body.km-domain240 #screen-domain{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240))!important}body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}}
+</style><style>/* Keep the map's positioning transform intact while pressing its label. */
+.km-map-building:active,.km-map-building.km-touch-down,.km-castle:active,.km-castle.km-touch-down{transform:translate(-50%,-50%)!important;filter:none!important}
+.km-map-sign{transition:filter .08s,box-shadow .08s,scale .08s}
+.km-map-building:active .km-map-sign,.km-map-building.km-touch-down .km-map-sign{scale:.96;filter:brightness(.85);box-shadow:inset 0 2px 5px #0009,0 1px 2px #0008!important}
+body.km-domain240 .km-castle span{min-width:146px;min-height:46px;display:flex;align-items:center;justify-content:center;padding:10px 20px 7px;font-size:15px;font-weight:900;letter-spacing:.025em;color:#fff0b0;text-shadow:0 2px 2px #000;border:2px solid #e6c46e;border-radius:9px 9px 14px 14px;background:linear-gradient(135deg,#25436bdd,#091c39f5 45%,#293e60ef);box-shadow:inset 0 0 0 2px #856b38,inset 0 0 18px #f3ca4833,0 4px 0 #44331c,0 6px 15px #0009;transition:scale .08s,filter .08s,box-shadow .08s}
+body.km-domain240 .km-castle span:before{content:'';position:absolute;left:50%;top:-20px;transform:translateX(-50%);width:37px;height:32px;background-image:var(--km-resource-atlas);background-size:400% 300%;background-position:100% 100%;filter:drop-shadow(0 2px 2px #000)}
+body.km-domain240 .km-castle span:after{content:'';position:absolute;inset:4px;border:1px solid #ecd48765;border-radius:5px 5px 10px 10px;pointer-events:none}
+body.km-domain240 .km-castle:active span,body.km-domain240 .km-castle.km-touch-down span{scale:.96;filter:brightness(.86);box-shadow:inset 0 2px 7px #000b,inset 0 0 0 2px #91753a,0 2px 0 #44331c,0 3px 8px #0008}
+.km-header-power-label-v222,body.km-domain240 .km-header-power-label-v222{display:inline!important;font-size:9px;white-space:nowrap}
+#km-header-power-v221,body.km-domain240 #km-header-power-v221{max-width:108px;gap:3px;font-size:9px}
+body.km-domain240 .top-bar>div:first-child>div:first-child{gap:5px}body.km-domain240 .top-bar>div:first-child{gap:5px}
+.km-map-progress{min-width:126px!important;width:max-content!important;white-space:nowrap;left:50%;transform:translateX(-50%);font-variant-numeric:tabular-nums;font-size:9px!important}
+.km-map-progress .progress-bar-text{font-size:9px!important;white-space:nowrap}
+#km-detail-time,#km-action-cost239,#progress-text-hero{font-variant-numeric:tabular-nums}
+.km-production-gain241{display:block;color:#a1e8c0;font-size:10px;margin:4px 0 8px}
+.km-gather239 .progress-bar-container{height:18px!important}.km-gather239 .progress-bar-text{display:block!important;font-size:9px;line-height:16px;text-shadow:0 1px 2px #000}
 </style></head>
 <body>
 
@@ -1837,7 +1853,7 @@ body.km-domain240 .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.40";
+        const GAME_VERSION = "v2.0.41";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -1967,12 +1983,20 @@ body.km-domain240 .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
             const cfg=KM_ECONOMY_V217[kind];
             return Math.max(1,Math.round(cfg.timeBaseSeconds*Math.pow(cfg.timeGrowth,Math.max(0,Number(level)-1))));
         }
+// Upgrade production increments, kept separate from rendering and cost configuration.
+const KM_PRODUCTION_V241=Object.freeze({version:1,increment:'facilityLevel + castleLevel'});
+function kmDuration241(seconds){const n=Number(seconds),s=Number.isFinite(n)?Math.max(0,Math.ceil(n)):0,p=v=>String(v).padStart(2,'0');return Math.floor(s/86400)+'d '+p(Math.floor(s%86400/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60);}
+function kmFacilityRaw241(kind,key){const obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],saved=gameState.productionV241?.[kind+':'+key];return Number.isFinite(saved)&&saved>=0?saved:(Number(obj.prodRate)||0)*Math.max(1,Number(obj.level)||1);}
+function kmFacilityRate241(kind,key){return kmFacilityRaw241(kind,key)*(kind==='building'?KM_ECONOMY_V217.production.buildingMultiplier:KM_ECONOMY_V217.production.gatheringMultiplier);}
+function kmFacilityGain241(kind,key){const obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key];return Math.max(1,Number(obj.level)||1)+Math.max(1,Number(gameState.level)||1);}
+function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,key),gain=Number.isFinite(job.productionGainV241)&&job.productionGainV241>0?job.productionGainV241:kmFacilityGain241(kind,key);if(!gameState.productionV241||typeof gameState.productionV241!=='object')gameState.productionV241={};gameState.productionV241[kind+':'+key]=raw+gain;}
+
         function kmProductionRatesV217() {
             const rates={};
-            for(const b of Object.values(BUILDINGS)) if(b.prodType)
-                rates[b.prodType]=(rates[b.prodType]||0)+(Number(b.prodRate)||0)*(Number(b.level)||1)*KM_ECONOMY_V217.production.buildingMultiplier;
-            for(const n of Object.values(GATHERING_NODES)) if(n.resKey)
-                rates[n.resKey]=(rates[n.resKey]||0)+(Number(n.prodRate)||0)*(Number(n.level)||1)*KM_ECONOMY_V217.production.gatheringMultiplier;
+            for(const [key,b] of Object.entries(BUILDINGS)) if(b.prodType)
+                rates[b.prodType]=(rates[b.prodType]||0)+kmFacilityRate241('building',key);
+            for(const [key,n] of Object.entries(GATHERING_NODES)) if(n.resKey)
+                rates[n.resKey]=(rates[n.resKey]||0)+kmFacilityRate241('gather',key);
             return rates;
         }
         window.KingMisoEconomyBridge=Object.freeze({
@@ -2136,11 +2160,11 @@ function kmRenderDomainBuildings(){
   const b=BUILDINGS[key],busy=gameState.upgradesInProgress['building:'+key];
   const fx=kmDomainEffects[key];
   const effect=fx&&fx.until>Date.now()?' km-'+fx.kind:'';
-  return `<button type="button" id="building-${key}" class="km-map-building ${busy?'km-working':''}${effect}" style="left:${pos.x}%;top:${pos.y}%" onclick="openV15Build('building','${key}')" aria-label="${b.name} 레벨 ${b.level}, ${busy?'건설 중':'초당 생산 '+b.level*b.prodRate}">
+  return `<button type="button" id="building-${key}" class="km-map-building ${busy?'km-working':''}${effect}" style="left:${pos.x}%;top:${pos.y}%" onclick="openV15Build('building','${key}')" aria-label="${b.name} 레벨 ${b.level}, ${busy?'건설 중':'초당 생산 '+kmFacilityRate241('building',key)}">
    <span class="km-ground-ring"></span><span class="km-construction"><span class="km-hammer">⚒</span><i></i><i></i><i></i><span class="km-scaffold"></span></span>
-   <span class="km-map-sign"><strong>${pos.label} <em>Lv.${b.level}</em></strong><small>${busy?'건설 중':'생산 +'+formatNumber(b.level*b.prodRate*KM_ECONOMY_V217.production.buildingMultiplier)+'/초'}</small></span>
+   <span class="km-map-sign"><strong>${pos.label} <em>Lv.${b.level}</em></strong><small>${busy?'건설 중':'생산 +'+formatNumber(kmFacilityRate241('building',key))+'/초'}</small></span>
    <span class="km-map-progress" id="progress-container-${key}" style="display:${busy?'block':'none'}"><span class="progress-bar-fill" id="progress-fill-${key}"></span><span class="progress-bar-text" id="progress-text-${key}"></span></span>
-   <span class="km-resource-mote">+${b.level*b.prodRate}</span>
+   <span class="km-resource-mote">+${kmFacilityRate241('building',key)}</span>
   </button>`;
  }).join('');
  const level=document.getElementById('km-castle-level');if(level)level.textContent='왕성 · Lv.'+gameState.level;
@@ -2181,11 +2205,11 @@ function kmRefreshBuild238(){
  document.getElementById('v15-build-title').textContent=obj.name;
  document.getElementById('km-detail-level').textContent='Lv.'+obj.level+' → Lv.'+(obj.level+1);
  document.getElementById('v15-build-desc').textContent=obj.desc||(kind==='building'?'건물을 성장시켜 생산량을 높이세요.':'채집장을 확장하여 생산량을 높이세요.');
- document.getElementById('km-detail-output').innerHTML=kmResourceArt238(prodKey)+`<span>초당 생산</span><strong>${formatNumber(obj.level*rate)} <b>→ ${formatNumber((obj.level+1)*rate)}</b></strong>`;
+ document.getElementById('km-detail-output').innerHTML=kmResourceArt238(prodKey)+`<span>초당 생산</span><strong>${formatNumber(kmFacilityRate241(kind,key))} <b>→ ${formatNumber(kmFacilityRate241(kind,key)+(task?.productionGainV241||kmFacilityGain241(kind,key))*(kind==='building'?KM_ECONOMY_V217.production.buildingMultiplier:KM_ECONOMY_V217.production.gatheringMultiplier))}</b></strong>`;
  document.getElementById('v15-build-cost').innerHTML=kmResourceArt238(obj.costType)+`<span><small>${KM_RESOURCE_VIEW_238[obj.costType]?.[0]||obj.costType}</small><strong>${formatNumber(cost)}</strong></span><span class="km-owned ${balance<cost?'km-insufficient':''}">보유 ${formatNumber(balance)}</span>`;
  const status=document.getElementById('km-detail-status'),btn=document.getElementById('v15-build-go');
  const ms=task?Math.max(0,Number(task.endTime)-Date.now()):0;
- document.getElementById('km-detail-time').textContent=task?(ms/1000).toFixed(1)+'초 남음':seconds+'초';
+ document.getElementById('km-detail-time').textContent=task?kmDuration241(ms/1000)+' 남음':kmDuration241(seconds);
  document.getElementById('km-detail-progress').hidden=!task;
  document.getElementById('km-detail-progress-fill').style.width=task?Math.max(0,Math.min(100,100*(1-ms/(Math.max(1,task.totalTime)*1000))))+'%':'0%';
  document.getElementById('km-detail-progress').setAttribute('aria-valuenow',task?String(Math.floor(Math.max(0,Math.min(100,100*(1-ms/(Math.max(1,task.totalTime)*1000)))))):'0');
@@ -2220,12 +2244,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const cost = kmGrowthCostV217(b.baseCost,b.level,'building');
             if (spendResource(b.costType, cost)) {
                 const timeSec = kmGrowthTimeV217(b.level,'building');
-                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key };
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'building', subKey: key, productionGainV241:kmFacilityGain241('building',key) };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderBuildings(); kmDomainEffect(key,'start');
                 if(window.cloudSaveGame) window.cloudSaveGame();
                 playSfx('click');
-                showNotification(`<i class="fa-solid fa-hammer mr-1 text-yellow-300"></i>${b.name} 건설 시작 (${timeSec}초)`);
+                showNotification(`<i class="fa-solid fa-hammer mr-1 text-yellow-300"></i>${b.name} 건설 시작 (${kmDuration241(timeSec)})`);
             } else {
                 showNotification(`<i class="fa-solid fa-triangle-exclamation mr-1 text-red-400"></i>자원이 부족합니다.`);
             }
@@ -2254,13 +2278,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                                 <div>
                                     <div class="font-bold text-slate-100 text-xs">${node.name} <span class="text-[10px] bg-emerald-900/80 text-emerald-200 px-1.5 py-0.5 rounded ml-1">Lv.${node.level}</span></div>
                                     <div class="text-[10px] text-slate-400 mt-0.5">${node.desc}</div>
-                                    <div class="text-[10px] font-semibold text-emerald-400 mt-0.5">초당 +${node.level * node.prodRate} 채집</div>
+                                    <div class="text-[10px] font-semibold text-emerald-400 mt-0.5">초당 +${kmFacilityRate241('gather',key)} 채집</div>
                                 </div>
                             </div>
                             <button class="btn-3d btn-blue flex flex-col items-center justify-center min-w-[85px] text-[11px] py-1.5 px-2" id="btn-gather-${key}" onclick="event.stopPropagation(); startGatherUpgrade('${key}')" ${isBusy ? 'disabled' : ''}>
                                 <span>${isBusy ? '확장중' : '확장'}</span>
                                 <span class="flex items-center gap-1 mt-0.5"><i class="fa-solid ${costIconName}"></i>${formatNumber(cost)}</span>
-                                <span class="text-[9px] text-slate-200"><i class="fa-regular fa-clock mr-0.5"></i>${timeSec}초</span>
+                                <span class="text-[9px] text-slate-200"><i class="fa-regular fa-clock mr-0.5"></i>${kmDuration241(timeSec)}</span>
                             </button>
                         </div>
                         <div class="progress-bar-container" id="progress-container-${key}">
@@ -2280,7 +2304,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const cost = kmGrowthCostV217(node.baseCost,node.level,'gathering');
             if (spendResource(node.costType, cost)) {
                 const timeSec = kmGrowthTimeV217(node.level,'gathering');
-                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key };
+                gameState.upgradesInProgress[taskKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'gather', subKey: key, productionGainV241:kmFacilityGain241('gather',key) };
                 scheduleUpgradeCompletionV16(taskKey);
                 updateUI(); renderGathering();
                 if(window.cloudSaveGame) window.cloudSaveGame();
@@ -2460,7 +2484,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                                         <button class="btn-3d btn-purple text-[10px] px-2 py-1" onclick="event.stopPropagation(); openEquipmentModal(${globalIdx}); playSfx('click');">장비</button>
                                         <button class="btn-3d btn-orange flex flex-col items-center justify-center km-upgrade-btn km-hero-upgrade-btn ${isBusy ? 'opacity-60 cursor-not-allowed' : ''}" id="btn-hero-${globalIdx}" onclick="event.stopPropagation(); startHeroUpgrade(${globalIdx}, this)" ${isBusy ? 'disabled aria-disabled="true"' : ''}>
                                             <span>${isBusy ? '훈련중' : '강화'}</span>
-                                            <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${busyRemain}초` : heroCostsHtmlV206(heroCostsV206)}</span>
+                                            <span class="flex items-center gap-0.5 mt-0.5">${isBusy ? `<i class="fa-solid fa-clock"></i>${kmDuration241(busyRemain)}` : heroCostsHtmlV206(heroCostsV206)}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -2516,7 +2540,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 scheduleUpgradeCompletionV16(progressKey);
                 renderHeroes();
                 playSfx('click');
-                showNotification(`<i class="fa-solid fa-users mr-1 text-indigo-300"></i>${h.name} 훈련 시작 (${timeSec}초)`);
+                showNotification(`<i class="fa-solid fa-users mr-1 text-indigo-300"></i>${h.name} 훈련 시작 (${kmDuration241(timeSec)})`);
             } else {
                 if(sourceBtn){ sourceBtn.disabled=false; sourceBtn.removeAttribute('aria-disabled'); sourceBtn.classList.remove('opacity-60','cursor-not-allowed'); }
                 showNotification(`<i class="fa-solid fa-triangle-exclamation mr-1 text-red-400"></i>자원이 부족합니다.`);
@@ -2952,7 +2976,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 squadSize:(gameState.selectedSquad||[]).length,hud,issues};
         }
         function kmDiagFormatV219(n) {return Number.isFinite(Number(n))?Number(n).toLocaleString('ko-KR',{maximumFractionDigits:2}):'—';}
-        function kmDiagTimeV219(n){const v=Math.max(0,Math.ceil(Number(n)||0));return v>=3600?Math.floor(v/3600)+'시간 '+Math.floor(v%3600/60)+'분':v>=60?Math.floor(v/60)+'분 '+v%60+'초':v+'초';}
+        function kmDiagTimeV219(n){return kmDuration241(n);}
         function kmDiagSectionV219(root,title,headers,rows){
             const section=document.createElement('section');section.className='rounded-xl border border-slate-600 bg-slate-900/60 p-2.5';
             const heading=document.createElement('h4');heading.className='font-bold text-cyan-300 mb-2';heading.textContent=title;section.appendChild(heading);
@@ -3517,12 +3541,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             if(v16Timers[taskKey]){ clearTimeout(v16Timers[taskKey]); delete v16Timers[taskKey]; }
             playSfx('upgrade');
             if(item.type==='building' && BUILDINGS[item.subKey]){
+                kmCompleteProduction241('building',item.subKey,item);
                 BUILDINGS[item.subKey].level++;
                 syncProgressionV15(); renderBuildings(); checkKingdomLevelUp();
                 kmDomainEffect(item.subKey,'complete');
                 const castleLabel=document.getElementById('km-castle-level');if(castleLabel)castleLabel.textContent='왕성 · Lv.'+gameState.level;
                 showNotification(`✨ ${BUILDINGS[item.subKey].name} 건설 완료! Lv.${BUILDINGS[item.subKey].level}`);
             } else if(item.type==='gather' && GATHERING_NODES[item.subKey]){
+                kmCompleteProduction241('gather',item.subKey,item);
                 GATHERING_NODES[item.subKey].level++;
                 syncProgressionV15(); renderGathering(); checkKingdomLevelUp();
                 showNotification(`✨ ${GATHERING_NODES[item.subKey].name} 확장 완료! Lv.${GATHERING_NODES[item.subKey].level}`);
@@ -3541,7 +3567,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const item=gameState.upgradesInProgress[taskKey]; if(!item)return;
             const wait=Math.max(0,Number(item.endTime)-Date.now())+80;
             if(v16Timers[taskKey]) clearTimeout(v16Timers[taskKey]);
-            v16Timers[taskKey]=setTimeout(()=>finishUpgradeV16(taskKey),wait);
+            v16Timers[taskKey]=setTimeout(()=>{if(gameState.upgradesInProgress[taskKey]&&Date.now()<Number(gameState.upgradesInProgress[taskKey].endTime))scheduleUpgradeCompletionV16(taskKey);else finishUpgradeV16(taskKey);},Math.min(wait,2147483647));
         }
         function resumeUpgradeTimersV16(){
             Object.keys(gameState.upgradesInProgress||{}).forEach(k=>{
@@ -3613,14 +3639,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     const resource=b.prodType;
                     if (!resource) return;
                     gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +(Number(b.prodRate)||0)*(Number(b.level)||1)*KM_ECONOMY_V217.production.buildingMultiplier*seconds;
+                        +kmFacilityRate241('building',key)*seconds;
                 });
                 Object.keys(GATHERING_NODES).forEach(key => {
                     const node=GATHERING_NODES[key];
                     const resource=node.resKey;
                     if (!resource) return;
                     gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +(Number(node.prodRate)||0)*(Number(node.level)||1)*KM_ECONOMY_V217.production.gatheringMultiplier*seconds;
+                        +kmFacilityRate241('gather',key)*seconds;
                 });
                 // 매 틱 실제 자원과 헤더를 동기화. 다른 UI의 오류와 독립적으로 실행.
                 updateResourceHudV200();
@@ -3642,7 +3668,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                         const total=Math.max(1,Number(item.totalTime)||1)*1000;
                         const pct=Math.max(0,Math.min(100,(1-ms/total)*100));
                         fill.style.width=`${pct}%`;
-                        txt.textContent=`${Math.floor(pct)}% (${Math.max(0,ms/1000).toFixed(1)}초)`;
+                        txt.textContent=`${Math.floor(pct)}% (${kmDuration241(Math.max(0,ms/1000).toFixed(1))})`;
                     }
                     if(ms<=0) finishUpgradeV16(key);
                 }
@@ -3703,8 +3729,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 gameState.resources[resource]=(Number(gameState.resources[resource])||0)+amount;
                 gains[resource]=(gains[resource]||0)+amount;
             };
-            Object.values(BUILDINGS).forEach(b=>add(b.prodType,b.prodRate,b.level));
-            Object.values(GATHERING_NODES).forEach(n=>add(n.resKey,n.prodRate,n.level));
+            Object.entries(BUILDINGS).forEach(([key,b])=>add(b.prodType,kmFacilityRate241('building',key),1));
+            Object.entries(GATHERING_NODES).forEach(([key,n])=>add(n.resKey,kmFacilityRate241('gather',key),1));
             kmOfflineReportV205={seconds,gains,capped:elapsed>KM_OFFLINE_CAP_V205};
             kmLastResourceTickV202=Date.now();
             gameState._kmLastProductionAtV205=kmLastResourceTickV202;
@@ -3716,13 +3742,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const rows=KM_OFFLINE_KEYS_V205.filter(k=>r.gains[k]>0).map(k=>`<div style="display:flex;justify-content:space-between;gap:20px;margin:6px 0"><span>${names[k]}</span><b>+${Math.floor(r.gains[k]).toLocaleString('en-US')}</b></div>`).join('');
             const overlay=document.createElement('div');overlay.id='km-offline-modal-v205';
             overlay.style.cssText='position:fixed;inset:0;z-index:10050;background:#020617cc;display:flex;align-items:center;justify-content:center;padding:20px';
-            overlay.innerHTML=`<div style="width:min(360px,100%);background:#172554;border:2px solid #fbbf24;border-radius:18px;color:white;padding:20px;box-shadow:0 12px 40px #0009"><div style="font-size:21px;font-weight:900;text-align:center;margin-bottom:10px">🎁 오프라인 채집 보상</div><div style="text-align:center;color:#cbd5e1;font-size:12px;margin-bottom:14px">미접속 ${Math.floor(r.seconds/3600)}시간 ${Math.floor(r.seconds%3600/60)}분 · 최대 12시간${r.capped?' (상한 적용)':''}</div>${rows}<button id="km-offline-ok-v205" style="width:100%;margin-top:16px;padding:12px;background:#f59e0b;border-radius:10px;font-weight:900;color:#1e293b">확인</button></div>`;
+            overlay.innerHTML=`<div style="width:min(360px,100%);background:#172554;border:2px solid #fbbf24;border-radius:18px;color:white;padding:20px;box-shadow:0 12px 40px #0009"><div style="font-size:21px;font-weight:900;text-align:center;margin-bottom:10px">🎁 오프라인 채집 보상</div><div style="text-align:center;color:#cbd5e1;font-size:12px;margin-bottom:14px">미접속 ${kmDuration241(r.seconds)} · 최대 ${kmDuration241(KM_OFFLINE_CAP_V205)}${r.capped?' (상한 적용)':''}</div>${rows}<button id="km-offline-ok-v205" style="width:100%;margin-top:16px;padding:12px;background:#f59e0b;border-radius:10px;font-weight:900;color:#1e293b">확인</button></div>`;
             document.body.appendChild(overlay);
             document.getElementById('km-offline-ok-v205').onclick=()=>overlay.remove();
         }
         function kmRestoreV204(data){
             if(!data||typeof data!=='object'||!data.resources||typeof data.resources!=='object')throw Error('잘못된 저장 데이터');
             Object.assign(gameState,data);
+            gameState.productionV241=JSON.parse(JSON.stringify(data.productionV241||{}));
             gameState.resources=Object.assign({gold:0,food:0,wood:0,ore:0,herb:0,magicDust:0,gem:0,pureGold:0,emerald:0,ruby:0,sapphire:0},data.resources);
             if(!gameState.upgradesInProgress||typeof gameState.upgradesInProgress!=='object')gameState.upgradesInProgress={};
             applyProgressionV15();
@@ -4108,14 +4135,14 @@ function kmFitDomain238(){const view=document.querySelector('.km-map-viewport'),
 const KM_SCENES239={wood:'0% 0%',ore:'100% 0%',herb:'0% 50%',magic:'100% 50%'};
 const kmOpenBuild239=openV15Build;
 openV15Build=function(kind,key){kmOpenBuild239(kind,key);const art=document.querySelector('.v15-build-art');if(kind==='gather')art.style.backgroundPosition=KM_SCENES239[key];document.querySelector('.v15-build-body').scrollTop=0;};
-function renderGathering(){document.getElementById('gathering-container').innerHTML=Object.entries(GATHERING_NODES).map(([key,n])=>{const busy=!!gameState.upgradesInProgress['gather:'+key];return `<button id="gather-${key}" class="km-gather239 ${busy?'upgrading':''}" onclick="openV15Build('gather','${key}')" style="--scene-position:${KM_SCENES239[key]}"><span class="km-gather-scene239"></span><span class="km-gather-info239">${kmResourceArt238(n.resKey)}<strong>${n.name}<small>Lv.${n.level} · 초당 +${formatNumber(n.level*n.prodRate*KM_ECONOMY_V217.production.gatheringMultiplier)}</small></strong><span class="km-gather-action239">${busy?'확장 중':'관리 ›'}</span></span><span class="progress-bar-container" id="progress-container-${key}" style="display:${busy?'block':'none'}"><span class="progress-bar-fill" id="progress-fill-${key}"></span><span class="progress-bar-text" id="progress-text-${key}"></span></span></button>`;}).join('');}
+function renderGathering(){document.getElementById('gathering-container').innerHTML=Object.entries(GATHERING_NODES).map(([key,n])=>{const busy=!!gameState.upgradesInProgress['gather:'+key];return `<button id="gather-${key}" class="km-gather239 ${busy?'upgrading':''}" onclick="openV15Build('gather','${key}')" style="--scene-position:${KM_SCENES239[key]}"><span class="km-gather-scene239"></span><span class="km-gather-info239">${kmResourceArt238(n.resKey)}<strong>${n.name}<small>Lv.${n.level} · 초당 +${formatNumber(kmFacilityRate241('gather',key))}</small></strong><span class="km-gather-action239">${busy?'확장 중':'관리 ›'}</span></span><span class="progress-bar-container" id="progress-container-${key}" style="display:${busy?'block':'none'}"><span class="progress-bar-fill" id="progress-fill-${key}"></span><span class="progress-bar-text" id="progress-text-${key}"></span></span></button>`;}).join('');}
 let kmHeroFilter239='all',kmHeroSelected239=null;
 function kmPortrait239(i){return `background-position:${(i%7)*100/6}% ${Math.floor(i/7)*50}%`;}
 function kmFilterHeroes239(type){kmHeroFilter239=type;renderHeroes();}
 function renderHeroes(){const types=[['all','전체'],['infantry','보병'],['cavalry','기병'],['archer','궁병']];let html='<div class="km-hero-filters239">'+types.map(([t,n])=>`<button onclick="kmFilterHeroes239('${t}')" aria-pressed="${kmHeroFilter239===t}">${n}</button>`).join('')+'</div><div class="km-hero-grid239">';HEROES.forEach((h,i)=>{if(kmHeroFilter239!=='all'&&kmHeroFilter239!==h.type)return;const peers=HEROES.map((h,idx)=>({h,idx})).filter(x=>x.h.type===h.type),tier=peers.findIndex(x=>x.idx===i),unlocked=tier<=getHighestUnlockedHeroTierV196(peers);html+=`<button class="km-hero-card239 ${unlocked?'':'km-locked239'}" onclick="kmOpenHero239(${i})" aria-label="${h.name} ${unlocked?'Lv.'+h.level:'잠김'}"><span class="km-portrait239" style="${kmPortrait239(i)}"></span><span class="km-hero-caption239"><b>${unlocked?'Lv.'+h.level:'잠김'}</b><small>${h.name}</small></span>${gameState.upgradesInProgress['hero:'+i]?'<span class="km-training239">훈련 중</span>':''}</button>`;});document.getElementById('heroes-container').innerHTML=html+'</div>';if(kmHeroSelected239!==null)kmRefreshHero239();}
 function kmOpenHero239(i){kmHeroSelected239=i;kmRefreshHero239();document.getElementById('km-hero-detail239').hidden=false;document.getElementById('km-hero-close239').focus();}
 function kmCloseHero239(){document.getElementById('km-hero-detail239').hidden=true;kmHeroSelected239=null;}
-function kmRefreshHero239(){const i=kmHeroSelected239;if(i===null)return;const h=HEROES[i],peers=HEROES.map((h,idx)=>({h,idx})).filter(x=>x.h.type===h.type),tier=peers.findIndex(x=>x.idx===i),unlocked=tier<=getHighestUnlockedHeroTierV196(peers),s=getHeroStats(h),costs=getHeroUpgradeCostsV206(h,tier),busy=!!gameState.upgradesInProgress['hero:'+i];document.getElementById('km-hero-detail-content239').innerHTML=`<div class="km-hero-detail-portrait239 km-portrait239" style="${kmPortrait239(i)}"></div><h2>${h.name} <small>Lv.${h.level}</small></h2><p>공격력 ${formatNumber(s.atk)} · 체력 ${formatNumber(s.hp)}</p>${unlocked?`<div class="km-hero-cost239">${heroCostsHtmlV206(costs)}</div><p>훈련 시간 ${getHeroUpgradeTimeV194(h)}초</p><div id="progress-container-hero:${i}" class="progress-bar-container" style="display:${busy?'block':'none'}"><div id="progress-fill-hero:${i}" class="progress-bar-fill"></div><div id="progress-text-hero:${i}" class="progress-bar-text"></div></div><div class="km-hero-actions239"><button onclick="kmCloseHero239();openEquipmentModal(${i})">장비 관리</button><button id="btn-hero-${i}" onclick="startHeroUpgrade(${i},this);kmRefreshHero239()" ${busy?'disabled':''}>${busy?'훈련 중':'훈련 시작'}</button></div>`:`<p>${getHeroUnlockTextV196(peers,tier)} 달성 시 해금됩니다.</p>`}`;}
+function kmRefreshHero239(){const i=kmHeroSelected239;if(i===null)return;const h=HEROES[i],peers=HEROES.map((h,idx)=>({h,idx})).filter(x=>x.h.type===h.type),tier=peers.findIndex(x=>x.idx===i),unlocked=tier<=getHighestUnlockedHeroTierV196(peers),s=getHeroStats(h),costs=getHeroUpgradeCostsV206(h,tier),busy=!!gameState.upgradesInProgress['hero:'+i];document.getElementById('km-hero-detail-content239').innerHTML=`<div class="km-hero-detail-portrait239 km-portrait239" style="${kmPortrait239(i)}"></div><h2>${h.name} <small>Lv.${h.level}</small></h2><p>공격력 ${formatNumber(s.atk)} · 체력 ${formatNumber(s.hp)}</p>${unlocked?`<div class="km-hero-cost239">${heroCostsHtmlV206(costs)}</div><p>훈련 시간 ${kmDuration241(getHeroUpgradeTimeV194(h))}</p><div id="progress-container-hero:${i}" class="progress-bar-container" style="display:${busy?'block':'none'}"><div id="progress-fill-hero:${i}" class="progress-bar-fill"></div><div id="progress-text-hero:${i}" class="progress-bar-text"></div></div><div class="km-hero-actions239"><button onclick="kmCloseHero239();openEquipmentModal(${i})">장비 관리</button><button id="btn-hero-${i}" onclick="startHeroUpgrade(${i},this);kmRefreshHero239()" ${busy?'disabled':''}>${busy?'훈련 중':'훈련 시작'}</button></div>`:`<p>${getHeroUnlockTextV196(peers,tier)} 달성 시 해금됩니다.</p>`}`;}
 function renderShop(){document.getElementById('shop-container').innerHTML=SHOP_ITEMS.map(item=>`<div class="shop-item">${kmResourceArt238(item.rewardType|| (item.costType==='cash'?'crown':'gem'))}<strong>${item.name}</strong><p>${item.desc}</p><button class="btn-3d btn-orange" onclick="buyShopItem('${item.id}');playSfx('click')">${item.btnText}</button></div>`).join('');}
 const kmBattleUnits239=renderBattleUnitsV12;
 renderBattleUnitsV12=function(){kmBattleUnits239();BATTLE_V12.heroes.forEach((u,i)=>{const el=document.querySelector('#fighter-v12-'+i+' .unit');if(el){const col=u.type==='archer'?3:u.type==='cavalry'?2:HEROES[u.idx]?.level>=10?1:0;el.style.setProperty('--sprite-pos',`${col*100/3}% 0%`);}});const el=document.getElementById('enemy-unit-v12');if(el)el.style.setProperty('--sprite-pos',`${BATTLE_V12.enemy.boss?100:((Math.max(1,gameState.towerFloor||1)-1)%3)*100/3}% 100%`);};
@@ -4126,7 +4153,7 @@ updateSquadSummary=function(){const box=document.getElementById('battle-squad-pr
 const kmSquadOpen239=openSquadModal;openSquadModal=function(){kmSquadOpen239();document.querySelectorAll('#squad-hero-selection-list [onclick^="toggleSquadHero"]').forEach(row=>{const i=Number(row.getAttribute('onclick').match(/\d+/)?.[0]);const icon=row.querySelector('i');if(icon){const holder=icon.parentElement;holder.className='km-portrait239';holder.setAttribute('style',kmPortrait239(i));holder.replaceChildren();}});};
 document.addEventListener('DOMContentLoaded',()=>{['gold','food','herb','magic'].forEach(key=>{const el=document.getElementById('cost-'+key);if(el){el.parentElement.querySelector('i')?.remove();el.insertAdjacentHTML('beforebegin',kmResourceArt238(key==='magic'?'magicDust':key));}});});
 document.addEventListener('keydown',e=>{const modal=document.getElementById('km-hero-detail239');if(modal.hidden||e.key!=='Tab')return;const list=[...modal.querySelectorAll('button:not(:disabled)')],first=list[0],last=list.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
-const kmRefreshBuild239=kmRefreshBuild238;kmRefreshBuild238=function(){kmRefreshBuild239();if(!v15BuildTarget)return;let line=document.getElementById('km-action-cost239');if(!line){line=document.createElement('div');line.id='km-action-cost239';document.querySelector('.km-detail-actions239')?.prepend(line);}const {kind,key}=v15BuildTarget,obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],cfg=kind==='building'?'building':'gathering',job=gameState.upgradesInProgress[(kind==='building'?'building:':'gather:')+key];const value=job?'완료까지 '+Math.max(0,Math.ceil((job.endTime-Date.now())/1000))+'초':(KM_RESOURCE_VIEW_238[obj.costType]?.[0]||obj.costType)+' '+formatNumber(kmGrowthCostV217(obj.baseCost,obj.level,cfg))+' · '+kmGrowthTimeV217(obj.level,cfg)+'초';if(line.textContent!==value)line.textContent=value;};
+const kmRefreshBuild239=kmRefreshBuild238;kmRefreshBuild238=function(){kmRefreshBuild239();if(!v15BuildTarget)return;let line=document.getElementById('km-action-cost239');if(!line){line=document.createElement('div');line.id='km-action-cost239';document.querySelector('.km-detail-actions239')?.prepend(line);}const {kind,key}=v15BuildTarget,obj=kind==='building'?BUILDINGS[key]:GATHERING_NODES[key],cfg=kind==='building'?'building':'gathering',job=gameState.upgradesInProgress[(kind==='building'?'building:':'gather:')+key];const value=job?'완료까지 '+kmDuration241((job.endTime-Date.now())/1000):(KM_RESOURCE_VIEW_238[obj.costType]?.[0]||obj.costType)+' '+formatNumber(kmGrowthCostV217(obj.baseCost,obj.level,cfg))+' · '+kmDuration241(kmGrowthTimeV217(obj.level,cfg));if(line.textContent!==value)line.textContent=value;};
 </script>
 <script>// Domain composition only; no economic or persistence changes.
 const kmFitBefore240=kmFitDomain238;
