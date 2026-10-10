@@ -17,3 +17,7 @@
 - Durations use Dd HH:MM:SS. Map touch feedback must preserve translate(-50%,-50%) anchors.
 
 - v2.0.42: omit the day prefix for durations below one day; show larger level/nickname/power without the domain title in the HUD. Active building/gathering/hero jobs can be cancelled with exactly 50% of paid resources refunded once. New jobs persist paidCostsV242; legacy jobs infer unchanged pre-upgrade costs.
+
+- v2.0.43: HUD level, nickname and power share one line. Domain/gather detail uses saved-job progress for workshop animation; honor reduced motion and keep action footer visible.
+
+- v2.0.47: timed building, gathering and hero upgrades accelerate by 720 seconds per diamond; never charge completed jobs. Original job resources refund 50% on cancellation; acceleration diamonds are consumed. Gathering uses four compact illustrated cards with working controls.
