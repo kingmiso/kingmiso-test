@@ -25,3 +25,5 @@
 - v2.0.48 master style: fine gold borders, warm cream type, honey-gold buttons; flat periwinkle navigation silhouettes (house, pickaxe, cute face, crossed swords, shop). Avoid metallic bevels, bulky tile selection and oversized icons.
 
 - v2.0.49 supersedes thin borders: rounded cute colored navigation, substantial 2px UI outlines, roomy diamond capsule, no map zoom controls. Warm storybook gathering art in list and details.
+
+- v2.0.50: domain art matches gathering storybook style with landmark anchors preserved. Fantasy navigation uses crown castle, crystal pickaxe, mage, rune swords and treasure chest.

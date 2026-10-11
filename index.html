@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.49: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.50: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -2830,6 +2830,10 @@ body{color:var(--km-cream248)}
 .bottom-wrapper,#inline-chat-container{border-top-width:2px!important}
 @media(max-width:380px){.top-bar .resource-item.gem,body.km-domain240 .top-bar .resource-item.gem{min-width:58px!important;padding-inline:5px!important}.top-bar>div:first-child{gap:2px!important}.top-bar [onclick*="openProfileModal"]{padding-right:4px!important}.km-nav-art,body.km-domain240 .km-nav-art{width:34px!important;height:34px!important}}
 
+</style><style>
+:root{--km-map-portrait:url('km_domain_story_v250.png')}
+.nav-btn.active .km-nav-art,body.km-domain240 .nav-btn.active .km-nav-art{filter:drop-shadow(0 1px 1px #08162b) drop-shadow(0 0 4px #ffe09355)!important}
+
 </style></head>
 <body>
 
@@ -3288,7 +3292,7 @@ body{color:var(--km-cream248)}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.49";
+        const GAME_VERSION = "v2.0.50";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -5714,6 +5718,20 @@ kmSceneUpdate245=function(){kmSceneBefore249();if(v15BuildTarget?.kind==='gather
 const kmFitBefore249=kmSceneFit245;
 kmSceneFit245=function(){if(v15BuildTarget?.kind!=='gather')return kmFitBefore249();const a=document.querySelector('.v15-build-art'),r=a.getBoundingClientRect(),w=Math.max(r.width,r.height*1.5);a.style.setProperty('--scene-width245',w+'px');a.style.setProperty('--scene-height245',w/1.5+'px');};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmCuteMenu249);else kmCuteMenu249();
+
+</script><script>
+function kmFantasyMenu250(){
+const art={
+domain:'<path d="M5 17h8v16H5zm19 0h8v16h-8zM12 12h13v21H12z" fill="#f5d9a5"/><path d="M3 17q5-15 11 0M11 12q7-19 15 0M23 17q5-15 11 0" fill="#6f9ad5"/><path d="M15 33v-7q3-7 7 0v7" fill="#986b47"/><path d="m13 7-1-5 4 2 3-3 3 3 4-2-1 5z" fill="#ffdc79"/><path d="M8 22v3m20-3v3" stroke="#9d7249" stroke-width="2"/><circle cx="19" cy="5" r="1.2" fill="#f8af9b"/>',
+gather:'<path d="m8 30 15-18q3-3 5 0L13 33q-3 3-5-3" fill="#b78654"/><path d="M4 14Q16-3 27 9l6 8q1 4-3 3L21 12q-5-3-12 6-6 3-5-4" fill="#a3d8ec"/><path d="m18 9 4 5m-9 12 4 4" stroke="#ffe097" stroke-width="3"/><path d="m28 3 3 4-3 5-3-5z" fill="#b899ee"/><path d="m5 3 1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="#fff0ad"/>',
+heroes:'<path d="M8 20q0-11 11-11t11 11q0 13-11 13T8 20" fill="#f4d7aa"/><path d="M8 16 17 1q2-2 3 1l9 15" fill="#828bc9"/><path d="M4 18q14-7 28 0 3 3-2 4-12-4-23 0-5 0-3-4" fill="#929ed8"/><path d="m20 8 1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="#ffe28a"/><circle cx="14" cy="25" r="1.8" fill="#63463c"/><circle cx="24" cy="25" r="1.8" fill="#63463c"/><path d="M17 29q3 2 5-1" fill="none" stroke="#ac7656" stroke-width="1.5"/>',
+battle:'<path d="M7 3q2-2 4 3l18 21-5 3L7 9zm23 0q-2-2-4 3L8 27l5 3L30 9z" fill="#b7deed"/><path d="m5 25 9 7m10 0 9-7" stroke="#f8d387" stroke-width="4"/><path d="m8 30-3 4m24-4 3 4" stroke="#b38acb" stroke-width="4"/><path d="m17 16 2-4 2 4-2 4z" fill="#f4dd8b"/><path d="m10 10 5 6m11-6-4 5" stroke="#efffff" stroke-width="1.4"/>',
+shop:'<path d="M5 16q0-11 7-11h15q7 0 7 11v12q0 5-5 5H10q-5 0-5-5z" fill="#ad784c"/><path d="M5 17q0-12 7-12h15q7 0 7 12z" fill="#739aca"/><path d="M6 19h27M11 7v24M28 7v24" stroke="#f8d78c" stroke-width="3"/><path d="m19 15 5 5-5 6-4-6z" fill="#c4a4f4"/><path d="m3 3 1 3 3 1-3 1-1 3-1-3-2-1 2-1m29-9 1 3 3 1-3 1-1 3-1-3-3-1 3-1" fill="#fff0b5"/>'
+};
+Object.entries(art).forEach(([k,v])=>document.querySelector('#tab-'+k+' svg').innerHTML='<g stroke-linecap="round" stroke-linejoin="round">'+v+'</g>');
+document.documentElement.dataset.uiVersion='2.0.50';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmFantasyMenu250);else kmFantasyMenu250();
 
 </script></body>
 </html>
