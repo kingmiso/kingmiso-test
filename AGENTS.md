@@ -27,3 +27,5 @@
 - v2.0.49 supersedes thin borders: rounded cute colored navigation, substantial 2px UI outlines, roomy diamond capsule, no map zoom controls. Warm storybook gathering art in list and details.
 
 - v2.0.50: domain art matches gathering storybook style with landmark anchors preserved. Fantasy navigation uses crown castle, crystal pickaxe, mage, rune swords and treasure chest.
+
+- v2.0.51 supersedes thick outlines: use subtle button rims and dimensional highlights/base shadows matching master. Login uses poster outline only. Building detail art matches new storybook domain.

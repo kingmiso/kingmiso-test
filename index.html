@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.50: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.51: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -2834,6 +2834,26 @@ body{color:var(--km-cream248)}
 :root{--km-map-portrait:url('km_domain_story_v250.png')}
 .nav-btn.active .km-nav-art,body.km-domain240 .nav-btn.active .km-nav-art{filter:drop-shadow(0 1px 1px #08162b) drop-shadow(0 0 4px #ffe09355)!important}
 
+</style><style>
+/* The poster contains the field outline; don't draw a second outline above it. */
+#login-overlay .km-login-input-box-v233,#login-overlay .km-login-input-box-v233:focus-within,#login-overlay .km-login-input-box-v233:has(input:not(:placeholder-shown)){border:0!important;box-shadow:none!important;outline:0!important;background:#0d213d!important;border-radius:6px!important}
+#login-overlay .km-login-input-box-v233 input,#login-overlay .km-login-input-box-v233 input:focus{border:0!important;box-shadow:none!important;outline:0!important;background:transparent!important;-webkit-appearance:none;appearance:none}
+#v15-build-modal[data-kind=building] .v15-build-art:before{background-image:url('km_buildings_story_v251.png')!important;background-size:200% 200%!important;aspect-ratio:3/2!important}
+/* Light rim, illuminated face, recessed base: dimensional master-style buttons. */
+.km-speed247,.km-manage247,#v15-build-go,.km-hero-actions239 button:not([id*="cancel"]),#km-chat-send{border:1px solid #fff0bf70!important;border-radius:10px!important;background:linear-gradient(#ffe89e 0%,#ffd268 45%,#efb642 85%,#db972c 100%)!important;color:#493017!important;box-shadow:inset 0 1px 1px #fff7d7b0,inset 0 -2px 0 #bf822844,0 3px 0 #81501b,0 4px 8px #0004!important;text-shadow:0 1px #fff1b155;transform:none}
+.km-speed247:active,.km-manage247:active,#v15-build-go:active,.km-hero-actions239 button:active,#km-chat-send:active{translate:0 2px;box-shadow:inset 0 1px 3px #80521b44,0 1px 0 #81501b!important;filter:brightness(.97)}
+#km-build-cancel242{border:1px solid #b7a0a150!important;background:linear-gradient(#354152,#202b3a)!important;border-radius:10px!important;box-shadow:inset 0 1px #dbe0e822,0 2px 0 #101728!important;color:#e3c7b7!important}
+#v15-build-modal .v15-build-card,#km-hero-detail239 .km-hero-card239,.modal-content{border:1px solid #c8b17a88!important;box-shadow:inset 0 1px #fff3c622,0 7px 25px #0006!important}
+.v15-close{border:1px solid #c6bd9b55!important;background:linear-gradient(#293d52,#142639)!important;box-shadow:inset 0 1px #e2e7ef22,0 2px 0 #071628!important}
+.km-detail-titleline,#km-detail-level,#km-scene-info244,.km-hero-cost239>span,.km-gather247,.km-gather-res247{border-width:1px!important;border-color:#d2bc8177!important}
+#v15-build-modal #km-scene-pin244{border:1px solid #d7bf8877!important;box-shadow:inset 0 1px #ffefc333,0 3px 8px #0005!important}
+.km-work-track243,.progress-bar-container{border:1px solid #b7c4ae44!important;background:#071b25!important;box-shadow:inset 0 1px 2px #0005!important}
+.nav-btn.active,body.km-domain240 .nav-btn.active{border-color:transparent!important;background:radial-gradient(ellipse,#e8c37335,transparent 74%)!important;box-shadow:none!important}
+.bottom-nav,body.km-domain240 .bottom-nav,.bottom-wrapper,#inline-chat-container{border-top-width:1px!important;border-color:#c8b17a55!important}
+.top-bar .resource-item.gem,body.km-domain240 .top-bar .resource-item.gem,.top-bar [onclick*="openProfileModal"],.top-bar #audio-toggle-btn{border-width:1px!important;border-color:#c7b1b977!important}
+.km-map-sign,body.km-domain240 .km-map-sign{border-width:1px!important;border-color:#dcc58b88!important;box-shadow:inset 0 1px #f8eec322,0 3px 5px #0005!important}
+@media(prefers-reduced-motion:reduce){.km-speed247:active,.km-manage247:active,#v15-build-go:active{translate:none}}
+
 </style></head>
 <body>
 
@@ -3292,7 +3312,7 @@ body{color:var(--km-cream248)}
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.50";
+        const GAME_VERSION = "v2.0.51";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -5732,6 +5752,12 @@ Object.entries(art).forEach(([k,v])=>document.querySelector('#tab-'+k+' svg').in
 document.documentElement.dataset.uiVersion='2.0.50';
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmFantasyMenu250);else kmFantasyMenu250();
+
+</script><script>
+// Both new atlases have 3:2 cells; preserve proportions in every facility detail.
+kmSceneFit245=function(){const a=document.querySelector('.v15-build-art'),r=a.getBoundingClientRect(),w=Math.max(r.width,r.height*1.5);if(r.width&&r.height){a.style.setProperty('--scene-width245',w+'px');a.style.setProperty('--scene-height245',w/1.5+'px');}};
+function kmInit251(){document.documentElement.dataset.uiVersion='2.0.51';}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit251);else kmInit251();
 
 </script></body>
 </html>
