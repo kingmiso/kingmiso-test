@@ -29,3 +29,5 @@
 - v2.0.50: domain art matches gathering storybook style with landmark anchors preserved. Fantasy navigation uses crown castle, crystal pickaxe, mage, rune swords and treasure chest.
 
 - v2.0.51 supersedes thick outlines: use subtle button rims and dimensional highlights/base shadows matching master. Login uses poster outline only. Building detail art matches new storybook domain.
+
+- v2.0.52 fresh master popup: image above visible output/cost/time, gold accelerate + blue build; no hidden info drawer. Login has one visible input outline.
