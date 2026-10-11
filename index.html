@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.53: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.54: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -2980,6 +2980,60 @@ body.km-domain240 .km-domain-map{width:100%!important;height:auto!important;aspe
 #v15-build-modal.km-master252 #km-build-cancel242{min-height:24px!important;height:24px!important}
 @media(max-height:650px){#v15-build-modal.km-master252 .km-master-info252{padding:6px 12px 5px!important}#v15-build-modal.km-master252 .km-master-timer252{padding-right:82px!important}#v15-build-modal.km-master252 #km-build-speed247,#v15-build-modal.km-master252 #v15-build-go{min-height:49px!important;height:49px!important}}
 
+</style><style>
+/* The domain is a single fitted scene; landmarks and controls share its coordinates. */
+:root{--km-nav-height:82px}
+body.km-domain240 #screen-domain{top:var(--km-header-height)!important;bottom:var(--km-footer-height)!important;height:auto!important;overflow:hidden!important;padding:0!important}
+body.km-domain240 .km-map-shell{height:100%!important;min-height:0!important;margin:0!important;border:0!important;overflow:hidden!important}
+body.km-domain240 .km-map-viewport{inset:0!important;position:absolute!important;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important;touch-action:none;overscroll-behavior:none;isolation:isolate}
+body.km-domain240 .km-map-viewport:before{content:'';position:absolute;inset:-15px;z-index:-1;background:linear-gradient(#09233a44,#071e3544),url('km_domain_master_v253.png') center/cover;filter:blur(12px)}
+body.km-domain240 .km-domain-map{width:var(--km-map-width254)!important;height:var(--km-map-height254)!important;aspect-ratio:2/3!important;margin:0!important;flex:none!important;background-size:100% 100%!important;box-shadow:0 0 25px #091c3760!important}
+body.km-domain240 .km-map-building{height:16%!important;width:28%!important}
+body.km-domain240 #building-farm{left:22%!important;top:43%!important}
+body.km-domain240 #building-mine{left:80%!important;top:50%!important}
+body.km-domain240 #building-sawmill{left:25%!important;top:69%!important}
+body.km-domain240 #building-forge{left:77%!important;top:73%!important}
+body.km-domain240 .km-map-sign{min-width:66px!important;padding:4px 7px!important;border:1px solid #c9b57988!important;border-radius:10px!important;background:linear-gradient(#213f56ed,#0a2037f5)!important}
+body.km-domain240 .km-map-progress{left:50%!important;transform:translateX(-50%);width:112px!important;height:17px!important;bottom:-19px!important;font-size:9px!important;border:1px solid #c6b47f99!important}
+body.km-domain240 .km-map-progress .progress-bar-text{font-size:9px!important}
+body.km-domain240 .km-castle{top:21%!important;height:24%!important}
+body.km-domain240 .km-castle span{min-width:125px!important;min-height:38px!important;padding:6px 14px!important;font-size:14px!important}
+/* Original rounded painted fantasy icons, not small font glyphs. */
+.bottom-nav,body.km-domain240 .bottom-nav{height:82px!important;padding:3px 5px 5px!important;gap:3px!important}
+.nav-btn,body.km-domain240 .nav-btn{gap:0!important;padding:0!important;border-radius:19px!important;font-size:12px!important;font-weight:700!important;color:#bac8dc!important;overflow:visible!important;transition:background .15s,scale .1s}
+.nav-btn .km-nav-art{display:none!important}
+.km-nav-painted254{display:block;width:53px;height:53px;flex:none;background-image:url('km_nav_round_v254.png');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 3px 2px #0006);pointer-events:none;transition:filter .15s,scale .15s}
+.nav-btn.active,body.km-domain240 .nav-btn.active{color:#ffe8ab!important;background:radial-gradient(ellipse at 50% 45%,#ffc96b33,#e5b9670a 75%)!important;box-shadow:inset 0 1px #ffe3a425,inset 0 -2px #e4bb6722!important}
+.nav-btn.active .km-nav-painted254{filter:drop-shadow(0 2px 2px #0007) drop-shadow(0 0 4px #ffd77755);scale:1.05}
+.nav-btn:active .km-nav-painted254{scale:.92}
+/* Fit the panel to its content; never reserve an empty spacer above the actions. */
+#v15-build-modal.km-master252 .v15-build-card{height:auto!important;max-height:100%!important;background:radial-gradient(ellipse at 10% 5%,#1c3851,#0a1c31 50%,#08162a)!important;border-color:#cfbb8b66!important;box-shadow:inset 0 1px #f3deae30,0 16px 50px #0008!important}
+#v15-build-modal.km-master252 .v15-build-body{flex:1 1 auto!important}
+#v15-build-modal.km-master252 .v15-build-art{flex:0 1 250px!important;height:250px!important;max-height:265px!important;min-height:110px!important;border-radius:9px!important;box-shadow:0 1px 0 #dec88e33!important}
+#v15-build-modal.km-master252 .km-master-info252{padding:10px 14px 5px!important}
+#v15-build-modal.km-master252 #v15-build-desc{font-size:13px!important;color:#bdccdf!important;margin-bottom:10px!important}
+#v15-build-modal.km-master252 #km-detail-output{font-size:13px!important;padding:8px 10px!important;min-height:42px!important;border-color:#86b8b34a!important;background:linear-gradient(110deg,#183c45aa,#142b45)!important}
+#v15-build-modal.km-master252 #km-detail-output strong{font-size:18px!important}
+#v15-build-modal.km-master252 #km-detail-output .km-resource-art{width:28px!important;height:28px!important}
+.km-master-label252{font-weight:700;color:#dbe7f2;letter-spacing:.01em;margin-top:2px}
+#v15-build-modal.km-master252 #v15-build-cost{min-height:61px!important;background:linear-gradient(110deg,#1b324a,#10223b)!important;border-color:#92afd331!important;box-shadow:inset 0 1px #bfd0e514,0 2px 6px #020d1a33!important}
+#v15-build-modal.km-master252 #v15-build-cost strong{font-size:23px!important}
+#v15-build-modal.km-master252 .km-owned{font-size:11px!important;text-align:right;line-height:1.5}
+#v15-build-modal.km-master252 .km-master-timer252{margin-top:3px!important;background:linear-gradient(110deg,#20354b,#11233a)!important;border:1px solid #aebdda22!important}
+#v15-build-modal.km-master252 .km-detail-actions239,#v15-build-modal.km-master252 .km-detail-actions239:has(#km-build-speed247){padding-top:10px!important;border-top:1px solid #acb9c310!important;background:linear-gradient(#10233a33,#07162977)!important}
+#v15-build-modal.km-master252 .km-detail-heading{border-bottom:1px solid #c1cfe112!important;margin-bottom:6px!important}
+@media(max-height:650px){#v15-build-modal.km-master252 .v15-build-art{height:170px!important;flex-basis:170px!important}#v15-build-modal.km-master252 .km-master-info252{padding:6px 12px 5px!important}#v15-build-modal.km-master252 #v15-build-desc{font-size:11px!important;margin-bottom:6px!important}#v15-build-modal.km-master252 #km-detail-output{min-height:33px!important;padding:5px 8px!important}#v15-build-modal.km-master252 #v15-build-cost{min-height:48px!important}#v15-build-modal.km-master252 #v15-build-cost strong{font-size:20px!important}}
+@media(prefers-reduced-motion:reduce){.km-nav-painted254,.nav-btn{transition:none!important}}
+body.km-domain240 .top-bar{background:linear-gradient(110deg,#152e47,#091b33)!important;backdrop-filter:none!important}
+body.km-domain240 .km-map-viewport{align-items:flex-start!important}
+body.km-domain240 .km-domain-map{margin-top:var(--km-map-top254,0px)!important}
+#v15-build-modal.km-master252 .km-master-info252{padding:8px 14px 5px!important}
+#v15-build-modal.km-master252 #v15-build-desc{font-size:12px!important;margin-bottom:8px!important}
+#v15-build-modal.km-master252 #km-detail-output{min-height:34px!important;padding:4px 10px!important}
+#v15-build-modal.km-master252 #km-detail-output .km-resource-art{width:24px!important;height:24px!important}
+#v15-build-modal.km-master252 #v15-build-cost{min-height:50px!important}
+#v15-build-modal.km-master252 #v15-build-cost strong{font-size:21px!important;line-height:1.2!important}
+
 </style></head>
 <body>
 
@@ -3438,7 +3492,7 @@ body.km-domain240 .km-domain-map{width:100%!important;height:auto!important;aspe
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.53";
+        const GAME_VERSION = "v2.0.54";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -5933,6 +5987,25 @@ function kmInitMaster253(){
  document.documentElement.dataset.uiVersion='2.0.53';
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInitMaster253);else kmInitMaster253();
+
+</script><script>
+function kmFitDomain254(){
+ const view=document.querySelector('.km-map-viewport'),map=document.getElementById('km-domain-map');if(!view||!map||!document.body.classList.contains('km-domain240'))return;
+ const w=Math.min(view.clientWidth,view.clientHeight/(1.5*.88));
+ if(w>0){map.style.setProperty('--km-map-width254',w+'px');map.style.setProperty('--km-map-height254',w*1.5+'px');map.style.setProperty('--km-map-top254',Math.max(0,(view.clientHeight-w*1.5)/2)+'px');}
+ view.scrollTop=0;view.scrollLeft=0;
+}
+kmFitDomain238=kmFitDomain254;
+function kmInit254(){
+ const positions={domain:'0% 0%',gather:'50% 0%',heroes:'100% 0%',battle:'0% 100%',shop:'50% 100%'};
+ Object.entries(positions).forEach(([key,pos])=>{const button=document.getElementById('tab-'+key),icon=document.createElement('span');icon.className='km-nav-painted254';icon.setAttribute('aria-hidden','true');icon.style.backgroundPosition=pos;button.prepend(icon);});
+ new ResizeObserver(kmFitDomain254).observe(document.querySelector('.km-map-viewport'));
+ new ResizeObserver(kmFitDomain254).observe(document.querySelector('.top-bar'));
+ window.visualViewport?.addEventListener('resize',kmFitDomain254);window.addEventListener('resize',kmFitDomain254);
+ requestAnimationFrame(kmFitDomain254);
+ document.documentElement.dataset.uiVersion='2.0.54';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit254);else kmInit254();
 
 </script></body>
 </html>

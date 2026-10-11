@@ -34,3 +34,5 @@
 
 - v2.0.53 authoritative master direction supersedes v249–251 nav/outline guidance: painterly royal-blue-and-gold fantasy, natural warm sunlight, calm readable composition. Navigation uses master periwinkle inactive/gold active silhouettes. Avoid pastel toy icons, heavy outlining and excessive flower/tower density.
 - Building/gather popup occupies a standalone max-430px portrait viewport above HUD/navigation. Show the full building scene (no crop), visible output/cost/time, one progress bar with a small worker, and gold/blue dimensional actions. Preserve existing gameplay handlers. Respect reduced motion.
+
+- v2.0.54 supersedes map scrolling and monochrome navigation guidance: fit domain landmarks into the viewport with no pan/scroll, preserve image proportions, and crop only decorative lower cliff when needed. All four labels and progress strips stay visible above navigation. Use large rounded painted fantasy icons from km_nav_round_v254.png. Popup card height follows content, with no empty spacer above actions; retain worker animation and dimensional gold/blue controls.
