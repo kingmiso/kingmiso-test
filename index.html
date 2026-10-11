@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.57: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.58: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -3131,7 +3131,18 @@ body .top-bar .km-rare-resources .resource-item span:not(.km-resource-art){font-
 #v15-build-modal.km-master252 .v15-build-art{width:calc(100% - 28px)!important;height:auto!important;aspect-ratio:3/2!important;min-height:0!important;max-height:none!important;flex:0 0 auto!important;margin:0 auto!important;padding:0!important;border:0!important;box-sizing:border-box!important;overflow:hidden!important;border-radius:9px!important;box-shadow:0 0 0 1px #dec88e33!important}
 #v15-build-modal.km-master252 .v15-build-art:before{inset:0!important;transform:none!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;background-size:200% 200%!important}
 @media(max-height:650px){#v15-build-modal.km-master252 .v15-build-art{width:min(calc(100% - 28px),255px)!important}}
-</style><style>body .top-bar>div:first-child{height:42px!important;min-height:42px!important;max-height:42px!important;flex:0 0 42px!important;box-sizing:border-box!important}</style></head>
+</style><style>body .top-bar>div:first-child{height:42px!important;min-height:42px!important;max-height:42px!important;flex:0 0 42px!important;box-sizing:border-box!important}</style><style>/* Idle plaques are solid; live job class alone enables translucency. */
+body.km-domain240 #building-farm:not(.km-working){--plaque-top:#8b7743;--plaque-base:#5b562d;--plaque-edge:#383519}
+body.km-domain240 #building-mine:not(.km-working){--plaque-top:#a77a40;--plaque-base:#6c492a;--plaque-edge:#472e19}
+body.km-domain240 #building-sawmill:not(.km-working){--plaque-top:#61866a;--plaque-base:#355c48;--plaque-edge:#203e30}
+body.km-domain240 #building-forge:not(.km-working){--plaque-top:#97705d;--plaque-base:#62433c;--plaque-edge:#3c2b28}
+body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183b6b 48%,#294d7e)!important}
+/* Explicit resource atlas coordinates, independent of legacy parent backgrounds. */
+#v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=wood]:before{background-position:0% 0%!important}
+#v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=ore]:before{background-position:100% 0%!important}
+#v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=herb]:before{background-position:0% 100%!important}
+#v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=magic]:before{background-position:100% 100%!important}
+</style></head>
 <body>
 
     <div class="top-bar">
@@ -3589,7 +3600,7 @@ body .top-bar .km-rare-resources .resource-item span:not(.km-resource-art){font-
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.57";
+        const GAME_VERSION = "v2.0.58";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -6121,7 +6132,7 @@ const KM_WORKERS256={farm:[0,0,'밀을 수확하는 농부'],mine:[50,0,'금화�
 function kmWorker256(){let worker=document.querySelector('.km-worker253');if(!worker)return;if(worker.tagName==='IMG'){const replacement=document.createElement('span');replacement.className='km-worker253 km-worker256';replacement.setAttribute('role','img');worker.replaceWith(replacement);worker=replacement;}const key=typeof v15BuildTarget==='object'&&v15BuildTarget?v15BuildTarget.key:'sawmill',r=KM_WORKERS256[key]||KM_WORKERS256.forge;worker.style.backgroundPosition=r[0]+'% '+r[1]+'%';worker.setAttribute('aria-label',r[2]);worker.dataset.worker=key;}
 const kmRefreshBefore256=kmRefreshBuild238;kmRefreshBuild238=function(){const result=kmRefreshBefore256.apply(this,arguments);kmWorker256();return result;};
 function kmChrome256(){const bar=document.querySelector('.top-bar');if(bar)document.documentElement.style.setProperty('--km-header-height',Math.ceil(bar.getBoundingClientRect().height)+'px');}
-function kmInit256(){const backdrop=document.createElement('div');backdrop.id='km-backdrop256';backdrop.setAttribute('aria-hidden','true');document.body.prepend(backdrop);kmWorker256();kmChrome256();new ResizeObserver(kmChrome256).observe(document.querySelector('.top-bar'));document.documentElement.dataset.uiVersion='2.0.57';}
+function kmInit256(){const backdrop=document.createElement('div');backdrop.id='km-backdrop256';backdrop.setAttribute('aria-hidden','true');document.body.prepend(backdrop);kmWorker256();kmChrome256();new ResizeObserver(kmChrome256).observe(document.querySelector('.top-bar'));document.documentElement.dataset.uiVersion='2.0.58';}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit256);else kmInit256();
 
 </script><script>/* Original 48-bar waltz. Lightweight synthesized chamber orchestra. */
@@ -6138,6 +6149,6 @@ startBgmLoop=function(){if(bgmInterval||isMuted||document.hidden)return;initAudi
 function kmPauseMusic257(){if(bgmInterval){clearInterval(bgmInterval);bgmInterval=null;}if(kmMusic257){kmMusic257.bus.gain.setTargetAtTime(0,audioCtx.currentTime,.025);kmMusic257.next=audioCtx.currentTime+2;}}
 const kmToggleBefore257=toggleAudioMute;toggleAudioMute=function(){kmToggleBefore257();if(isMuted)kmPauseMusic257();};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)kmPauseMusic257();else if(!isMuted&&audioCtx)startBgmLoop();});
-document.documentElement.dataset.uiVersion='2.0.57';
+document.documentElement.dataset.uiVersion='2.0.58';
 </script></body>
 </html>
