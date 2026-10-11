@@ -1082,7 +1082,7 @@
 @media(prefers-reduced-motion:reduce){.km-login-loading-bar-v233{animation:none}}
 
 
-/* v2.0.55: royal domain dashboard (presentation only, existing upgrade logic intact) */
+/* v2.0.56: royal domain dashboard (presentation only, existing upgrade logic intact) */
 #screen-domain {background:linear-gradient(180deg,#0b2340 0%,#101c33 44%,#0b1425 100%)!important}
 #screen-domain>h2 {font-family:Georgia,serif;letter-spacing:.015em;color:#f8e5b1!important;font-size:18px!important;margin-bottom:4px!important}
 #screen-domain>div.mb-3 {color:#b6c4d5!important;font-size:11px!important}
@@ -3094,6 +3094,34 @@ body.km-domain240 .top-bar{background:linear-gradient(#10263d80,#132c4355)!impor
 body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!important;backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}
 .btn-3d{border-radius:12px!important;box-shadow:inset 0 1px 1px #fff4,0 3px 0 #10233766,0 4px 8px #06152733!important}
 
+</style><style>
+/* Shared continuous kingdom scene and translucent chrome. */
+:root{--km-resource-atlas:url('km_resources_v256.png')}
+#km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:var(--km-chat-height240,42px);width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
+body .top-bar,body.km-domain240 .top-bar{background:linear-gradient(#10263d80,#132c4355)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-bottom:1px solid #ffe0a52b!important;box-shadow:0 3px 15px #08172b18!important;height:auto!important}
+body .bottom-wrapper{background:transparent!important;border-top:0!important;box-shadow:none!important}
+body .bottom-nav,body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-top:1px solid #ffdb9b33!important}
+body .top-bar [onclick*="openProfileModal"]{background:#1b344960!important;border:1px solid #efcf9477!important;box-shadow:inset 0 1px #fff2,0 3px 7px #07192933!important}
+body #screen-gather,body #screen-heroes,body #screen-battle,body #screen-shop{background:linear-gradient(#10273e44,#10273e77)!important;z-index:1}
+body #screen-gather:before,body #screen-heroes:before,body #screen-battle:before,body #screen-shop:before{background:none!important}
+/* Each painted icon has its own padding, including the rare-resource row. */
+body .top-bar .km-resource-board{height:auto!important;min-height:0!important;padding:4px!important;box-sizing:border-box;background:linear-gradient(110deg,#10283ab5,#17344b99)!important;border:1px solid #e5c88b55!important;border-radius:12px!important}
+body .top-bar .km-basic-resources{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;height:auto!important;gap:3px!important;align-items:stretch!important}
+body .top-bar .km-basic-resources .resource-item{height:auto!important;min-height:45px!important;min-width:0!important;flex-direction:column!important;justify-content:center!important;gap:1px!important;padding:3px 1px!important;box-sizing:border-box!important}
+body .top-bar .km-basic-resources .km-resource-art{width:25px!important;height:25px!important;flex:0 0 25px!important;margin:0!important;transform:none!important}
+body .top-bar .km-rare-resources{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;height:auto!important;min-height:29px!important;padding:3px 0 0!important;margin-top:3px!important;gap:3px!important;background:transparent!important}
+body .top-bar .km-rare-resources .resource-item{height:auto!important;min-height:26px!important;padding:2px 4px!important;gap:5px!important;justify-content:center!important;box-sizing:border-box!important}
+body .top-bar .km-rare-resources .km-resource-art{width:21px!important;height:21px!important;flex:0 0 21px!important;margin:0!important;transform:none!important}
+body .top-bar [id^=res-]{line-height:1.2!important;white-space:nowrap!important}
+body.km-domain240 #building-farm{--plaque-top:#8b774399;--plaque-base:#5b562db8;--plaque-edge:#38351988}
+body.km-domain240 #building-mine{--plaque-top:#a77a4099;--plaque-base:#6c492ab8;--plaque-edge:#472e1988}
+body.km-domain240 #building-sawmill{--plaque-top:#61866a99;--plaque-base:#355c48b8;--plaque-edge:#203e3088}
+body.km-domain240 #building-forge{--plaque-top:#97705d99;--plaque-base:#62433cb8;--plaque-edge:#3c2b2888}
+body.km-domain240 .km-map-sign{backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}
+body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5aa,#183b6bb8 48%,#294d7eaa)!important;backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}
+#v15-build-modal .km-worker256{display:block!important;width:102px!important;height:102px!important;right:-3px!important;bottom:-2px!important;background-image:url('km_workers_v256.png');background-size:300% 200%;background-repeat:no-repeat;filter:drop-shadow(0 3px 2px #0005);pointer-events:none}
+@media(max-height:650px){#v15-build-modal .km-worker256{width:88px!important;height:88px!important;right:0!important}}
+
 </style></head>
 <body>
 
@@ -3552,7 +3580,7 @@ body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!im
     </script>
 
     <script>
-        const GAME_VERSION = "v2.0.55";
+        const GAME_VERSION = "v2.0.56";
         window.KM_APP_VERSION = GAME_VERSION;
         
         const gameState = {
@@ -6077,6 +6105,15 @@ overlay.innerHTML='<section class="km-warm-card255"><div class="km-reward-art255
 document.body.append(overlay);const button=overlay.querySelector('button');button.onclick=()=>overlay.remove();button.focus();};
 function kmInit255(){new ResizeObserver(kmFitDomain255).observe(document.querySelector('.km-map-viewport'));window.addEventListener('resize',kmFitDomain255);requestAnimationFrame(kmFitDomain255);const card=document.querySelector('#kingdom-levelup-modal .modal-content');card.classList.add('km-warm-card255');const crown=card.firstElementChild;crown.classList.add('km-level-art255');crown.setAttribute('aria-hidden','true');document.documentElement.dataset.uiVersion='2.0.55';}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit255);else kmInit255();
+
+</script><script>
+// Presentation only; jobs, resource balances and saved progression stay unchanged.
+const KM_WORKERS256={farm:[0,0,'밀을 수확하는 농부'],mine:[50,0,'금화를 캐는 광부'],sawmill:[100,0,'통나무를 나르는 나무꾼'],forge:[0,100,'철을 다루는 대장장이'],wood:[100,0,'통나무를 나르는 나무꾼'],ore:[0,100,'철을 다루는 작업자'],herb:[50,100,'약초를 모으는 채집가'],magic:[100,100,'마력수정을 모으는 채집가']};
+function kmWorker256(){let worker=document.querySelector('.km-worker253');if(!worker)return;if(worker.tagName==='IMG'){const replacement=document.createElement('span');replacement.className='km-worker253 km-worker256';replacement.setAttribute('role','img');worker.replaceWith(replacement);worker=replacement;}const key=typeof v15BuildTarget==='object'&&v15BuildTarget?v15BuildTarget.key:'sawmill',r=KM_WORKERS256[key]||KM_WORKERS256.forge;worker.style.backgroundPosition=r[0]+'% '+r[1]+'%';worker.setAttribute('aria-label',r[2]);worker.dataset.worker=key;}
+const kmRefreshBefore256=kmRefreshBuild238;kmRefreshBuild238=function(){const result=kmRefreshBefore256.apply(this,arguments);kmWorker256();return result;};
+function kmChrome256(){const bar=document.querySelector('.top-bar');if(bar)document.documentElement.style.setProperty('--km-header-height',Math.ceil(bar.getBoundingClientRect().height)+'px');}
+function kmInit256(){const backdrop=document.createElement('div');backdrop.id='km-backdrop256';backdrop.setAttribute('aria-hidden','true');document.body.prepend(backdrop);kmWorker256();kmChrome256();new ResizeObserver(kmChrome256).observe(document.querySelector('.top-bar'));document.documentElement.dataset.uiVersion='2.0.56';}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',kmInit256);else kmInit256();
 
 </script></body>
 </html>
