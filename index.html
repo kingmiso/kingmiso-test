@@ -3834,7 +3834,9 @@ function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,k
             setTimeout(() => noti.remove(), 2000);
         }
 
-        function checkKingdomLevelUp() {
+        // Presentation only: pending notices are never part of a saved game.
+        const kmKingdomLevelUpQueue = [];
+        function checkKingdomLevelUp(deferredEffects) {
             let minLevel = 9999;
             Object.keys(BUILDINGS).forEach(k => { if (BUILDINGS[k].level < minLevel) minLevel = BUILDINGS[k].level; });
             Object.keys(GATHERING_NODES).forEach(k => { if (GATHERING_NODES[k].level < minLevel) minLevel = GATHERING_NODES[k].level; });
@@ -3849,19 +3851,32 @@ function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,k
                 const rEquip = equipKeys[Math.floor(Math.random() * equipKeys.length)];
                 ARMY_EQUIPMENT[rArmy][rEquip] += 1;
 
-                document.getElementById('popup-new-kingdom-level').textContent = gameState.level;
-                document.getElementById('popup-reward-text').innerHTML = `
-                    <div class="mb-1"><i class="fa-solid fa-gem text-yellow-300 mr-1"></i>왕국 지원금: 다이아 +50개!</div>
-                    <div class="text-purple-300"><i class="fa-solid fa-shield mr-1"></i>보너스 장비 강화 (${rArmy} ${EQUIP_TYPES[rEquip].name} +1)</div>
-                `;
-                document.getElementById('kingdom-levelup-modal').style.display = 'flex';
-                playSfx('levelup');
-                showNotification(`<i class="fa-solid fa-crown mr-1 text-yellow-300"></i>왕국 Lv.${gameState.level} 달성!`);
-                renderHeroes();
+                const achievedLevel = gameState.level;
+                const rewardText = `
+                        <div class="mb-1"><i class="fa-solid fa-gem text-yellow-300 mr-1"></i>왕국 지원금: 다이아 +50개!</div>
+                        <div class="text-purple-300"><i class="fa-solid fa-shield mr-1"></i>보너스 장비 강화 (${rArmy} ${EQUIP_TYPES[rEquip].name} +1)</div>
+                    `;
+                const present = () => {
+                    document.getElementById('popup-new-kingdom-level').textContent = achievedLevel;
+                    document.getElementById('popup-reward-text').innerHTML = rewardText;
+                    document.getElementById('kingdom-levelup-modal').style.display = 'flex';
+                    playSfx('levelup');
+                    showNotification(`<i class="fa-solid fa-crown mr-1 text-yellow-300"></i>왕국 Lv.${achievedLevel} 달성!`);
+                    renderHeroes();
+                };
+                const enqueue = () => {
+                    kmKingdomLevelUpQueue.push(present);
+                    if(kmKingdomLevelUpQueue.length===1)present();
+                };
+                if(deferredEffects) deferredEffects.push(enqueue); else enqueue();
             }
         }
 
-        function closeKingdomLevelUpModal() { document.getElementById('kingdom-levelup-modal').style.display = 'none'; }
+        function closeKingdomLevelUpModal() {
+            document.getElementById('kingdom-levelup-modal').style.display = 'none';
+            kmKingdomLevelUpQueue.shift();
+            if(kmKingdomLevelUpQueue.length)kmKingdomLevelUpQueue[0]();
+        }
 
 
         // v1.5: persist progression separately from static definitions.
@@ -5280,35 +5295,40 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 
         const v16Timers = {};
-        function finishUpgradeV16(taskKey){
+        function finishUpgradeV16(taskKey,deferredEffects){
             const item = gameState.upgradesInProgress[taskKey];
             if(!item) return;
             if(Date.now() < Number(item.endTime||0)) return;
             delete gameState.upgradesInProgress[taskKey];
             if(v16Timers[taskKey]){ clearTimeout(v16Timers[taskKey]); delete v16Timers[taskKey]; }
-            playSfx('upgrade');
+            // Offline settlement must not render (which re-enters upgradeTimerTickV201)
+            // or save an intermediate balance before its production cursor is committed.
+            const present=fn=>{if(deferredEffects)deferredEffects.push(fn);else fn();};
+            present(()=>playSfx('upgrade'));
             if(item.type==='building' && BUILDINGS[item.subKey]){
                 kmCompleteProduction241('building',item.subKey,item);
                 BUILDINGS[item.subKey].level++;
-                syncProgressionV15(); renderBuildings(); checkKingdomLevelUp();
-                kmDomainEffect(item.subKey,'complete');
-                const castleLabel=document.getElementById('km-castle-level');if(castleLabel)castleLabel.textContent='왕성 · Lv.'+gameState.level;
-                showNotification(`✨ ${BUILDINGS[item.subKey].name} 건설 완료! Lv.${BUILDINGS[item.subKey].level}`);
+                syncProgressionV15(); present(()=>renderBuildings()); checkKingdomLevelUp(deferredEffects);
+                present(()=>{
+                    kmDomainEffect(item.subKey,'complete');
+                    const castleLabel=document.getElementById('km-castle-level');if(castleLabel)castleLabel.textContent='왕성 · Lv.'+gameState.level;
+                    showNotification(`✨ ${BUILDINGS[item.subKey].name} 건설 완료! Lv.${BUILDINGS[item.subKey].level}`);
+                });
             } else if(item.type==='gather' && GATHERING_NODES[item.subKey]){
                 kmCompleteProduction241('gather',item.subKey,item);
                 GATHERING_NODES[item.subKey].level++;
-                syncProgressionV15(); renderGathering(); checkKingdomLevelUp();
-                showNotification(`✨ ${GATHERING_NODES[item.subKey].name} 확장 완료! Lv.${GATHERING_NODES[item.subKey].level}`);
+                syncProgressionV15(); present(()=>renderGathering()); checkKingdomLevelUp(deferredEffects);
+                present(()=>showNotification(`✨ ${GATHERING_NODES[item.subKey].name} 확장 완료! Lv.${GATHERING_NODES[item.subKey].level}`));
             } else if(item.type==='hero' && HEROES[item.subKey]){
                 HEROES[item.subKey].level++;
-                syncProgressionV15(); renderHeroes();
-                showNotification(`⚔ ${HEROES[item.subKey].name} 훈련 완료! Lv.${HEROES[item.subKey].level}`);
+                syncProgressionV15(); present(()=>renderHeroes());
+                present(()=>showNotification(`⚔ ${HEROES[item.subKey].name} 훈련 완료! Lv.${HEROES[item.subKey].level}`));
             } else if(item.type==='equip'){
                 // v1.7+: equipment is instant; legacy timed job is discarded.
-                if(activeHeroIndexForModal!==null) renderEquipmentList();
+                present(()=>{if(activeHeroIndexForModal!==null) renderEquipmentList();});
             }
-            updateUI();
-            if(window.cloudSaveGame) window.cloudSaveGame();
+            present(()=>updateUI());
+            if(!deferredEffects&&window.cloudSaveGame) window.cloudSaveGame();
         }
         function scheduleUpgradeCompletionV16(taskKey){
             const item=gameState.upgradesInProgress[taskKey]; if(!item)return;
@@ -5463,24 +5483,45 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         const KM_OFFLINE_KEYS_V205=['gold','food','wood','ore','herb','magicDust'];
         let kmOfflineReportV205=null;
         function kmApplyOfflineV205(savedTime){
-            const time=Number(savedTime);
-            if(!Number.isFinite(time)||time<=0)return;
-            const elapsed=Math.max(0,(Date.now()-time)/1000);
+            const now=Date.now(),time=Number(savedTime),settled=Number(gameState._kmLastProductionAtV205);
+            const start=Number.isFinite(time)&&time>0
+                ? Math.max(time,Number.isFinite(settled)&&settled>0?settled:time) : now;
+            const elapsed=Math.max(0,(now-start)/1000);
             const seconds=Math.min(KM_OFFLINE_CAP_V205,elapsed);
-            if(seconds<2)return;
-            const gains={};
-            const add=(resource,rate,level)=>{
+            const end=start+seconds*1000,gains={},deferredEffects=[];
+            let cursor=start;
+            kmOfflineReportV205=null;
+            const add=(resource,rate,duration)=>{
                 if(!KM_OFFLINE_KEYS_V205.includes(resource))return;
-                const amount=Math.max(0,Number(rate)||0)*Math.max(1,Number(level)||1)*seconds;
+                const amount=Math.max(0,Number(rate)||0)*duration;
                 if(!Number.isFinite(amount)||amount<=0)return;
                 gameState.resources[resource]=(Number(gameState.resources[resource])||0)+amount;
                 gains[resource]=(gains[resource]||0)+amount;
             };
-            Object.entries(BUILDINGS).forEach(([key,b])=>add(b.prodType,kmFacilityRate241('building',key),1));
-            Object.entries(GATHERING_NODES).forEach(([key,n])=>add(n.resKey,kmFacilityRate241('gather',key),1));
-            kmOfflineReportV205={seconds,gains,capped:elapsed>KM_OFFLINE_CAP_V205};
-            kmLastResourceTickV202=Date.now();
+            const accrue=until=>{
+                const next=Math.max(cursor,Math.min(end,until)),duration=(next-cursor)/1000;
+                // Preserve the existing policy of no offline award below two seconds.
+                if(seconds>=2&&duration>0){
+                    Object.entries(BUILDINGS).forEach(([key,b])=>add(b.prodType,kmFacilityRate241('building',key),duration));
+                    Object.entries(GATHERING_NODES).forEach(([key,n])=>add(n.resKey,kmFacilityRate241('gather',key),duration));
+                }
+                cursor=next;
+            };
+            const completed=Object.entries(gameState.upgradesInProgress||{})
+                .map(([key,job])=>({key,endTime:Number(job?.endTime||0)}))
+                .filter(job=>Number.isFinite(job.endTime)&&job.endTime<=now)
+                .sort((a,b)=>a.endTime-b.endTime);
+            for(const job of completed){
+                accrue(job.endTime);
+                // Equal-time events have no production between them. Events after
+                // the cap still complete, but accrue() cannot award beyond the cap.
+                finishUpgradeV16(job.key,deferredEffects);
+            }
+            accrue(end);
+            if(seconds>=2)kmOfflineReportV205={seconds,gains,capped:elapsed>KM_OFFLINE_CAP_V205};
+            kmLastResourceTickV202=now;
             gameState._kmLastProductionAtV205=kmLastResourceTickV202;
+            return deferredEffects;
         }
         function kmShowOfflineReportV205(){
             const r=kmOfflineReportV205;kmOfflineReportV205=null;
@@ -5497,16 +5538,37 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             if(!data||typeof data!=='object'||!data.resources||typeof data.resources!=='object')throw Error('잘못된 저장 데이터');
             Object.assign(gameState,data);
             gameState.productionV241=JSON.parse(JSON.stringify(data.productionV241||{}));
+            // Restoration must not consume jobs in the source snapshot or retain
+            // a previous session's cursor when restoring a legacy save.
+            gameState.upgradesInProgress=JSON.parse(JSON.stringify(data.upgradesInProgress||{}));
+            gameState._kmLastProductionAtV205=data._kmLastProductionAtV205;
             gameState.resources=Object.assign({gold:0,food:0,wood:0,ore:0,herb:0,magicDust:0,gem:0,pureGold:0,emerald:0,ruby:0,sapphire:0},data.resources);
             if(!gameState.upgradesInProgress||typeof gameState.upgradesInProgress!=='object')gameState.upgradesInProgress={};
             applyProgressionV15();
             syncHeaderProfileV196();
         }
+        let kmLoginBusyV204=false;
         async function attemptLogin() {
+            if(kmLoginBusyV204)return;
             const id=document.getElementById('login-id').value.trim();
             const pw=document.getElementById('login-pw').value.trim();
             if(!id||!pw){showNotification('아이디와 비밀번호를 입력하세요.');return;}
+            kmLoginBusyV204=true;
+            // An active session may still own battle, roulette and upgrade callbacks.
+            // Re-enter through the page's original initialization before another login.
+            if(window.kmProductionIntervalV201||window.kmUpgradeIntervalV201){
+                if(!window.currentCustomId||!kmLocalWriteV204(window.currentCustomId)){
+                    kmLoginBusyV204=false;
+                    alert('현재 게임을 저장하지 못해 계정 전환을 중단했습니다. 다시 시도해 주세요.');
+                    return;
+                }
+                kmSaveEnabledV204=false;
+                window.currentCustomId=null;
+                window.location.reload();
+                return;
+            }
             showLoginPanel('loading');
+            kmSaveEnabledV204=false;
             try {
                 const local=kmLocalReadV204(id);
                 const cloudReady=window.kmCloudReadyV204 ? await window.kmCloudReadyV204() : false;
@@ -5540,22 +5602,28 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                 const lastProduction=cloudData
                     ? (Number(cloudData._kmLastProductionAtV205)||Number(local?.savedAt)||0)
                     : (local ? (Number(local.state?._kmLastProductionAtV205)||Number(local.savedAt)||0) : 0);
-                kmApplyOfflineV205(lastProduction);
+                const deferredEffects=kmApplyOfflineV205(lastProduction);
                 window.currentCustomId=id;
+                if(!kmLocalWriteV204(id))throw Error('기기 저장에 실패하여 복원을 완료하지 못했습니다. 다시 시도해 주세요.');
                 kmSaveEnabledV204=true;
-                kmLocalWriteV204(id);
                 document.getElementById('login-overlay').style.display='none';
                 startGameEngine();
+                for(const effect of deferredEffects){
+                    try{effect();}catch(e){console.warn('KingMiso offline completion display failed',e);}
+                }
                 syncHeaderProfileV196();
                 kmShowOfflineReportV205();
                 // Commit the credited timestamp immediately to avoid repeat rewards on reload.
                 if(window.cloudSaveGame)window.cloudSaveGame();
                 if(!cloudReady)kmSetSaveStatusV204('기기에만 저장 (서버 미연결)');
+                kmLoginBusyV204=false;
             }catch(e){
                 console.error('KingMiso login/load error',e);
                 kmSaveEnabledV204=false;
-                showLoginPanel('login');
-                alert('저장 데이터 보호: '+(e.message||'불러오기 실패'));
+                window.currentCustomId=null;
+                // Keep the login lock until navigation destroys the failed state and timers.
+                alert('저장 데이터 보호: '+(e.message||'불러오기 실패')+'\n로그인 화면을 다시 불러옵니다.');
+                window.location.reload();
             }
         }
         function kmSaveLocalV204(){
