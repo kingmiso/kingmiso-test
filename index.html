@@ -3834,6 +3834,8 @@ function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,k
             setTimeout(() => noti.remove(), 2000);
         }
 
+        // Presentation only: pending notices are never part of a saved game.
+        const kmKingdomLevelUpQueue = [];
         function checkKingdomLevelUp(deferredEffects) {
             let minLevel = 9999;
             Object.keys(BUILDINGS).forEach(k => { if (BUILDINGS[k].level < minLevel) minLevel = BUILDINGS[k].level; });
@@ -3849,22 +3851,32 @@ function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,k
                 const rEquip = equipKeys[Math.floor(Math.random() * equipKeys.length)];
                 ARMY_EQUIPMENT[rArmy][rEquip] += 1;
 
-                const present = () => {
-                    document.getElementById('popup-new-kingdom-level').textContent = gameState.level;
-                    document.getElementById('popup-reward-text').innerHTML = `
+                const achievedLevel = gameState.level;
+                const rewardText = `
                         <div class="mb-1"><i class="fa-solid fa-gem text-yellow-300 mr-1"></i>왕국 지원금: 다이아 +50개!</div>
                         <div class="text-purple-300"><i class="fa-solid fa-shield mr-1"></i>보너스 장비 강화 (${rArmy} ${EQUIP_TYPES[rEquip].name} +1)</div>
                     `;
+                const present = () => {
+                    document.getElementById('popup-new-kingdom-level').textContent = achievedLevel;
+                    document.getElementById('popup-reward-text').innerHTML = rewardText;
                     document.getElementById('kingdom-levelup-modal').style.display = 'flex';
                     playSfx('levelup');
-                    showNotification(`<i class="fa-solid fa-crown mr-1 text-yellow-300"></i>왕국 Lv.${gameState.level} 달성!`);
+                    showNotification(`<i class="fa-solid fa-crown mr-1 text-yellow-300"></i>왕국 Lv.${achievedLevel} 달성!`);
                     renderHeroes();
                 };
-                if(deferredEffects) deferredEffects.push(present); else present();
+                const enqueue = () => {
+                    kmKingdomLevelUpQueue.push(present);
+                    if(kmKingdomLevelUpQueue.length===1)present();
+                };
+                if(deferredEffects) deferredEffects.push(enqueue); else enqueue();
             }
         }
 
-        function closeKingdomLevelUpModal() { document.getElementById('kingdom-levelup-modal').style.display = 'none'; }
+        function closeKingdomLevelUpModal() {
+            document.getElementById('kingdom-levelup-modal').style.display = 'none';
+            kmKingdomLevelUpQueue.shift();
+            if(kmKingdomLevelUpQueue.length)kmKingdomLevelUpQueue[0]();
+        }
 
 
         // v1.5: persist progression separately from static definitions.
