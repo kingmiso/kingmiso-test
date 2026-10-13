@@ -3178,6 +3178,12 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
  #km-chat-page{width:min(100%,calc(var(--km-app-width) * var(--km-ui-scale,1)))!important;max-width:none}
  .km-chat-page-header,.km-chat-page-compose,#km-chat-history{zoom:var(--km-ui-scale,1)}
 }
+/* The phone rotation notice lives outside the zoomed game roots. */
+#km-portrait-notice{position:fixed;inset:auto;margin:0;border:0;padding:24px;box-sizing:border-box;max-width:none;max-height:none;background:#081a2ef5;color:#ffe6ac;text-align:center;overscroll-behavior:none;touch-action:none}
+#km-portrait-notice[open]{display:grid;place-content:center;gap:20px}
+#km-portrait-notice::backdrop{background:#081a2e}
+#km-portrait-notice .km-rotate-symbol{font-size:56px;line-height:1;color:#e9b957}
+#km-portrait-notice p{margin:0;font-size:18px;font-weight:700;line-height:1.6}
 </style>
 <script>
 // Presentation only; mobile layout and the chat visualViewport handlers stay unchanged.
@@ -3188,6 +3194,38 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
  }
  kmFitPortraitFrame();
  window.addEventListener('resize',kmFitPortraitFrame);
+})();
+
+// Conservative phone detection; viewport aspect ratio also changes with the keyboard.
+(function(){
+ let notice;
+ function kmUpdatePortraitNotice(){
+  const ua=navigator.userAgent,shortSide=Math.min(screen.width,screen.height);
+  const phone=/iPhone|iPod|Android.*Mobile/i.test(ua)&&!/iPad/i.test(ua);
+  const eligible=phone&&navigator.maxTouchPoints>0&&matchMedia('(any-pointer:coarse)').matches&&shortSide>0&&shortSide<600;
+  const type=screen.orientation?.type;
+  const landscape=type?type.startsWith('landscape'):typeof window.orientation==='number'&&Math.abs(window.orientation)===90;
+  if(!eligible||!landscape){if(notice?.open)notice.close();return;}
+  if(!notice){
+   notice=document.createElement('dialog');notice.id='km-portrait-notice';
+   notice.setAttribute('aria-labelledby','km-portrait-message');
+   notice.innerHTML='<span class="km-rotate-symbol" aria-hidden="true">↻</span><p id="km-portrait-message">세로 화면으로 돌려서 플레이해 주세요.</p>';
+   notice.addEventListener('cancel',event=>event.preventDefault());
+   document.body.append(notice);
+  }
+  const v=window.visualViewport;
+  Object.assign(notice.style,{left:(v?v.offsetLeft:0)+'px',top:(v?v.offsetTop:0)+'px',width:(v?v.width:innerWidth)+'px',height:(v?v.height:innerHeight)+'px'});
+  // Native modal inertness blocks pointer/keyboard input to the game without pausing it.
+  if(!notice.open)notice.showModal();
+ }
+ // Keep existing document-level Escape/Tab handlers from changing covered popups.
+ document.addEventListener('keydown',event=>{if(notice?.open){event.stopImmediatePropagation();if(event.key==='Escape')event.preventDefault();}},true);
+ document.addEventListener('DOMContentLoaded',kmUpdatePortraitNotice);
+ window.addEventListener('resize',kmUpdatePortraitNotice);
+ window.addEventListener('orientationchange',kmUpdatePortraitNotice);
+ screen.orientation?.addEventListener('change',kmUpdatePortraitNotice);
+ window.visualViewport?.addEventListener('resize',kmUpdatePortraitNotice);
+ window.visualViewport?.addEventListener('scroll',kmUpdatePortraitNotice);
 })();
 </script></head>
 <body>
