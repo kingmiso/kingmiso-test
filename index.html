@@ -1377,8 +1377,15 @@ body.km-domain240 #v15-build-modal{background:#03102244;backdrop-filter:blur(3px
 @media(prefers-reduced-motion:reduce){body.km-domain240 *{scroll-behavior:auto!important}}
 body .top-bar{padding-top:5px;padding-bottom:6px}
 body .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
-/* Larger devices retain a phone-shaped domain instead of stretching the painting. */
-@media(min-width:600px){body.km-domain240{--km-domain-gap240:max(0px,calc(100dvh - 744px))}body.km-domain240 .bottom-wrapper{bottom:var(--km-domain-gap240)!important}body.km-domain240 #screen-domain{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240))!important}body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}}
+/* All large-screen tabs share the existing portrait frame; mobile keeps its viewport. */
+@media(min-width:600px){
+ :root{--km-app-height:min(100dvh,744px);--km-domain-gap240:max(0px,calc(100dvh - var(--km-app-height)))}
+ body .bottom-wrapper{bottom:var(--km-domain-gap240)!important}
+ .screen-panel,#km-hero-detail239{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}
+ body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}
+ #notification-container{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240) + 12px)}
+ body #inline-chat-container{min-height:42px;padding-block:3px max(3px,env(safe-area-inset-bottom,0px))!important}
+}
 </style><style>/* Keep the map's positioning transform intact while pressing its label. */
 .km-map-building:active,.km-map-building.km-touch-down,.km-castle:active,.km-castle.km-touch-down{transform:translate(-50%,-50%)!important;filter:none!important}
 .km-map-sign{transition:filter .08s,box-shadow .08s,scale .08s}
@@ -3097,7 +3104,7 @@ body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!im
 </style><style>
 /* Shared continuous kingdom scene and translucent chrome. */
 :root{--km-resource-atlas:url('km_resources_v256.png')}
-#km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:var(--km-chat-height240,42px);width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
+#km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240,0px));width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
 /* Keep the large-screen domain and backdrop aligned with the existing footer frame. */
 @media(min-width:600px){
  body.km-domain240 #screen-domain,body.km-domain240 #km-backdrop256{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240,0px))!important}
