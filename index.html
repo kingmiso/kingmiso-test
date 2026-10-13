@@ -3148,6 +3148,16 @@ body.km-domain240 #building-mine:not(.km-working){--plaque-top:#a77a40;--plaque-
 body.km-domain240 #building-sawmill:not(.km-working){--plaque-top:#61866a;--plaque-base:#355c48;--plaque-edge:#203e30}
 body.km-domain240 #building-forge:not(.km-working){--plaque-top:#97705d;--plaque-base:#62433c;--plaque-edge:#3c2b28}
 body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183b6b 48%,#294d7e)!important}
+/* Short mobile: keep plaque buttons and live progress inside the usable map. */
+/* Preserve the old 77%/81% lower edges; 64px targets avoid overlapping the row above.
+   Reserve 19px for progress + 7px clearance, and a separate upper row for farm/mine. */
+@media(max-width:599px) and (min-height:580px) and (max-height:700px){
+ body.km-domain240 #building-sawmill,body.km-domain240 #building-forge{height:64px!important}
+ body.km-domain240 #building-sawmill{top:min(calc(77% - 32px),calc(100dvh - var(--km-footer-height) - 58px))!important}
+ body.km-domain240 #building-forge{top:min(calc(81% - 32px),calc(100dvh - var(--km-footer-height) - 58px))!important}
+ body.km-domain240 #building-farm{top:min(48%,calc(100dvh - var(--km-footer-height) - var(--km-map-height254) * .08 - 112px))!important}
+ body.km-domain240 #building-mine{top:min(54%,calc(100dvh - var(--km-footer-height) - var(--km-map-height254) * .08 - 112px))!important;left:min(80%,calc(50% + min(50vw,calc(var(--km-app-width)/2)) - 70px))!important}
+}
 /* Explicit resource atlas coordinates, independent of legacy parent backgrounds. */
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=wood]:before{background-position:0% 0%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=ore]:before{background-position:100% 0%!important}
