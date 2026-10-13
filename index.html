@@ -3163,7 +3163,33 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=ore]:before{background-position:100% 0%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=herb]:before{background-position:0% 100%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=magic]:before{background-position:100% 100%!important}
-</style></head>
+/* Large screens retain the 430px logical UI; zoom only its roots, never body.
+   Chrome observers report rendered pixels: convert their insets back to logical units.
+   Limit logical height to keep the map labels and progress strips inside the frame. */
+@media(min-width:600px){
+ :root{--km-view-height:calc(100dvh / var(--km-ui-scale,1));--km-app-height:min(calc((100dvh - 24px) / var(--km-ui-scale,1)),780px);--km-domain-gap240:max(0px,calc((var(--km-view-height) - var(--km-app-height)) / 2))}
+ .top-bar,.bottom-wrapper,.screen-panel,#km-backdrop256,#km-hero-detail239,#v15-build-modal,.modal-bg,.km-warm-overlay255,#km-cancel242,#notification-container{zoom:var(--km-ui-scale,1)}
+ body .top-bar{top:var(--km-domain-gap240)}
+ body .screen-panel,#km-hero-detail239{top:calc(var(--km-header-height) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important;bottom:calc(var(--km-footer-height) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important}
+ body.km-domain240 #screen-domain,body.km-domain240 #km-backdrop256,#km-backdrop256{top:var(--km-domain-gap240)!important;bottom:calc(var(--km-chat-height240,42px) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important}
+ #v15-build-modal.km-master252{top:var(--km-domain-gap240)!important;height:var(--km-app-height)!important;bottom:auto!important}
+ .modal-bg .modal-content,.km-warm-card255{max-height:calc(var(--km-view-height) - 32px)!important}
+ #notification-container{bottom:calc(var(--km-footer-height) / var(--km-ui-scale,1) + var(--km-domain-gap240) + 12px)}
+ #km-chat-page{width:min(100%,calc(var(--km-app-width) * var(--km-ui-scale,1)))!important;max-width:none}
+ .km-chat-page-header,.km-chat-page-compose,#km-chat-history{zoom:var(--km-ui-scale,1)}
+}
+</style>
+<script>
+// Presentation only; mobile layout and the chat visualViewport handlers stay unchanged.
+(function(){
+ function kmFitPortraitFrame(){
+  const scale=innerWidth>=600?Math.max(1,Math.min(560/430,(innerWidth-24)/430,(innerHeight-24)/744)):1;
+  document.documentElement.style.setProperty('--km-ui-scale',scale);
+ }
+ kmFitPortraitFrame();
+ window.addEventListener('resize',kmFitPortraitFrame);
+})();
+</script></head>
 <body>
 
     <div class="top-bar">
