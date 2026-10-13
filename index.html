@@ -3098,6 +3098,10 @@ body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!im
 /* Shared continuous kingdom scene and translucent chrome. */
 :root{--km-resource-atlas:url('km_resources_v256.png')}
 #km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:var(--km-chat-height240,42px);width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
+/* Keep the large-screen domain and backdrop aligned with the existing footer frame. */
+@media(min-width:600px){
+ body.km-domain240 #screen-domain,body.km-domain240 #km-backdrop256{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240,0px))!important}
+}
 body .top-bar,body .top-bar{background:linear-gradient(#10263d80,#132c4355)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-bottom:1px solid #ffe0a52b!important;box-shadow:0 3px 15px #08172b18!important;height:auto!important}
 body .bottom-wrapper{background:transparent!important;border-top:0!important;box-shadow:none!important}
 body .bottom-nav,body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-top:1px solid #ffdb9b33!important}
