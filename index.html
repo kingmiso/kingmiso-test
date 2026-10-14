@@ -1377,8 +1377,15 @@ body.km-domain240 #v15-build-modal{background:#03102244;backdrop-filter:blur(3px
 @media(prefers-reduced-motion:reduce){body.km-domain240 *{scroll-behavior:auto!important}}
 body .top-bar{padding-top:5px;padding-bottom:6px}
 body .top-bar>div:first-child{min-height:33px;margin-bottom:3px}
-/* Larger devices retain a phone-shaped domain instead of stretching the painting. */
-@media(min-width:600px){body.km-domain240{--km-domain-gap240:max(0px,calc(100dvh - 744px))}body.km-domain240 .bottom-wrapper{bottom:var(--km-domain-gap240)!important}body.km-domain240 #screen-domain{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240))!important}body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}}
+/* All large-screen tabs share the existing portrait frame; mobile keeps its viewport. */
+@media(min-width:600px){
+ :root{--km-app-height:min(100dvh,744px);--km-domain-gap240:max(0px,calc(100dvh - var(--km-app-height)))}
+ body .bottom-wrapper{bottom:var(--km-domain-gap240)!important}
+ .screen-panel,#km-hero-detail239{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}
+ body.km-domain240 #v15-build-modal{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240))!important}
+ #notification-container{bottom:calc(var(--km-footer-height) + var(--km-domain-gap240) + 12px)}
+ body #inline-chat-container{min-height:42px;padding-block:3px max(3px,env(safe-area-inset-bottom,0px))!important}
+}
 </style><style>/* Keep the map's positioning transform intact while pressing its label. */
 .km-map-building:active,.km-map-building.km-touch-down,.km-castle:active,.km-castle.km-touch-down{transform:translate(-50%,-50%)!important;filter:none!important}
 .km-map-sign{transition:filter .08s,box-shadow .08s,scale .08s}
@@ -3097,7 +3104,11 @@ body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!im
 </style><style>
 /* Shared continuous kingdom scene and translucent chrome. */
 :root{--km-resource-atlas:url('km_resources_v256.png')}
-#km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:var(--km-chat-height240,42px);width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
+#km-backdrop256{position:fixed;left:50%;transform:translateX(-50%);top:0;bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240,0px));width:min(100%,430px);pointer-events:none;z-index:0;background:url('km_domain_full_v255.png') center top/cover no-repeat}
+/* Keep the large-screen domain and backdrop aligned with the existing footer frame. */
+@media(min-width:600px){
+ body.km-domain240 #screen-domain,body.km-domain240 #km-backdrop256{bottom:calc(var(--km-chat-height240,42px) + var(--km-domain-gap240,0px))!important}
+}
 body .top-bar,body .top-bar{background:linear-gradient(#10263d80,#132c4355)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-bottom:1px solid #ffe0a52b!important;box-shadow:0 3px 15px #08172b18!important;height:auto!important}
 body .bottom-wrapper{background:transparent!important;border-top:0!important;box-shadow:none!important}
 body .bottom-nav,body.km-domain240 .bottom-nav{background:linear-gradient(#17364a55,#0b203599)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important;border-top:1px solid #ffdb9b33!important}
@@ -3137,12 +3148,86 @@ body.km-domain240 #building-mine:not(.km-working){--plaque-top:#a77a40;--plaque-
 body.km-domain240 #building-sawmill:not(.km-working){--plaque-top:#61866a;--plaque-base:#355c48;--plaque-edge:#203e30}
 body.km-domain240 #building-forge:not(.km-working){--plaque-top:#97705d;--plaque-base:#62433c;--plaque-edge:#3c2b28}
 body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183b6b 48%,#294d7e)!important}
+/* Short mobile: keep plaque buttons and live progress inside the usable map. */
+/* Preserve the old 77%/81% lower edges; 64px targets avoid overlapping the row above.
+   Reserve 19px for progress + 7px clearance, and a separate upper row for farm/mine. */
+@media(max-width:599px) and (min-height:580px) and (max-height:700px){
+ body.km-domain240 #building-sawmill,body.km-domain240 #building-forge{height:64px!important}
+ body.km-domain240 #building-sawmill{top:min(calc(77% - 32px),calc(100dvh - var(--km-footer-height) - 58px))!important}
+ body.km-domain240 #building-forge{top:min(calc(81% - 32px),calc(100dvh - var(--km-footer-height) - 58px))!important}
+ body.km-domain240 #building-farm{top:min(48%,calc(100dvh - var(--km-footer-height) - var(--km-map-height254) * .08 - 112px))!important}
+ body.km-domain240 #building-mine{top:min(54%,calc(100dvh - var(--km-footer-height) - var(--km-map-height254) * .08 - 112px))!important;left:min(80%,calc(50% + min(50vw,calc(var(--km-app-width)/2)) - 70px))!important}
+}
 /* Explicit resource atlas coordinates, independent of legacy parent backgrounds. */
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=wood]:before{background-position:0% 0%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=ore]:before{background-position:100% 0%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=herb]:before{background-position:0% 100%!important}
 #v15-build-modal.km-master252[data-kind=gather] .v15-build-art[data-key=magic]:before{background-position:100% 100%!important}
-</style></head>
+/* Large screens retain the 430px logical UI; zoom only its roots, never body.
+   Chrome observers report rendered pixels: convert their insets back to logical units.
+   Limit logical height to keep the map labels and progress strips inside the frame. */
+@media(min-width:600px){
+ :root{--km-view-height:calc(100dvh / var(--km-ui-scale,1));--km-app-height:min(calc((100dvh - 24px) / var(--km-ui-scale,1)),780px);--km-domain-gap240:max(0px,calc((var(--km-view-height) - var(--km-app-height)) / 2))}
+ .top-bar,.bottom-wrapper,.screen-panel,#km-backdrop256,#km-hero-detail239,#v15-build-modal,.modal-bg,.km-warm-overlay255,#km-cancel242,#notification-container{zoom:var(--km-ui-scale,1)}
+ body .top-bar{top:var(--km-domain-gap240)}
+ body .screen-panel,#km-hero-detail239{top:calc(var(--km-header-height) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important;bottom:calc(var(--km-footer-height) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important}
+ body.km-domain240 #screen-domain,body.km-domain240 #km-backdrop256,#km-backdrop256{top:var(--km-domain-gap240)!important;bottom:calc(var(--km-chat-height240,42px) / var(--km-ui-scale,1) + var(--km-domain-gap240))!important}
+ #v15-build-modal.km-master252{top:var(--km-domain-gap240)!important;height:var(--km-app-height)!important;bottom:auto!important}
+ .modal-bg .modal-content,.km-warm-card255{max-height:calc(var(--km-view-height) - 32px)!important}
+ #notification-container{bottom:calc(var(--km-footer-height) / var(--km-ui-scale,1) + var(--km-domain-gap240) + 12px)}
+ #km-chat-page{width:min(100%,calc(var(--km-app-width) * var(--km-ui-scale,1)))!important;max-width:none}
+ .km-chat-page-header,.km-chat-page-compose,#km-chat-history{zoom:var(--km-ui-scale,1)}
+}
+/* The phone rotation notice lives outside the zoomed game roots. */
+#km-portrait-notice{position:fixed;inset:auto;margin:0;border:0;padding:24px;box-sizing:border-box;max-width:none;max-height:none;background:#081a2ef5;color:#ffe6ac;text-align:center;overscroll-behavior:none;touch-action:none}
+#km-portrait-notice[open]{display:grid;place-content:center;gap:20px}
+#km-portrait-notice::backdrop{background:#081a2e}
+#km-portrait-notice .km-rotate-symbol{font-size:56px;line-height:1;color:#e9b957}
+#km-portrait-notice p{margin:0;font-size:18px;font-weight:700;line-height:1.6}
+</style>
+<script>
+// Presentation only; mobile layout and the chat visualViewport handlers stay unchanged.
+(function(){
+ function kmFitPortraitFrame(){
+  const scale=innerWidth>=600?Math.max(1,Math.min(560/430,(innerWidth-24)/430,(innerHeight-24)/744)):1;
+  document.documentElement.style.setProperty('--km-ui-scale',scale);
+ }
+ kmFitPortraitFrame();
+ window.addEventListener('resize',kmFitPortraitFrame);
+})();
+
+// Conservative phone detection; viewport aspect ratio also changes with the keyboard.
+(function(){
+ let notice;
+ function kmUpdatePortraitNotice(){
+  const ua=navigator.userAgent,shortSide=Math.min(screen.width,screen.height);
+  const phone=/iPhone|iPod|Android.*Mobile/i.test(ua)&&!/iPad/i.test(ua);
+  const eligible=phone&&navigator.maxTouchPoints>0&&matchMedia('(any-pointer:coarse)').matches&&shortSide>0&&shortSide<600;
+  const type=screen.orientation?.type;
+  const landscape=type?type.startsWith('landscape'):typeof window.orientation==='number'&&Math.abs(window.orientation)===90;
+  if(!eligible||!landscape){if(notice?.open)notice.close();return;}
+  if(!notice){
+   notice=document.createElement('dialog');notice.id='km-portrait-notice';
+   notice.setAttribute('aria-labelledby','km-portrait-message');
+   notice.innerHTML='<span class="km-rotate-symbol" aria-hidden="true">↻</span><p id="km-portrait-message">세로 화면으로 돌려서 플레이해 주세요.</p>';
+   notice.addEventListener('cancel',event=>event.preventDefault());
+   document.body.append(notice);
+  }
+  const v=window.visualViewport;
+  Object.assign(notice.style,{left:(v?v.offsetLeft:0)+'px',top:(v?v.offsetTop:0)+'px',width:(v?v.width:innerWidth)+'px',height:(v?v.height:innerHeight)+'px'});
+  // Native modal inertness blocks pointer/keyboard input to the game without pausing it.
+  if(!notice.open)notice.showModal();
+ }
+ // Keep existing document-level Escape/Tab handlers from changing covered popups.
+ document.addEventListener('keydown',event=>{if(notice?.open){event.stopImmediatePropagation();if(event.key==='Escape')event.preventDefault();}},true);
+ document.addEventListener('DOMContentLoaded',kmUpdatePortraitNotice);
+ window.addEventListener('resize',kmUpdatePortraitNotice);
+ window.addEventListener('orientationchange',kmUpdatePortraitNotice);
+ screen.orientation?.addEventListener('change',kmUpdatePortraitNotice);
+ window.visualViewport?.addEventListener('resize',kmUpdatePortraitNotice);
+ window.visualViewport?.addEventListener('scroll',kmUpdatePortraitNotice);
+})();
+</script></head>
 <body>
 
     <div class="top-bar">

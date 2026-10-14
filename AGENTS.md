@@ -2,7 +2,7 @@
 
 - All work is iPhone-first regardless of whether the user works on iPad or desktop.
 - Design and verify widths 360, 393 and 430 CSS pixels; include a short 580px viewport to account for mobile browser chrome.
-- iPad and desktop use the same portrait art, landmark positions and controls in a centered max-width 430px game shell. Never select a different square map by device width.
+- iPad and desktop use the same portrait art, landmark positions and controls in a centered portrait game shell: preserve the mobile UI at up to 430px; on screens at least 600px wide, enlarge the same controls and art to fit available width/height, capped at 560px rendered width. Never select a different square map by device width.
 - Preserve the existing royal blue/gold fantasy anime art style.
 - Building detail has a scrollable information body and a permanently visible action footer; map fills shell width and can scroll/pan vertically.
 - Chat sits below bottom navigation, shows only the latest two messages, and opens a dedicated page for full available server history and composition.
@@ -33,7 +33,7 @@
 - v2.0.52 fresh master popup: image above visible output/cost/time, gold accelerate + blue build; no hidden info drawer. Login has one visible input outline.
 
 - v2.0.53 authoritative master direction supersedes v249–251 nav/outline guidance: painterly royal-blue-and-gold fantasy, natural warm sunlight, calm readable composition. Navigation uses master periwinkle inactive/gold active silhouettes. Avoid pastel toy icons, heavy outlining and excessive flower/tower density.
-- Building/gather popup occupies a standalone max-430px portrait viewport above HUD/navigation. Show the full building scene (no crop), visible output/cost/time, one progress bar with a small worker, and gold/blue dimensional actions. Preserve existing gameplay handlers. Respect reduced motion.
+- Building/gather popup occupies a standalone max-430px logical portrait viewport above HUD/navigation; on large screens it scales with the shared game frame. Show the full building scene (no crop), visible output/cost/time, one progress bar with a small worker, and gold/blue dimensional actions. Preserve existing gameplay handlers. Respect reduced motion.
 
 - v2.0.54 supersedes map scrolling and monochrome navigation guidance: fit domain landmarks into the viewport with no pan/scroll, preserve image proportions, and crop only decorative lower cliff when needed. All four labels and progress strips stay visible above navigation. Use large rounded painted fantasy icons from km_nav_round_v254.png. Popup card height follows content, with no empty spacer above actions; retain worker animation and dimensional gold/blue controls.
 
