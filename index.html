@@ -4664,14 +4664,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             document.getElementById('cost-food').textContent = formatNumber(costs.food);
             document.getElementById('cost-herb').textContent = formatNumber(costs.herb);
             document.getElementById('cost-magic').textContent = formatNumber(costs.magicDust);
-            const readySquad=(gameState.selectedSquad||[]).some(i=>HEROES[Number(i)]);
-            const enough=['gold','food','herb','magicDust'].every(k=>(gameState.resources[k]||0)>=costs[k]);
-            if(btnStartBattle&&!gameState.isBattling){
-                btnStartBattle.disabled=!readySquad||!enough;
-                if(!readySquad)btnStartBattle.innerHTML='<i class="fa-solid fa-users mr-1"></i>원정대 편성 필요';
-                else if(!enough)btnStartBattle.innerHTML='<i class="fa-solid fa-triangle-exclamation mr-1"></i>입장 자원 부족';
-                else if(!isFailed)btnStartBattle.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';
-            }
+            updateBattleEntryButton(isFailed);
         }
 
         function renderShop() {
@@ -4805,7 +4798,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             },3000);
         }
 
+        function updateBattleEntryButton(isFailed) {
+            const btn=document.getElementById('btn-start-battle');
+            if(!btn) return;
+            if(kmBattleLaunchPending || gameState.isBattling || BATTLE_V12.running){
+                btn.disabled=true;
+                return;
+            }
+            const floor=Math.max(1,Number(gameState.towerFloor)||1);
+            const readySquad=(gameState.selectedSquad||[]).some(i=>HEROES[Number(i)]);
+            const enough=canSpendResources(getTowerEntryCosts(floor));
+            const retry=isFailed ?? document.getElementById('battle-status-title')?.textContent.includes('재도전');
+            const label=!readySquad?'<i class="fa-solid fa-users mr-1"></i>원정대 편성 필요'
+                :!enough?'<i class="fa-solid fa-triangle-exclamation mr-1"></i>입장 자원 부족'
+                :retry?'<i class="fa-solid fa-rotate-right mr-1"></i>재도전'
+                :'<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';
+            btn.disabled=!readySquad||!enough;
+            if(btn.innerHTML!==label) btn.innerHTML=label;
+        }
+
         function updateButtonsState() {
+            updateBattleEntryButton();
             Object.keys(BUILDINGS).forEach(key => {
                 const b = BUILDINGS[key];
                 const btn = document.getElementById(`btn-bld-${key}`);
