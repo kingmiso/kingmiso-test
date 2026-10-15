@@ -3228,9 +3228,15 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
  window.visualViewport?.addEventListener('scroll',kmUpdatePortraitNotice);
 })();
 </script><style>
-/* Display-only UTC clock uses the existing space below the power label. */
-body .top-bar #km-header-power-v221{position:relative;inset:auto}
-#km-utc-clock{position:absolute;left:0;top:calc(100% + 1px);width:12ch;white-space:nowrap;font:10px/12px ui-monospace,monospace;font-variant-numeric:tabular-nums;font-weight:400;color:#e4d4b0;letter-spacing:0;pointer-events:none}
+/* Inline display only: keep the UTC renderer and header/resource geometry unchanged. */
+body .top-bar #km-header-power-v221{position:relative;inset:auto;flex:1;min-width:0;justify-content:flex-start}
+#km-header-power-value-v221{min-width:0;text-overflow:ellipsis}
+.km-utc-display{display:inline-flex;align-items:center;flex:none;gap:3px;border:0;background:none;box-shadow:none;text-shadow:none;white-space:nowrap;pointer-events:none}
+.km-utc-icon{width:9px;height:9px;flex:none;color:#dcc18a}
+.km-utc-label{color:#e8d3a2;font:700 9px/12px Arial,sans-serif}
+/* The existing renderer writes "UTC HH:mm:ss"; clip only its duplicate visual prefix. */
+#km-utc-clock{display:inline-block;width:8ch;overflow:hidden;text-indent:-4ch;white-space:nowrap;font:600 10px/12px ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#f5ead7;letter-spacing:0;border:0;background:none;box-shadow:none;text-shadow:none}
+.km-utc-gap{flex:1;min-width:0;max-width:calc(28px / var(--km-ui-scale,1) - 6px)}
 #km-roulette-times{font-size:11px;line-height:16px;font-variant-numeric:tabular-nums;color:#cbd5e1;margin:4px 0}
 </style></head>
 <body>
@@ -3249,7 +3255,12 @@ body .top-bar #km-header-power-v221{position:relative;inset:auto}
                     <i class="fa-solid fa-bolt" aria-hidden="true"></i>
                     <span class="km-header-power-label-v222">전투력</span>
                     <span id="km-header-power-value-v221">0</span>
-                    <time id="km-utc-clock" aria-live="off" title="게임 운영 시간 · UTC">UTC --:--:--</time>
+                    <span class="km-utc-gap" aria-hidden="true"></span>
+                    <span class="km-utc-display" title="게임 운영 시간 · UTC">
+                        <svg class="km-utc-icon" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.5"/></svg>
+                        <span class="km-utc-label" aria-hidden="true">UTC</span>
+                        <time id="km-utc-clock" aria-live="off">UTC --:--:--</time>
+                    </span>
                 </div>
             </div>
 
