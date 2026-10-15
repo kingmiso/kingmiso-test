@@ -5337,6 +5337,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         function finishBattleV12(victory) {
             gameState.isBattling=false; BATTLE_V12.running=false; const btn=document.getElementById('btn-start-battle'); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';} const controls=document.getElementById('battle-controls-box'); if(controls) setTimeout(()=>controls.classList.remove('battle-hidden-v121'), 1150);
             showBattleResultV12(victory);
+            ['battle-team-v12', 'battle-enemy-v12'].forEach(id => {
+                document.getElementById(id)?.replaceChildren();
+            });
             if(victory){
                 playSfx('victory'); const f=gameState.towerFloor, boss=f%5===0; const mult=boss?2:1;
                 const rPure=(Math.floor(Math.random()*(f+2))+1)*mult, rEmer=(Math.floor(Math.random()*(f+2))+1)*mult, rRuby=(Math.floor(Math.random()*(f+2))+1)*mult, rSapp=(Math.floor(Math.random()*(f+2))+1)*mult;
