@@ -5509,9 +5509,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const item = gameState.upgradesInProgress[taskKey];
             if(!item) return;
             if(Date.now() < Number(item.endTime||0)) return;
+            // Production-changing callbacks must settle the old and new rates first.
+            // Deferred calls already belong to an online or offline settlement.
+            if(!deferredEffects&&(item.type==='building'||item.type==='gather')){ productionTickV201(); return; }
             delete gameState.upgradesInProgress[taskKey];
             if(v16Timers[taskKey]){ clearTimeout(v16Timers[taskKey]); delete v16Timers[taskKey]; }
-            // Offline settlement must not render (which re-enters upgradeTimerTickV201)
+            // Settlement must not render (which re-enters upgradeTimerTickV201)
             // or save an intermediate balance before its production cursor is committed.
             const present=fn=>{if(deferredEffects)deferredEffects.push(fn);else fn();};
             present(()=>playSfx('upgrade'));
@@ -5604,28 +5607,42 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             renderHUD:updateResourceHudV200, check:kmHudCompatibilityV215
         });
         function productionTickV201() {
-            const now=Date.now();
-            // Catch up when Safari suspends timers in the background, capped at 12h.
-            const seconds=Math.max(0,Math.min((now-kmLastResourceTickV202)/1000,KM_ECONOMY_V217.production.catchupLimitSeconds));
-            kmLastResourceTickV202=now;
+            const now=Date.now(),start=kmLastResourceTickV202;
+            // Catch up from the previous cursor, capped at the existing 12h limit.
+            const seconds=Math.max(0,Math.min((now-start)/1000,KM_ECONOMY_V217.production.catchupLimitSeconds));
+            const end=start+seconds*1000,deferredEffects=[];
+            let cursor=start;
             try {
                 if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
-                // 원본 정상 작동 코드와 동일한 건물/채집장 생산 경로
-                Object.keys(BUILDINGS).forEach(key => {
-                    const b=BUILDINGS[key];
-                    const resource=b.prodType;
-                    if (!resource) return;
-                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +kmFacilityRate241('building',key)*seconds;
-                });
-                Object.keys(GATHERING_NODES).forEach(key => {
-                    const node=GATHERING_NODES[key];
-                    const resource=node.resKey;
-                    if (!resource) return;
-                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +kmFacilityRate241('gather',key)*seconds;
-                });
-                // 매 틱 실제 자원과 헤더를 동기화. 다른 UI의 오류와 독립적으로 실행.
+                const accrue=until=>{
+                    const next=Math.max(cursor,Math.min(end,until)),duration=(next-cursor)/1000;
+                    if(duration>0){
+                        Object.keys(BUILDINGS).forEach(key => {
+                            const resource=BUILDINGS[key].prodType;
+                            if(resource)gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                                +kmFacilityRate241('building',key)*duration;
+                        });
+                        Object.keys(GATHERING_NODES).forEach(key => {
+                            const resource=GATHERING_NODES[key].resKey;
+                            if(resource)gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                                +kmFacilityRate241('gather',key)*duration;
+                        });
+                    }
+                    cursor=next;
+                };
+                const completed=Object.entries(gameState.upgradesInProgress||{})
+                    .map(([key,job])=>({key,endTime:Number(job?.endTime||0)}))
+                    .filter(job=>Number.isFinite(job.endTime)&&job.endTime<=now)
+                    .sort((a,b)=>a.endTime-b.endTime);
+                for(const job of completed){
+                    accrue(job.endTime);
+                    finishUpgradeV16(job.key,deferredEffects);
+                }
+                accrue(end);
+                // Commit before saving or rendering: UI can re-enter completion.
+                kmLastResourceTickV202=Math.max(start,now);
+                if(completed.length&&window.cloudSaveGame)window.cloudSaveGame();
+                deferredEffects.forEach(effect=>effect());
                 updateResourceHudV200();
                 updateButtonsState();
             } catch(e) { console.error('KingMiso resource loop error',e); }
