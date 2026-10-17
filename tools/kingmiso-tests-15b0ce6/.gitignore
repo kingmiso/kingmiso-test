@@ -1,0 +1,10 @@
+.venv/
+results/
+__pycache__/
+*.pyc
+downloads/
+offline-cache/
+*.whl
+*.zip
+.env
+.env.*
