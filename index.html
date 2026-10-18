@@ -3227,7 +3227,18 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
  window.visualViewport?.addEventListener('resize',kmUpdatePortraitNotice);
  window.visualViewport?.addEventListener('scroll',kmUpdatePortraitNotice);
 })();
-</script></head>
+</script><style>
+/* Inline display only: keep the UTC renderer and header/resource geometry unchanged. */
+body .top-bar #km-header-power-v221{position:relative;inset:auto;flex:1;min-width:0;justify-content:flex-start}
+#km-header-power-value-v221{min-width:0;text-overflow:ellipsis}
+.km-utc-display{display:inline-flex;align-items:center;flex:none;gap:3px;border:0;background:none;box-shadow:none;text-shadow:none;white-space:nowrap;pointer-events:none}
+.km-utc-icon{width:9px;height:9px;flex:none;color:#dcc18a}
+.km-utc-label{color:#e8d3a2;font:700 9px/12px Arial,sans-serif}
+/* The existing renderer writes "UTC HH:mm:ss"; clip only its duplicate visual prefix. */
+#km-utc-clock{display:inline-block;width:8ch;overflow:hidden;text-indent:-4ch;white-space:nowrap;font:600 10px/12px ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#f5ead7;letter-spacing:0;border:0;background:none;box-shadow:none;text-shadow:none}
+.km-utc-gap{flex:1;min-width:0;max-width:calc(28px / var(--km-ui-scale,1) - 6px)}
+#km-roulette-times{font-size:11px;line-height:16px;font-variant-numeric:tabular-nums;color:#cbd5e1;margin:4px 0}
+</style></head>
 <body>
 
     <div class="top-bar">
@@ -3244,6 +3255,12 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
                     <i class="fa-solid fa-bolt" aria-hidden="true"></i>
                     <span class="km-header-power-label-v222">전투력</span>
                     <span id="km-header-power-value-v221">0</span>
+                    <span class="km-utc-gap" aria-hidden="true"></span>
+                    <span class="km-utc-display" title="게임 운영 시간 · UTC">
+                        <svg class="km-utc-icon" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.5"/></svg>
+                        <span class="km-utc-label" aria-hidden="true">UTC</span>
+                        <time id="km-utc-clock" aria-live="off">UTC --:--:--</time>
+                    </span>
                 </div>
             </div>
 
@@ -3413,7 +3430,12 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
                 <h3 class="font-bold text-sm text-slate-100"><i class="fa-solid fa-gift mr-1 text-pink-400"></i>다이아 돌림판 🎡</h3>
                 <button onclick="closeRouletteModal(); playSfx('click');" class="text-slate-400 hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="text-[11px] text-slate-400 mb-2">1시간마다 무료 참여 (하루 최대 3회)!</div>
+            <div class="text-[11px] text-slate-400 mb-2">하루 최대 3회 · 완료 후 1시간 대기<br>매일 00:00 UTC 횟수 초기화</div>
+            <div id="km-roulette-times" aria-live="off">
+                <time id="km-roulette-utc">UTC --:--:--</time>
+                <div>다음 일일 초기화까지 <span id="km-roulette-reset">--:--:--</span></div>
+                <div>다음 회전 대기시간 <span id="km-roulette-wait">--:--:--</span></div>
+            </div>
             
             <div class="relative w-40 h-40 mx-auto my-2 flex items-center justify-center">
                 <div class="absolute -top-2 z-30 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[14px] border-t-red-500"></div>
@@ -3457,7 +3479,7 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
                 <img src="donation_qr.jpeg" alt="후원 QR" class="w-48 h-auto mx-auto object-contain rounded-lg">
             </div>
             <button class="btn-3d btn-pink w-full mt-3 py-2 text-xs font-bold bg-pink-600 hover:bg-pink-700 shadow" onclick="completeDonationReward()">
-                후원 완료 (다이아 +100)
+                안내 확인 (자동 다이아 지급 중단)
             </button>
         </div>
     </div>
@@ -3758,7 +3780,7 @@ body.km-domain240 .km-castle span{background:linear-gradient(125deg,#406da5,#183
 
         const SHOP_ITEMS = [
             { id: 'free_gem', name: '행운의 돌림판', icon: 'fa-gift text-pink-400', desc: '1시간마다 최대 50 다이아 획득!', cost: 0, costType: 'none', btnText: '돌림판 열기' },
-            { id: 'buy_cash_gem', name: '다이아 100개 충전', icon: 'fa-gem text-purple-400', desc: '후원하고 다이아 100개 즉시 충전', cost: 0, costType: 'cash', btnText: '후원하기' },
+            { id: 'buy_cash_gem', name: '후원 안내', icon: 'fa-gem text-purple-400', desc: 'QR 후원 안내 · 다이아 자동 지급은 중단되었습니다.', cost: 0, costType: 'cash', btnText: '후원 안내' },
             { id: 'buy_gold', name: '금화 주머니', icon: 'fa-coins text-yellow-400', desc: '금화 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'gold', btnText: '다이아 15개' },
             { id: 'buy_food', name: '식량 상자', icon: 'fa-wheat-awn text-red-400', desc: '식량 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'food', btnText: '다이아 15개' },
             { id: 'buy_wood', name: '왕실 목재 묶음', icon: 'fa-tree text-amber-500', desc: '목재 2,000 획득', cost: 15, costType: 'gem', reward: 2000, rewardType: 'wood', btnText: '다이아 15개' },
@@ -3887,14 +3909,26 @@ function kmCompleteProduction241(kind,key,job){const raw=kmFacilityRaw241(kind,k
             return Math.max(1, Math.round(eq.baseCost * Math.pow(KM_BALANCE_V216.equipment.costLevelMultiplier, Math.max(0, Number(currentLevel)||0))));
         }
 
-        function addResource(type, amount) { gameState.resources[type] = (gameState.resources[type] || 0) + amount; return true; }
-        function spendResource(type, amount) {
-            if ((gameState.resources[type] || 0) >= amount) {
-                gameState.resources[type] -= amount;
-                return true;
-            }
-            return false;
+        function kmValidResourceAmount(type,amount) {
+            return !!gameState.resources && typeof type==='string' && Object.hasOwn(gameState.resources,type)
+                && Number.isFinite(amount) && amount>=0
+                && Number.isFinite(gameState.resources[type]) && gameState.resources[type]>=0;
         }
+        function addResource(type,amount) {
+            if(!kmValidResourceAmount(type,amount)||!Number.isFinite(gameState.resources[type]+amount))return false;
+            gameState.resources[type]+=amount;return true;
+        }
+        function canSpendResources(costs) {
+            return !!costs && typeof costs==='object' && !Array.isArray(costs)
+                && Object.keys(costs).length>0 && Object.entries(costs).every(([type,amount])=>
+                    kmValidResourceAmount(type,amount)&&gameState.resources[type]>=amount);
+        }
+        function spendResources(costs) {
+            if(!canSpendResources(costs))return false;
+            Object.entries(costs).forEach(([type,amount])=>{gameState.resources[type]-=amount;});
+            return true;
+        }
+        function spendResource(type,amount) {return typeof type==='string'&&spendResources({[type]:amount});}
         function formatHudNumber(num) {
             // v2.0.24: show finer increments so live production is visible.
             // Presentation only: never round or mutate stored resource values.
@@ -4380,8 +4414,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const cost = getHeroUpgradeCostV194(h, subIdx);
 
             const heroCostsV206=getHeroUpgradeCostsV206(h,subIdx);
-            if (canPayHeroCostsV206(heroCostsV206)) {
-                Object.entries(heroCostsV206).forEach(([key,amount])=>{gameState.resources[key]-=amount;});
+            if (spendResources(heroCostsV206)) {
                 const timeSec = getHeroUpgradeTimeV194(h);
                 gameState.upgradesInProgress[progressKey] = { endTime: Date.now() + (timeSec * 1000), totalTime: timeSec, type: 'hero', subKey: index, paidCostsV242:{...heroCostsV206} };
                 scheduleUpgradeCompletionV16(progressKey);
@@ -4445,11 +4478,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const eq=EQUIP_TYPES[equipKey]; if(!eq||!ARMY_EQUIPMENT[armyType])return;
             const currentLevel=Number(ARMY_EQUIPMENT[armyType][equipKey]||0);
             const cost=getEquipCostV194(eq,currentLevel);
-            if((gameState.resources[eq.costType]||0)<cost){showNotification('강화 재화가 부족합니다.');return;}
+            if(!canSpendResources({[eq.costType]:cost})){showNotification('강화 재화가 부족합니다.');return;}
             EQUIP_CLICK_LOCK_V191.add(lockKey);
             if(sourceBtn){sourceBtn.disabled=true;sourceBtn.dataset.oldHtml=sourceBtn.innerHTML;sourceBtn.innerHTML='<span>강화중…</span>';}
             try{
-                gameState.resources[eq.costType]-=cost;
+                spendResource(eq.costType,cost);
                 ARMY_EQUIPMENT[armyType][equipKey]=currentLevel+1;
                 Object.keys(gameState.upgradesInProgress||{}).forEach(k=>{if(gameState.upgradesInProgress[k]?.type==='equip')delete gameState.upgradesInProgress[k];});
                 syncProgressionV15();
@@ -4631,14 +4664,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             document.getElementById('cost-food').textContent = formatNumber(costs.food);
             document.getElementById('cost-herb').textContent = formatNumber(costs.herb);
             document.getElementById('cost-magic').textContent = formatNumber(costs.magicDust);
-            const readySquad=(gameState.selectedSquad||[]).some(i=>HEROES[Number(i)]);
-            const enough=['gold','food','herb','magicDust'].every(k=>(gameState.resources[k]||0)>=costs[k]);
-            if(btnStartBattle&&!gameState.isBattling){
-                btnStartBattle.disabled=!readySquad||!enough;
-                if(!readySquad)btnStartBattle.innerHTML='<i class="fa-solid fa-users mr-1"></i>원정대 편성 필요';
-                else if(!enough)btnStartBattle.innerHTML='<i class="fa-solid fa-triangle-exclamation mr-1"></i>입장 자원 부족';
-                else if(!isFailed)btnStartBattle.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';
-            }
+            updateBattleEntryButton(isFailed);
         }
 
         function renderShop() {
@@ -4666,11 +4692,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const item=SHOP_ITEMS.find(i=>i.id===itemId); if(!item)return;
             if(item.costType==='none'){openRouletteModal();return;}
             if(item.costType==='cash'){openDonateModal();return;}
-            const cost=Number(item.cost)||0,reward=Number(item.reward)||0;
-            if((gameState.resources[item.costType]||0)<cost){showNotification('다이아가 부족합니다.');return;}
-            if(!(item.rewardType in gameState.resources)){showNotification('상품 데이터 오류: 다이아는 차감되지 않았습니다.');return;}
-            gameState.resources[item.costType]-=cost;
-            gameState.resources[item.rewardType]+=reward;
+            const cost=item.cost,reward=item.reward;
+            if(!kmValidResourceAmount(item.rewardType,reward)||!Number.isFinite(gameState.resources[item.rewardType]+reward)){showNotification('상품 데이터 오류: 다이아는 차감되지 않았습니다.');return;}
+            if(!spendResource(item.costType,cost)){showNotification('다이아가 부족하거나 상품 가격이 올바르지 않습니다.');return;}
+            addResource(item.rewardType,reward);
             updateUI(); playSfx('upgrade');
             showNotification(`${item.name} 구매 완료! +${formatNumber(reward)}`);
             if(window.cloudSaveGame)window.cloudSaveGame();
@@ -4679,52 +4704,121 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         function openDonateModal() { document.getElementById('donate-modal').style.display = 'flex'; }
         function closeDonateModal(event) { if (!event || event.target.id === 'donate-modal') document.getElementById('donate-modal').style.display = 'none'; }
         function completeDonationReward() {
-            addResource('gem', 100);
-            const gemHud = document.getElementById('res-gem');
-            if (gemHud) gemHud.textContent = formatNumber(gameState.resources.gem);
-            updateUI();
             closeDonateModal();
-            playSfx('upgrade');
-            showNotification('후원 확인! 다이아 +100 충전');
-            if (window.cloudSaveGame) window.cloudSaveGame();
+            showNotification('후원 자동 다이아 지급은 중단되었습니다. 결제 확인 기능은 아직 제공하지 않습니다.');
         }
 
+        const KM_ROULETTE_REWARDS=Object.freeze([1,10,20,30,50]);
+        const KM_ROULETTE_COOLDOWN=60*60*1000;
+        let kmRouletteSpin=null,kmRouletteRotation=0,kmRouletteRefreshTimer=null;
+        function kmRouletteDay(now){return new Date(now).toISOString().slice(0,10);}
+        function kmNextUTCReset(now){const d=new Date(now);return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()+1);}
+        function kmRenderUTCTime(id,now){const el=document.getElementById(id);if(el){const iso=new Date(now).toISOString();el.textContent='UTC '+iso.slice(11,19);el.dateTime=iso;}}
+        let kmUTCClockTimer=null;
+        function kmUpdateUTCClock(){
+            clearTimeout(kmUTCClockTimer);
+            kmRenderUTCTime('km-utc-clock',Date.now());
+            kmUTCClockTimer=setTimeout(kmUpdateUTCClock,1000-Date.now()%1000);
+        }
+        kmUpdateUTCClock();
+        document.addEventListener('visibilitychange',kmUpdateUTCClock);
+        function kmRouletteStatus(now=Date.now()) {
+            if(!gameState.roulette||typeof gameState.roulette!=='object'||Array.isArray(gameState.roulette))gameState.roulette={countToday:0,lastSpinTime:0};
+            const r=gameState.roulette,today=kmRouletteDay(now);
+            r.countToday=Number.isSafeInteger(r.countToday)&&r.countToday>=0?r.countToday:3;
+            r.lastSpinTime=Number.isFinite(r.lastSpinTime)&&r.lastSpinTime>=0&&r.lastSpinTime<=8640000000000000-32400000?r.lastSpinTime:(r.countToday?now:0);
+            // The completion timestamp is authoritative for KST and UTC saves alike.
+            // Keep the entire stored count on that UTC date; never infer extra rewards.
+            if(r.countToday>0&&r.lastSpinTime>0)r.dayKey=kmRouletteDay(r.lastSpinTime);
+            else if(typeof r.dayKey!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.dayKey))r.dayKey=today;
+            if(today>r.dayKey&&now>=r.lastSpinTime){r.dayKey=today;r.countToday=0;}
+            if(r.countToday===0&&now>=r.lastSpinTime)r.dayKey=today;
+            return {r,left:Math.max(0,3-r.countToday),wait:r.lastSpinTime?Math.max(0,r.lastSpinTime+KM_ROULETTE_COOLDOWN-now):0};
+        }
+        function kmRefreshRoulette() {
+            clearTimeout(kmRouletteRefreshTimer);kmRouletteRefreshTimer=null;
+            const modal=document.getElementById('roulette-modal');if(modal.style.display!=='flex')return;
+            const now=Date.now(),{left,wait}=kmRouletteStatus(now),btn=document.getElementById('btn-spin-roulette');
+            kmRenderUTCTime('km-roulette-utc',now);
+            document.getElementById('km-roulette-reset').textContent=kmDuration241(Math.ceil((kmNextUTCReset(now)-now)/1000));
+            document.getElementById('km-roulette-wait').textContent=kmDuration241(Math.ceil(wait/1000));
+            btn.disabled=!!kmRouletteSpin||left===0||wait>0;
+            btn.textContent=kmRouletteSpin?'회전 중…':left===0?'오늘 참여 완료 · 00:00 UTC 초기화':wait>0?'다음 참여까지 '+kmDuration241(Math.ceil(wait/1000)):'▶ 돌림판 돌리기';
+            btn.onclick=spinRouletteWheel;
+            const result=document.getElementById('roulette-result-display');
+            if(!kmRouletteSpin)result.textContent=(result.dataset.lastReward||'')+' 오늘 남은 횟수: '+left+'/3회';
+            kmRouletteRefreshTimer=setTimeout(kmRefreshRoulette,1000);
+        }
         function openRouletteModal() {
-            const left=Math.max(0,3-(gameState.roulette?.countToday||0));
-            document.getElementById('roulette-count-left').textContent=left;
-            const btn=document.getElementById('btn-spin-roulette');
-            if(btn){btn.disabled=left<=0;btn.textContent=left>0?'▶ 돌림판 돌리기':'오늘 참여 완료';btn.onclick=spinRouletteWheel;}
-            document.getElementById('roulette-result-display').innerHTML=`오늘 남은 횟수: <span id="roulette-count-left-inline">${left}</span>/3회`;
             document.getElementById('roulette-modal').style.display='flex';
+            kmRefreshRoulette();
+        }
+        function closeRouletteModal(event) {
+            if(event&&event.target.id!=='roulette-modal')return;
+            document.getElementById('roulette-modal').style.display='none';
+            clearTimeout(kmRouletteRefreshTimer);kmRouletteRefreshTimer=null;
+        }
+        function spinRouletteWheel() {
+            if(kmRouletteSpin||!kmSaveEnabledV204||!window.currentCustomId)return;
+            const status=kmRouletteStatus();
+            if(!status.left||status.wait){kmRefreshRoulette();return;}
+            const spin={owner:window.currentCustomId,state:status.r,index:Math.floor(Math.random()*KM_ROULETTE_REWARDS.length)};
+            kmRouletteSpin=spin;
+            const wheel=document.getElementById('roulette-wheel');
+            // SVG sectors begin at twelve o'clock and run clockwise in 72-degree steps.
+            const target=(360-(spin.index*72+36))%360;
+            kmRouletteRotation+=2160+(target-kmRouletteRotation%360+360)%360;
+            wheel.style.transition='transform 3s cubic-bezier(0.15, 0.85, 0.35, 1)';
+            wheel.style.transform=`rotate(${kmRouletteRotation}deg)`;
+            const result=document.getElementById('roulette-result-display');
+            delete result.dataset.lastReward;result.textContent='돌림판 회전 중...';
+            kmRefreshRoulette();
+            setTimeout(()=>{
+                try {
+                    if(kmRouletteSpin!==spin||!kmSaveEnabledV204||window.currentCustomId!==spin.owner||gameState.roulette!==spin.state)return;
+                    const now=Date.now(),{r,left,wait}=kmRouletteStatus(now);
+                    if(!left||wait)return;
+                    const previous={...r},gem=gameState.resources.gem,reward=KM_ROULETTE_REWARDS[spin.index];
+                    if(!addResource('gem',reward))return;
+                    r.countToday++;r.lastSpinTime=now;
+                    // Credit and limits share one local snapshot; a failed write grants neither.
+                    if(!kmLocalWriteV204(spin.owner)){
+                        gameState.resources.gem=gem;Object.assign(r,previous);
+                        showNotification('저장하지 못해 돌림판 보상을 지급하지 않았습니다. 다시 시도해 주세요.');
+                        return;
+                    }
+                    if(window.cloudSaveGame)window.cloudSaveGame();
+                    playSfx('levelup');showNotification(`다이아 +${reward} 획득!`);
+                    result.dataset.lastReward=`🎉 당첨! 다이아 +${reward}`;
+                } finally {
+                    if(kmRouletteSpin===spin)kmRouletteSpin=null;
+                    updateUI();
+                    kmRefreshRoulette();
+                }
+            },3000);
         }
 
-        function closeRouletteModal(event) { if (!event || event.target.id === 'roulette-modal') document.getElementById('roulette-modal').style.display = 'none'; }
-
-        function spinRouletteWheel() {
-            if (gameState.roulette.countToday >= 3) return;
-            const wheel = document.getElementById('roulette-wheel');
-            const resultDisplay = document.getElementById('roulette-result-display');
-            const spinBtn = document.getElementById('btn-spin-roulette');
-            
-            spinBtn.disabled = true;
-            wheel.style.transition = 'transform 3s cubic-bezier(0.15, 0.85, 0.35, 1)';
-            wheel.style.transform = `rotate(${2160 + Math.random() * 360}deg)`;
-            resultDisplay.textContent = '돌림판 회전 중...';
-
-            setTimeout(() => {
-                const rewardGems = [1, 10, 20, 30, 50][Math.floor(Math.random() * 5)];
-                gameState.resources.gem=(gameState.resources.gem||0)+rewardGems;
-                gameState.roulette.countToday=(gameState.roulette.countToday||0)+1;
-                gameState.roulette.lastSpinTime=Date.now();
-                resultDisplay.innerHTML=`<span class="text-pink-400 font-bold">🎉 당첨! 다이아 +${rewardGems}</span>`;
-                updateUI();
-                if(window.cloudSaveGame) window.cloudSaveGame();
-                playSfx('levelup'); showNotification(`다이아 +${rewardGems} 획득!`);
-                spinBtn.disabled=false; spinBtn.textContent='확인'; spinBtn.onclick=()=>closeRouletteModal();
-            }, 3000);
+        function updateBattleEntryButton(isFailed) {
+            const btn=document.getElementById('btn-start-battle');
+            if(!btn) return;
+            if(kmBattleLaunchPending || gameState.isBattling || BATTLE_V12.running){
+                btn.disabled=true;
+                return;
+            }
+            const floor=Math.max(1,Number(gameState.towerFloor)||1);
+            const readySquad=(gameState.selectedSquad||[]).some(i=>HEROES[Number(i)]);
+            const enough=canSpendResources(getTowerEntryCosts(floor));
+            const retry=isFailed ?? document.getElementById('battle-status-title')?.textContent.includes('재도전');
+            const label=!readySquad?'<i class="fa-solid fa-users mr-1"></i>원정대 편성 필요'
+                :!enough?'<i class="fa-solid fa-triangle-exclamation mr-1"></i>입장 자원 부족'
+                :retry?'<i class="fa-solid fa-rotate-right mr-1"></i>재도전'
+                :'<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';
+            btn.disabled=!readySquad||!enough;
+            if(btn.innerHTML!==label) btn.innerHTML=label;
         }
 
         function updateButtonsState() {
+            updateBattleEntryButton();
             Object.keys(BUILDINGS).forEach(key => {
                 const b = BUILDINGS[key];
                 const btn = document.getElementById(`btn-bld-${key}`);
@@ -5217,9 +5311,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         async function heroAttackV12(u, i) {
-            if(u.hp<=0 || BATTLE_V12.enemy.hp<=0) return;
+            const battleEnemy=BATTLE_V12.enemy;
+            if(!BATTLE_V12.running || !gameState.isBattling || u.hp<=0 || battleEnemy.hp<=0) return;
             const fighter=document.getElementById(`fighter-v12-${i}`), enemyUnit=document.getElementById('enemy-unit-v12');
             fighter?.classList.add('hero-strike-v12'); battleFxV15(u.type==='archer'?'arrow':(u.type==='cavalry'?'slash':'slash')); await sleepBattle(180);
+            if(!BATTLE_V12.running || !gameState.isBattling || BATTLE_V12.enemy!==battleEnemy) return;
             const crit=Math.random()<0.15, adv=typeAdvantage(u.type,BATTLE_V12.enemy.weakness);
             const variance=.88+Math.random()*.24; const dmg=Math.max(1,Math.floor(u.atk*adv*variance*(crit?1.75:1)));
             BATTLE_V12.enemy.hp-=dmg; enemyUnit?.classList.add('hit-v12'); battleFxV15(Math.random()<.35?'magic':'slash');
@@ -5230,32 +5326,51 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         }
 
         async function enemyAttackV12() {
+            const battleEnemy=BATTLE_V12.enemy;
+            if(!BATTLE_V12.running || !gameState.isBattling) return;
             const alive=BATTLE_V12.heroes.map((u,i)=>({u,i})).filter(x=>x.u.hp>0); if(!alive.length||BATTLE_V12.enemy.hp<=0)return;
             const target=alive[Math.floor(Math.random()*alive.length)], enemyUnit=document.getElementById('enemy-unit-v12'), fighter=document.getElementById(`fighter-v12-${target.i}`);
             enemyUnit?.classList.add('enemy-strike-v12'); battleFxV15(BATTLE_V12.enemy.boss?'magic':'slash'); await sleepBattle(190);
+            if(!BATTLE_V12.running || !gameState.isBattling || BATTLE_V12.enemy!==battleEnemy) return;
             const bossMult=BATTLE_V12.enemy.special && Math.random()<.22 ? 1.65 : 1; const dmg=Math.max(1,Math.floor(BATTLE_V12.enemy.atk*(.85+Math.random()*.3)*bossMult));
             target.u.hp-=dmg; fighter?.classList.add('hit-v12'); battleFloatV12(`fighter-v12-${target.i}`,`-${formatNumber(dmg)}`,'enemy-hit'); playTone(180,.09,'sawtooth',.05); updateBattleHpV12();
             logBattleV12(`<span class="text-red-300">${BATTLE_V12.enemy.name}</span> → ${target.u.name} <b class="text-red-400">${formatNumber(dmg)}</b> 피해${bossMult>1?' <span class="text-pink-400">[강타]</span>':''}`);
             await sleepBattle(260); enemyUnit?.classList.remove('enemy-strike-v12'); fighter?.classList.remove('hit-v12');
         }
 
-        async function runBattleV12() {
+        async function runBattleV12(battleEnemy = BATTLE_V12.enemy) {
+            const active=()=>BATTLE_V12.running && gameState.isBattling && BATTLE_V12.enemy===battleEnemy;
+            if(!active()) return;
             let rounds=0;
-            while(BATTLE_V12.enemy.hp>0 && BATTLE_V12.heroes.some(u=>u.hp>0) && rounds<50) {
+            while(battleEnemy.hp>0 && BATTLE_V12.heroes.some(u=>u.hp>0) && rounds<50) {
                 rounds++; logBattleV12(`<span class="text-slate-500">── ROUND ${rounds} ──</span>`);
-                for(let i=0;i<BATTLE_V12.heroes.length;i++){ await heroAttackV12(BATTLE_V12.heroes[i],i); if(BATTLE_V12.enemy.hp<=0)break; }
-                if(BATTLE_V12.enemy.hp>0) await enemyAttackV12(); await sleepBattle(180);
+                for(let i=0;i<BATTLE_V12.heroes.length;i++){
+                    await heroAttackV12(BATTLE_V12.heroes[i],i);
+                    if(!active()) return;
+                    if(battleEnemy.hp<=0)break;
+                }
+                if(battleEnemy.hp>0) await enemyAttackV12();
+                if(!active()) return;
+                await sleepBattle(180);
+                if(!active()) return;
             }
-            finishBattleV12(BATTLE_V12.enemy.hp<=0);
+            finishBattleV12(battleEnemy.hp<=0,battleEnemy);
         }
 
         function showBattleResultV12(victory) {
             const arena=document.getElementById('battle-arena'), d=document.createElement('div'); d.className='battle-result-v12'; d.style.color=victory?'#facc15':'#fb7185'; d.innerHTML=victory?'⚔ VICTORY!':'☠ DEFEAT'; arena.appendChild(d); setTimeout(()=>d.remove(),1700);
         }
 
-        function finishBattleV12(victory) {
-            gameState.isBattling=false; BATTLE_V12.running=false; const btn=document.getElementById('btn-start-battle'); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';} const controls=document.getElementById('battle-controls-box'); if(controls) setTimeout(()=>controls.classList.remove('battle-hidden-v121'), 1150);
+        function finishBattleV12(victory, battleEnemy = BATTLE_V12.enemy) {
+            // Only the active encounter may settle; consume its running flags before rewards.
+            if(!battleEnemy || BATTLE_V12.enemy!==battleEnemy || !BATTLE_V12.running || !gameState.isBattling) return;
+            gameState.isBattling=false; BATTLE_V12.running=false; const btn=document.getElementById('btn-start-battle'); if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';} const controls=document.getElementById('battle-controls-box'); if(controls) setTimeout(()=>{
+                if(BATTLE_V12.enemy===battleEnemy && !BATTLE_V12.running && !gameState.isBattling && !kmBattleLaunchPending) controls.classList.remove('battle-hidden-v121');
+            }, 1150);
             showBattleResultV12(victory);
+            ['battle-team-v12', 'battle-enemy-v12'].forEach(id => {
+                document.getElementById(id)?.replaceChildren();
+            });
             if(victory){
                 playSfx('victory'); const f=gameState.towerFloor, boss=f%5===0; const mult=boss?2:1;
                 const rPure=(Math.floor(Math.random()*(f+2))+1)*mult, rEmer=(Math.floor(Math.random()*(f+2))+1)*mult, rRuby=(Math.floor(Math.random()*(f+2))+1)*mult, rSapp=(Math.floor(Math.random()*(f+2))+1)*mult;
@@ -5267,16 +5382,18 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             updateUI(); if(window.cloudSaveGame) window.cloudSaveGame();
         }
 
+        let kmBattleLaunchPending=false;
         function startBattle(){
-            if(gameState.isBattling||BATTLE_V12.running)return;
+            if(kmBattleLaunchPending||gameState.isBattling||BATTLE_V12.running)return;
             const battleFloor=Math.max(1,Number(gameState.towerFloor)||1);
             const validSquad=(gameState.selectedSquad||[]).map(Number).filter(i=>Number.isInteger(i)&&HEROES[i]).slice(0,5);
             if(!validSquad.length){showNotification('원정대 영웅을 1명 이상 편성하세요.');return;}
             const costs=getTowerEntryCosts(battleFloor),keys=['gold','food','herb','magicDust'];
-            if(keys.some(k=>(Number(gameState.resources[k])||0)<Number(costs[k]||0))){showNotification('입장 자원이 부족합니다.');return;}
+            if(!canSpendResources(costs)){showNotification('입장 자원이 부족합니다.');return;}
 
             const btn=document.getElementById('btn-start-battle');
             if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-1"></i>전투 시작 중';}
+            kmBattleLaunchPending=true;
 
             const launch=()=>{
                 let charged=false;
@@ -5286,7 +5403,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     buildBattleUnits();
                     if(!BATTLE_V12.heroes.length||!BATTLE_V12.enemy) throw new Error('battle units unavailable');
 
-                    keys.forEach(k=>gameState.resources[k]-=costs[k]);
+                    if(!spendResources(costs)){
+                        if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-khanda mr-1"></i>탑 공략 시작';}
+                        updateUI();updateBattleStageUI(false);
+                        showNotification('입장 자원이 부족해 전투 진입을 취소했습니다.');
+                        return;
+                    }
                     charged=true;
                     gameState.isBattling=true;
                     BATTLE_V12.running=true;
@@ -5302,9 +5424,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     logBattleV12(`<span class="text-amber-300 font-bold">⚔ ${battleFloor}층 전투 개시!</span>`);
                     if(window.cloudSaveGame) window.cloudSaveGame();
 
+                    const battleEnemy=BATTLE_V12.enemy;
                     requestAnimationFrame(()=>{
                         setTimeout(()=>{
-                            runBattleV12().catch(err=>{
+                            if(BATTLE_V12.enemy!==battleEnemy || !BATTLE_V12.running || !gameState.isBattling) return;
+                            runBattleV12(battleEnemy).catch(err=>{
+                                if(BATTLE_V12.enemy!==battleEnemy || !BATTLE_V12.running || !gameState.isBattling) return;
                                 console.error('KingMiso battle runtime error:',err);
                                 gameState.isBattling=false; BATTLE_V12.running=false;
                                 if(charged){keys.forEach(k=>gameState.resources[k]+=costs[k]); charged=false;}
@@ -5322,7 +5447,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
                     const controls=document.getElementById('battle-controls-box');if(controls)controls.classList.remove('battle-hidden-v121');
                     updateUI(); updateBattleStageUI(false);
                     showNotification('전투 준비 실패: 입장 자원은 차감되지 않았습니다.');
-                }
+                }finally{kmBattleLaunchPending=false;}
             };
 
             const special=battleFloor%10===0,middle=battleFloor%5===0&&!special;
@@ -5384,9 +5509,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             const item = gameState.upgradesInProgress[taskKey];
             if(!item) return;
             if(Date.now() < Number(item.endTime||0)) return;
+            // Production-changing callbacks must settle the old and new rates first.
+            // Deferred calls already belong to an online or offline settlement.
+            if(!deferredEffects&&(item.type==='building'||item.type==='gather')){ productionTickV201(); return; }
             delete gameState.upgradesInProgress[taskKey];
             if(v16Timers[taskKey]){ clearTimeout(v16Timers[taskKey]); delete v16Timers[taskKey]; }
-            // Offline settlement must not render (which re-enters upgradeTimerTickV201)
+            // Settlement must not render (which re-enters upgradeTimerTickV201)
             // or save an intermediate balance before its production cursor is committed.
             const present=fn=>{if(deferredEffects)deferredEffects.push(fn);else fn();};
             present(()=>playSfx('upgrade'));
@@ -5479,28 +5607,42 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
             renderHUD:updateResourceHudV200, check:kmHudCompatibilityV215
         });
         function productionTickV201() {
-            const now=Date.now();
-            // Catch up when Safari suspends timers in the background, capped at 12h.
-            const seconds=Math.max(0,Math.min((now-kmLastResourceTickV202)/1000,KM_ECONOMY_V217.production.catchupLimitSeconds));
-            kmLastResourceTickV202=now;
+            const now=Date.now(),start=kmLastResourceTickV202;
+            // Catch up from the previous cursor, capped at the existing 12h limit.
+            const seconds=Math.max(0,Math.min((now-start)/1000,KM_ECONOMY_V217.production.catchupLimitSeconds));
+            const end=start+seconds*1000,deferredEffects=[];
+            let cursor=start;
             try {
                 if (!gameState.resources || typeof gameState.resources!=='object') gameState.resources={};
-                // 원본 정상 작동 코드와 동일한 건물/채집장 생산 경로
-                Object.keys(BUILDINGS).forEach(key => {
-                    const b=BUILDINGS[key];
-                    const resource=b.prodType;
-                    if (!resource) return;
-                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +kmFacilityRate241('building',key)*seconds;
-                });
-                Object.keys(GATHERING_NODES).forEach(key => {
-                    const node=GATHERING_NODES[key];
-                    const resource=node.resKey;
-                    if (!resource) return;
-                    gameState.resources[resource]=(Number(gameState.resources[resource])||0)
-                        +kmFacilityRate241('gather',key)*seconds;
-                });
-                // 매 틱 실제 자원과 헤더를 동기화. 다른 UI의 오류와 독립적으로 실행.
+                const accrue=until=>{
+                    const next=Math.max(cursor,Math.min(end,until)),duration=(next-cursor)/1000;
+                    if(duration>0){
+                        Object.keys(BUILDINGS).forEach(key => {
+                            const resource=BUILDINGS[key].prodType;
+                            if(resource)gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                                +kmFacilityRate241('building',key)*duration;
+                        });
+                        Object.keys(GATHERING_NODES).forEach(key => {
+                            const resource=GATHERING_NODES[key].resKey;
+                            if(resource)gameState.resources[resource]=(Number(gameState.resources[resource])||0)
+                                +kmFacilityRate241('gather',key)*duration;
+                        });
+                    }
+                    cursor=next;
+                };
+                const completed=Object.entries(gameState.upgradesInProgress||{})
+                    .map(([key,job])=>({key,endTime:Number(job?.endTime||0)}))
+                    .filter(job=>Number.isFinite(job.endTime)&&job.endTime<=now)
+                    .sort((a,b)=>a.endTime-b.endTime);
+                for(const job of completed){
+                    accrue(job.endTime);
+                    finishUpgradeV16(job.key,deferredEffects);
+                }
+                accrue(end);
+                // Commit before saving or rendering: UI can re-enter completion.
+                kmLastResourceTickV202=Math.max(start,now);
+                if(completed.length&&window.cloudSaveGame)window.cloudSaveGame();
+                deferredEffects.forEach(effect=>effect());
                 updateResourceHudV200();
                 updateButtonsState();
             } catch(e) { console.error('KingMiso resource loop error',e); }
@@ -6124,8 +6266,7 @@ function kmAccelerate247(key){
  const job=gameState.upgradesInProgress[key],now=Date.now();
  if(!job||!['building','gather','hero'].includes(job.type)||!Number.isFinite(Number(job.endTime)))return false;
  if(job.endTime<=now){finishUpgradeV16(key);return false;}
- if((Number(gameState.resources.gem)||0)<KM_ACCELERATION247.gemCost){showNotification('다이아가 부족합니다.');return false;}
- gameState.resources.gem-=KM_ACCELERATION247.gemCost;
+ if(!spendResource('gem',KM_ACCELERATION247.gemCost)){showNotification('다이아가 부족합니다.');return false;}
  job.endTime=Math.max(now,Number(job.endTime)-KM_ACCELERATION247.seconds*1000);
  if(job.endTime<=now)finishUpgradeV16(key);else scheduleUpgradeCompletionV16(key);
  updateUI();renderGathering();if(kmHeroSelected239!==null)kmRefreshHero239();kmRefreshBuild238();
